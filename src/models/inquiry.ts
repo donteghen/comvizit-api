@@ -1,0 +1,35 @@
+import {Schema, model} from 'mongoose'
+
+import { IInquiry } from './interfaces'
+
+const inquirySchema = new Schema<IInquiry>({
+    fullname: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true
+    },
+    phone: {
+        type: String,
+        required: true
+    },
+    subject: {
+        type: String,
+        required: true
+    },
+    message: {
+        type: String,
+        required: true
+    },
+    replied: {
+        type: Boolean,
+        required: true,
+        default: false
+    }
+})
+
+const Inquiry = model<IInquiry>('Contacts', inquirySchema)
+
+export {Inquiry}
