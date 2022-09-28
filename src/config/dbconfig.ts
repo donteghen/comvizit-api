@@ -1,9 +1,22 @@
 
-import {connect} from 'mongoose'
+import {connection, connect, disconnect} from 'mongoose'
 
 
-export const connectDb = async () : Promise<void> => {
-     connect(process.env.MONGO_STRING)
-     .then(() => console.log('Db is connected'))
-     .catch(error => console.log(error))
+export async function connectDb  () {
+     await connect(process.env.MONGO_STRING)
+}
+
+export async function clearDb () {
+     const collections = await connection.db.collections()
+     for(const currCollection of collections) {
+          currCollection.deleteMany({})
+
+     }
+}
+
+export async function closeDb() {
+     if (!connection) {
+          return
+     }
+     await connection.close()
 }

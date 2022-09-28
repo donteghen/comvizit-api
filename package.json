@@ -13,7 +13,7 @@
     "dev:start": "npm-run-all lint tsc start",
     "dev": "nodemon --watch src -e ts --exec npm run dev:start",
     "start": "node dist/index.js",
-    "test": "jest"
+    "test": "jest --detectOpenHandles"
   },
   "author": "Donald Ticha Teghen <donaldteghen@gmail.com>",
   "license": "ISC",

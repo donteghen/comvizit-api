@@ -12,10 +12,13 @@
             "*": [
                 "node_modules/*"
             ]
-        }
+        },
+        "types": ["jest", "node", "@types/jest"]
     },
     "include": [
         "src/**/*"
-    ]
+
+    ],
+    
     
 }

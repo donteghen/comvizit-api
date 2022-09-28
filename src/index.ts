@@ -1,30 +1,19 @@
-import express, {Request, Response} from 'express'
-import dotenv from 'dotenv'
-import cors from 'cors'
 
+
+import dotenv from 'dotenv'
 // local module imports
 import {connectDb} from './config/dbconfig'
 
 // global settings
 dotenv.config()
-connectDb()
+connectDb().then(() => console.log('db connected'))
+.catch(err => console.log(err))
+
 const PORT = process.env.PORT
-// declare and initail parameters
-const app = express()
+
+import {app} from './server'
 
 
-// middleware
-app.use(cors())
-app.use(express.json())
-
-//  Routes
-app.get('/api/', async (req: Request, res: Response) => {
-    try {
-        res.send({foo: 'bar'})
-    } catch (error) {
-        res.status(400).send(error.message)
-    }
-})
 
 
 // start server
@@ -32,4 +21,3 @@ app.listen(PORT, () => {
     console.log(`Server is listining at: http://loccalhost:${PORT}`)
 })
 
-export {app}

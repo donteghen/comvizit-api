@@ -9,12 +9,30 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.connectDb = void 0;
+exports.closeDb = exports.clearDb = exports.connectDb = void 0;
 const mongoose_1 = require("mongoose");
-const connectDb = () => __awaiter(void 0, void 0, void 0, function* () {
-    (0, mongoose_1.connect)(process.env.MONGO_STRING)
-        .then(() => console.log('Db is connected'))
-        .catch(error => console.log(error));
-});
+function connectDb() {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield (0, mongoose_1.connect)(process.env.MONGO_STRING);
+    });
+}
 exports.connectDb = connectDb;
+function clearDb() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const collections = yield mongoose_1.connection.db.collections();
+        for (const currCollection of collections) {
+            currCollection.deleteMany({});
+        }
+    });
+}
+exports.clearDb = clearDb;
+function closeDb() {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!mongoose_1.connection) {
+            return;
+        }
+        yield mongoose_1.connection.close();
+    });
+}
+exports.closeDb = closeDb;
 //# sourceMappingURL=dbconfig.js.map

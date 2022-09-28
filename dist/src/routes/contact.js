@@ -13,9 +13,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const inquiry_1 = require("../models/inquiry");
+const contact_1 = require("../models/contact");
 const middleware_1 = __importDefault(require("../middleware"));
-const InquiryRouter = express_1.default.Router();
+const ContactRouter = express_1.default.Router();
 // query helper function
 function setFilter(key, value) {
     switch (key) {
@@ -28,19 +28,17 @@ function setFilter(key, value) {
     }
 }
 // ***************************** public enpoints ***********************************************
-// create new inquiry
-InquiryRouter.post('/api/inquiries', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+// create new contact
+ContactRouter.post('/api/contacts', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { fullname, email, phone, subject, message } = req.body;
-        const newInquiry = new inquiry_1.Inquiry({
+        const { fullname, email, phone } = req.body;
+        const newContact = new contact_1.Contact({
             fullname,
             email,
-            phone,
-            subject,
-            message
+            phone
         });
-        const inquiry = yield newInquiry.save();
-        res.send({ ok: true, data: inquiry });
+        const contact = yield newContact.save();
+        res.send({ ok: true, data: contact });
     }
     catch (error) {
         if (error.name === 'ValidationError') {
@@ -51,8 +49,8 @@ InquiryRouter.post('/api/inquiries', (req, res) => __awaiter(void 0, void 0, voi
     }
 }));
 // ***************************** admin restricted endpoints ***********************************************
-// get all inquiries (with or without query string)
-InquiryRouter.get('/api/inquiries', middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+// get all contact (with or without query string)
+ContactRouter.get('/api/contacts', middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let filter = {};
         const queries = Object.keys(req.query);
@@ -63,36 +61,36 @@ InquiryRouter.get('/api/inquiries', middleware_1.default, (req, res) => __awaite
                 }
             });
         }
-        const inquiries = yield inquiry_1.Inquiry.find(setFilter);
-        res.send({ ok: true, data: inquiries });
+        const contacts = yield contact_1.Contact.find(setFilter);
+        res.send({ ok: true, data: contacts });
     }
     catch (error) {
         res.status(400).send({ ok: false, error: error.message });
     }
 }));
-// get single inquiry by id
-InquiryRouter.get('/api/inquiries/:id', middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+// get single contact by id
+ContactRouter.get('/api/contacts/:id', middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const inquiry = yield inquiry_1.Inquiry.findById(req.params.id);
-        if (!inquiry) {
+        const contact = yield contact_1.Contact.findById(req.params.id);
+        if (!contact) {
             throw new Error('Not Found!');
         }
-        res.send({ ok: true, data: inquiry });
+        res.send({ ok: true, data: contact });
     }
     catch (error) {
         res.status(400).send({ ok: false, error: error.message });
     }
 }));
-// make inquiry as replied
-InquiryRouter.patch('/api/inquiries/:id/update', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+// make contact as replied
+ContactRouter.patch('/api/contacts/:id/update', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const inquiry = yield inquiry_1.Inquiry.findById(req.params.id);
-        if (!inquiry) {
+        const contact = yield contact_1.Contact.findById(req.params.id);
+        if (!contact) {
             throw new Error('Not Found!');
         }
-        inquiry.replied = true;
-        const updateInquiry = yield inquiry.save();
-        res.send({ ok: true, data: updateInquiry });
+        contact.replied = true;
+        const updateContact = yield contact.save();
+        res.send({ ok: true, data: updateContact });
     }
     catch (error) {
         if (error.name === 'ValidationError') {
@@ -102,11 +100,11 @@ InquiryRouter.patch('/api/inquiries/:id/update', (req, res) => __awaiter(void 0,
         res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message });
     }
 }));
-// delete inquiries
-InquiryRouter.delete('/api/inquiries/:id/update', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+// delete contact
+ContactRouter.delete('/api/contacts/:id/update', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const inquiry = yield inquiry_1.Inquiry.findByIdAndDelete(req.params.id);
-        if (!inquiry) {
+        const contact = yield contact_1.Contact.findByIdAndDelete(req.params.id);
+        if (!contact) {
             throw new Error('Not Found!');
         }
         res.send({ ok: true });
@@ -115,4 +113,4 @@ InquiryRouter.delete('/api/inquiries/:id/update', (req, res) => __awaiter(void 0
         res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message });
     }
 }));
-//# sourceMappingURL=inquiry.js.map
+//# sourceMappingURL=contact.js.map
