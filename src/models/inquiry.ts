@@ -27,9 +27,14 @@ const inquirySchema = new Schema<IInquiry>({
         type: Boolean,
         required: true,
         default: false
+    },
+    updated: {
+        type: Number,
+        required: true,
+        default: Date.now()
     }
 })
 
-const Inquiry = model<IInquiry>('Contacts', inquirySchema)
+const Inquiry = model<IInquiry>('Inquiries', inquirySchema)
 
 export {Inquiry}

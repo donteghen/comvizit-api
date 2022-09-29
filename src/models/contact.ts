@@ -19,6 +19,11 @@ const contactSchema = new Schema<IContact>({
         type: Boolean,
         required: true,
         default: false
+    },
+    updated: {
+        type: Number,
+        required: true,
+        default: Date.now()
     }
 })
 

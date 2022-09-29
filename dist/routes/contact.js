@@ -12,10 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ContactRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const contact_1 = require("../models/contact");
 const middleware_1 = __importDefault(require("../middleware"));
 const ContactRouter = express_1.default.Router();
+exports.ContactRouter = ContactRouter;
 // query helper function
 function setFilter(key, value) {
     switch (key) {
@@ -61,7 +63,7 @@ ContactRouter.get('/api/contacts', middleware_1.default, (req, res) => __awaiter
                 }
             });
         }
-        const contacts = yield contact_1.Contact.find(setFilter);
+        const contacts = yield contact_1.Contact.find(filter);
         res.send({ ok: true, data: contacts });
     }
     catch (error) {
@@ -89,12 +91,13 @@ ContactRouter.patch('/api/contacts/:id/update', (req, res) => __awaiter(void 0, 
             throw new Error('Not Found!');
         }
         contact.replied = true;
+        contact.updated = Date.now();
         const updateContact = yield contact.save();
         res.send({ ok: true, data: updateContact });
     }
     catch (error) {
         if (error.name === 'ValidationError') {
-            res.status(400).send({ ok: false, error: 'Validation Error!' });
+            res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
         res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message });

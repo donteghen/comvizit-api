@@ -27,6 +27,7 @@ export type PreferredTenant = {
 
 export type Address = {
     town: string,
+    quater: string,
     street: string
 }
 
@@ -53,14 +54,16 @@ export interface IContact extends Document {
     fullname: string,
     email: string,
     phone: string,
-    replied: boolean
+    replied: boolean,
+    updated: number
 }
 
 export interface IOwner extends Document {
     fullname: string,
     email: string,
     phone: string,
-    address: Address
+    address: Address,
+    updated: number
 }
 
 export interface IInquiry extends Document {
@@ -69,13 +72,16 @@ export interface IInquiry extends Document {
     phone: string,
     message: string,
     replied: boolean,
-    subject: string
+    subject: string,
+    updated: number
 }
 
 export interface IProperty extends Document {
     ownerId: Types.ObjectId,
     price: number,
     propertyType: string,
+    updated: number,
+    bedroom?: string,
     propertSize: number,
     facilities: Types.Array<string>,
     furnishedState: string,
@@ -86,7 +92,7 @@ export interface IProperty extends Document {
     quater: Quater,
     street: string,
     district: string,
-    media: Media,
+    media?: Media,
     rentSummary: RentSummary,
     rules: Types.Array<string>,
     preferedTenant: PreferredTenant,

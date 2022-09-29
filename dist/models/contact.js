@@ -19,6 +19,11 @@ const contactSchema = new mongoose_1.Schema({
         type: Boolean,
         required: true,
         default: false
+    },
+    updated: {
+        type: Number,
+        required: true,
+        default: Date.now()
     }
 });
 const Contact = (0, mongoose_1.model)('Contacts', contactSchema);

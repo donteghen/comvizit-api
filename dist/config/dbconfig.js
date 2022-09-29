@@ -11,11 +11,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.closeDb = exports.clearDb = exports.connectDb = void 0;
 const mongoose_1 = require("mongoose");
-function connectDb() {
-    return __awaiter(this, void 0, void 0, function* () {
-        yield (0, mongoose_1.connect)(process.env.MONGO_STRING);
-    });
-}
+const connectDb = () => {
+    (0, mongoose_1.connect)(process.env.MONGO_STRING)
+        .then(() => console.log('db connected'))
+        .catch(err => console.log(err));
+};
 exports.connectDb = connectDb;
 function clearDb() {
     return __awaiter(this, void 0, void 0, function* () {

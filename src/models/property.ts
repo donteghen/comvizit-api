@@ -16,6 +16,10 @@ const propertySchema = new Schema<IProperty>({
         required: true,
         enum: ['Studio', 'Apartment', 'Private Room', 'Villa', 'House']
     },
+    bedroom: {
+        type: String,
+        enum: ['ONE', 'TWO', 'THREE', 'FOURPLUS']
+    },
     propertSize: {
         type: Number,
         required: true
@@ -160,6 +164,11 @@ const propertySchema = new Schema<IProperty>({
             default: false,
             required: true
         }
+    },
+    updated: {
+        type: Number,
+        required: true,
+        default: Date.now()
     }
 })
 

@@ -12,10 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.InquiryRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const inquiry_1 = require("../models/inquiry");
 const middleware_1 = __importDefault(require("../middleware"));
 const InquiryRouter = express_1.default.Router();
+exports.InquiryRouter = InquiryRouter;
 // query helper function
 function setFilter(key, value) {
     switch (key) {
@@ -44,7 +46,7 @@ InquiryRouter.post('/api/inquiries', (req, res) => __awaiter(void 0, void 0, voi
     }
     catch (error) {
         if (error.name === 'ValidationError') {
-            res.status(400).send({ ok: false, error: 'Validation Error!' });
+            res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
         res.status(400).send({ ok: false, error: error.message });
@@ -63,7 +65,7 @@ InquiryRouter.get('/api/inquiries', middleware_1.default, (req, res) => __awaite
                 }
             });
         }
-        const inquiries = yield inquiry_1.Inquiry.find(setFilter);
+        const inquiries = yield inquiry_1.Inquiry.find(filter);
         res.send({ ok: true, data: inquiries });
     }
     catch (error) {
@@ -91,12 +93,13 @@ InquiryRouter.patch('/api/inquiries/:id/update', (req, res) => __awaiter(void 0,
             throw new Error('Not Found!');
         }
         inquiry.replied = true;
+        inquiry.updated = Date.now();
         const updateInquiry = yield inquiry.save();
         res.send({ ok: true, data: updateInquiry });
     }
     catch (error) {
         if (error.name === 'ValidationError') {
-            res.status(400).send({ ok: false, error: 'Validation Error!' });
+            res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
         res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message });

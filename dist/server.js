@@ -15,14 +15,27 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.app = void 0;
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
+const dotenv_1 = __importDefault(require("dotenv"));
 // local module imports
-// import {connectDb} from './config/dbconfig'
+const dbconfig_1 = require("./config/dbconfig");
+// import router
+const owner_1 = require("./routes/owner");
+const property_1 = require("./routes/property");
+const inquiry_1 = require("./routes/inquiry");
+const contact_1 = require("./routes/contact");
+// global settings
+dotenv_1.default.config();
+(0, dbconfig_1.connectDb)();
 // declare and initail parameters
 const app = (0, express_1.default)();
 exports.app = app;
 // middleware
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
+app.use(property_1.PropertyRouter);
+app.use(owner_1.OwnerRouter);
+app.use(contact_1.ContactRouter);
+app.use(inquiry_1.InquiryRouter);
 //  Routes
 app.get('/api/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

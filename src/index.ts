@@ -1,17 +1,10 @@
 
+import {app} from './server'
 
-import dotenv from 'dotenv'
-// local module imports
-import {connectDb} from './config/dbconfig'
-
-// global settings
-dotenv.config()
-connectDb().then(() => console.log('db connected'))
-.catch(err => console.log(err))
-
+// set the port
 const PORT = process.env.PORT
 
-import {app} from './server'
+
 
 
 

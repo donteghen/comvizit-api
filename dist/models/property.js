@@ -17,6 +17,10 @@ const propertySchema = new mongoose_1.Schema({
         required: true,
         enum: ['Studio', 'Apartment', 'Private Room', 'Villa', 'House']
     },
+    bedroom: {
+        type: String,
+        enum: ['ONE', 'TWO', 'THREE', 'FOURPLUS']
+    },
     propertSize: {
         type: Number,
         required: true
@@ -161,6 +165,11 @@ const propertySchema = new mongoose_1.Schema({
             default: false,
             required: true
         }
+    },
+    updated: {
+        type: Number,
+        required: true,
+        default: Date.now()
     }
 });
 const Property = (0, mongoose_1.model)('Properties', propertySchema);

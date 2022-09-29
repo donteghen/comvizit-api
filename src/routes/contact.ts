@@ -52,7 +52,7 @@ ContactRouter.get('/api/contacts', adminAuth, async (req: Request, res: Response
                 }
             })
         }
-        const contacts = await Contact.find(setFilter)
+        const contacts = await Contact.find(filter)
         res.send({ok: true, data: contacts})
     } catch (error) {
         res.status(400).send({ok:false, error: error.message})
@@ -80,11 +80,13 @@ ContactRouter.patch('/api/contacts/:id/update', async (req: Request, res: Respon
             throw new Error('Not Found!')
         }
         contact.replied = true
+        contact.updated = Date.now()
+
         const updateContact = await contact.save()
         res.send({ok: true, data: updateContact})
     } catch (error) {
         if (error.name === 'ValidationError') {
-            res.status(400).send({ok: false, error:'Validation Error!'})
+            res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
         res.status(400).send({ok:false, error:error?.message})
@@ -105,3 +107,6 @@ ContactRouter.delete('/api/contacts/:id/update', async (req: Request, res: Respo
 })
 
 
+export {
+    ContactRouter
+}

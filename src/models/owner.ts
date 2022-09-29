@@ -20,10 +20,19 @@ const ownerSchema = new Schema<IOwner>({
             type: String,
             required: true
         },
+        quater: {
+            type: String,
+            required: true
+        },
         street: {
             type: String,
             required: true
         }
+    },
+    updated: {
+        type: Number,
+        required: true,
+        default: Date.now()
     }
 })
 

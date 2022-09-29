@@ -2,8 +2,10 @@
 import {connection, connect, disconnect} from 'mongoose'
 
 
-export async function connectDb  () {
-     await connect(process.env.MONGO_STRING)
+export const connectDb = () => {
+     connect(process.env.MONGO_STRING)
+     .then(() => console.log('db connected'))
+     .catch(err => console.log(err))
 }
 
 export async function clearDb () {

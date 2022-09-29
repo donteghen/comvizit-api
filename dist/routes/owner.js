@@ -12,10 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.OwnerRouter = void 0;
 const owner_1 = require("../models/owner");
 const express_1 = __importDefault(require("express"));
 const middleware_1 = __importDefault(require("../middleware"));
 const OwnerRouter = express_1.default.Router();
+exports.OwnerRouter = OwnerRouter;
 // query helper function
 function setFilter(key, value) {
     switch (key) {
@@ -45,9 +47,9 @@ OwnerRouter.get('/api/owners/:id', (req, res) => __awaiter(void 0, void 0, void 
 // create new owner account
 OwnerRouter.post('/api/owners', middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { name, email, phone, address } = req.body;
+        const { fullname, email, phone, address } = req.body;
         const newOwner = new owner_1.Owner({
-            name,
+            fullname,
             email,
             phone,
             address
@@ -57,7 +59,7 @@ OwnerRouter.post('/api/owners', middleware_1.default, (req, res) => __awaiter(vo
     }
     catch (error) {
         if (error.name === 'ValidationError') {
-            res.status(400).send({ ok: false, error: 'Validation Error!' });
+            res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
         res.status(400).send({ ok: false, error: error.message });
@@ -66,7 +68,16 @@ OwnerRouter.post('/api/owners', middleware_1.default, (req, res) => __awaiter(vo
 // get all owners
 OwnerRouter.get('/api/owners', middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const owners = yield owner_1.Owner.find();
+        let filter = {};
+        const queries = Object.keys(req.query);
+        if (queries.length > 0) {
+            queries.forEach(key => {
+                if (req.query[key]) {
+                    filter = Object.assign(filter, setFilter(key, req.query[key]));
+                }
+            });
+        }
+        const owners = yield owner_1.Owner.find(filter);
         res.send({ ok: true, data: owners });
     }
     catch (error) {
@@ -74,18 +85,19 @@ OwnerRouter.get('/api/owners', middleware_1.default, (req, res) => __awaiter(voi
     }
 }));
 // update owner account
-OwnerRouter.put('/api/owners/:id', middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+OwnerRouter.patch('/api/owners/:id', middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { fullname, email, phone, address } = req.body;
-        const owner = yield owner_1.Owner.findById(req.params.id);
-        if (!owner) {
-            throw new Error('Requested owner not found!');
+        const update = {};
+        Object.keys(req.body).forEach(key => {
+            update[key] = req.body[key];
+        });
+        if (Object.keys(update).length > 0) {
+            update.updated = Date.now();
         }
-        owner.fullname = fullname ? fullname : owner.fullname;
-        owner.email = email ? email : owner.email;
-        owner.phone = phone ? phone : owner.phone;
-        owner.address = address ? address : owner.address;
-        const updatedOwner = yield owner.save();
+        const updatedOwner = yield owner_1.Owner.findByIdAndUpdate(req.params.id, { $set: update });
+        if (!updatedOwner) {
+            throw new Error('Update request failed!');
+        }
         res.send({ ok: true, data: updatedOwner });
     }
     catch (error) {

@@ -20,10 +20,19 @@ const ownerSchema = new mongoose_1.Schema({
             type: String,
             required: true
         },
+        quater: {
+            type: String,
+            required: true
+        },
         street: {
             type: String,
             required: true
         }
+    },
+    updated: {
+        type: Number,
+        required: true,
+        default: Date.now()
     }
 });
 const Owner = (0, mongoose_1.model)('Owners', ownerSchema);

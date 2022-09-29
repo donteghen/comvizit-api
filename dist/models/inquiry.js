@@ -27,8 +27,13 @@ const inquirySchema = new mongoose_1.Schema({
         type: Boolean,
         required: true,
         default: false
+    },
+    updated: {
+        type: Number,
+        required: true,
+        default: Date.now()
     }
 });
-const Inquiry = (0, mongoose_1.model)('Contacts', inquirySchema);
+const Inquiry = (0, mongoose_1.model)('Inquiries', inquirySchema);
 exports.Inquiry = Inquiry;
 //# sourceMappingURL=inquiry.js.map

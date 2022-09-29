@@ -39,9 +39,9 @@ OwnerRouter.get('/api/owners/:id', async (req: Request, res: Response) => {
 // create new owner account
 OwnerRouter.post('/api/owners', adminAuth, async (req: Request, res: Response) => {
     try {
-        const {name, email, phone, address} = req.body
+        const {fullname, email, phone, address} = req.body
         const newOwner = new Owner({
-            name,
+            fullname,
             email,
             phone,
             address
@@ -50,7 +50,7 @@ OwnerRouter.post('/api/owners', adminAuth, async (req: Request, res: Response) =
         res.status(201).send({ok: true, data: owner})
     } catch (error) {
         if (error.name === 'ValidationError') {
-            res.status(400).send({ok: false, error:'Validation Error!'})
+            res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
         res.status(400).send({ok:false, error: error.message})
@@ -60,7 +60,16 @@ OwnerRouter.post('/api/owners', adminAuth, async (req: Request, res: Response) =
 // get all owners
 OwnerRouter.get('/api/owners', adminAuth, async (req: Request, res: Response) => {
     try {
-        const owners = await Owner.find()
+        let filter: any = {}
+        const queries = Object.keys(req.query)
+        if (queries.length > 0) {
+            queries.forEach(key => {
+                if (req.query[key]) {
+                    filter = Object.assign(filter, setFilter(key, req.query[key]))
+                }
+            })
+        }
+        const owners = await Owner.find(filter)
         res.send({ok: true, data: owners})
     } catch (error) {
         res.status(400).send({ok: false, error: error.message})
@@ -70,19 +79,20 @@ OwnerRouter.get('/api/owners', adminAuth, async (req: Request, res: Response) =>
 
 
 // update owner account
-OwnerRouter.put('/api/owners/:id', adminAuth, async (req: Request, res: Response) => {
+OwnerRouter.patch('/api/owners/:id', adminAuth, async (req: Request, res: Response) => {
     try {
-        const {fullname, email, phone, address} = req.body
-        const owner = await Owner.findById(req.params.id)
-        if (!owner) {
-            throw new Error('Requested owner not found!')
+        const update: any = {}
+        Object.keys(req.body).forEach(key => {
+            update[key] = req.body[key]
+        })
+        if (Object.keys(update).length > 0) {
+            update.updated = Date.now()
         }
-        owner.fullname = fullname ? fullname : owner.fullname
-        owner.email = email ? email : owner.email
-        owner.phone = phone ? phone : owner.phone
-        owner.address = address ? address : owner.address
+        const updatedOwner = await Owner.findByIdAndUpdate(req.params.id, {$set: update})
+        if (!updatedOwner) {
+            throw new Error('Update request failed!')
+        }
 
-        const updatedOwner = await owner.save()
         res.send({ok: true, data: updatedOwner})
     } catch (error) {
         if (error.name === 'ValidationError') {
@@ -106,3 +116,7 @@ OwnerRouter.delete('/api/owners/:id', adminAuth, async (req: Request, res: Respo
         res.status(400).send({ok:false, error: error.message})
     }
 })
+
+export {
+    OwnerRouter
+}

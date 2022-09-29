@@ -34,7 +34,7 @@ InquiryRouter.post('/api/inquiries', async (req: Request, res: Response) => {
         res.send({ok: true, data: inquiry})
     } catch (error) {
         if (error.name === 'ValidationError') {
-            res.status(400).send({ok: false, error:'Validation Error!'})
+            res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
         res.status(400).send({ok:false, error: error.message})
@@ -55,7 +55,7 @@ InquiryRouter.get('/api/inquiries', adminAuth, async (req: Request, res: Respons
                 }
             })
         }
-        const inquiries = await Inquiry.find(setFilter)
+        const inquiries = await Inquiry.find(filter)
         res.send({ok: true, data: inquiries})
     } catch (error) {
         res.status(400).send({ok:false, error: error.message})
@@ -82,12 +82,15 @@ InquiryRouter.patch('/api/inquiries/:id/update', async (req: Request, res: Respo
         if (!inquiry) {
             throw new Error('Not Found!')
         }
+
         inquiry.replied = true
+        inquiry.updated = Date.now()
+
         const updateInquiry = await inquiry.save()
         res.send({ok: true, data: updateInquiry})
     } catch (error) {
         if (error.name === 'ValidationError') {
-            res.status(400).send({ok: false, error:'Validation Error!'})
+            res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
         res.status(400).send({ok:false, error:error?.message})
@@ -108,3 +111,6 @@ InquiryRouter.delete('/api/inquiries/:id/update', async (req: Request, res: Resp
 })
 
 
+export {
+    InquiryRouter
+}
