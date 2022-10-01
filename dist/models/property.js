@@ -21,13 +21,16 @@ const propertySchema = new mongoose_1.Schema({
         type: String,
         enum: ['ONE', 'TWO', 'THREE', 'FOURPLUS']
     },
-    propertSize: {
+    propertySize: {
         type: Number,
         required: true
     },
     facilities: {
         type: [String],
         required: true
+    },
+    features: {
+        type: [String],
     },
     furnishedState: {
         type: String,
@@ -71,8 +74,14 @@ const propertySchema = new mongoose_1.Schema({
         required: true
     },
     district: {
-        type: String,
-        required: true
+        name: {
+            type: String,
+            required: true
+        },
+        ref: {
+            type: String,
+            required: true
+        }
     },
     media: {
         photos: {
@@ -115,9 +124,6 @@ const propertySchema = new mongoose_1.Schema({
         required: true
     },
     preferedTenant: {
-        age: {
-            type: Number,
-        },
         gender: {
             type: String,
             enum: ['Male', 'Female', 'All'],
@@ -126,7 +132,7 @@ const propertySchema = new mongoose_1.Schema({
         },
         type: {
             type: String,
-            enum: ['Student', 'Family', 'Others'],
+            enum: ['Student', 'Family', 'All'],
             required: true
         }
     },

@@ -1,28 +1,24 @@
 import { Property } from "../models/property";
 import express, { Request, Response } from 'express'
 import adminAuth from "../middleware";
+import { Types } from "mongoose";
 
 const PropertyRouter = express.Router()
 
-const pageSize: number = 24 // number of documents returned per request for the get all properties route
+const pageSize: number = 2 // number of documents returned per request for the get all properties route
+
 
 // query helper function
 function setFilter(key:string, value:any): any {
     switch (key) {
         case 'ownerId':
-            return {'ownerId': value.toString()}
-        case 'ownerId':
-            return {'ownerId': { "$regex": value, $options: 'i'}}
-        case 'maxprice':
-            return {'price': {$lte : Number.parseInt(value, 10)}}
-        case 'minprice':
-            return {'price': {$gte : Number.parseInt(value, 10)}}
+            return {'ownerId': new Types.ObjectId(value)}
         case 'bedroomCount':
-            return {'bedroomCount': value}
+            return {'bedroom': value.toString()}
         case 'propertyType':
             return {'propertyType': value}
-        case 'propertSize':
-            return {'propertSize': {$gte : Number.parseInt(value, 10)}}
+        case 'propertySize':
+            return {'propertySize': {$gte : Number.parseInt(value, 10)}}
         case 'distanceFromRoad':
             return {'distanceFromRoad': {$lte : Number.parseInt(value, 10)}}
         case 'costFromRoad':
@@ -30,28 +26,43 @@ function setFilter(key:string, value:any): any {
         case 'furnishedState':
             return {'furnishedState': value}
         case 'amenities':
-            return {'amenities': {$in : value}}
+            return {'amenities': {$in : [value]}}
         case 'facilities':
-            return {'facilities': {$in : value}}
-        case 'amenities':
-            return {'amenities': {$in : value}}
-        case 'preferedTenant':
-            return {'preferedTenant': value}
+            return {'facilities': {$in : [value]}}
+        case 'features':
+            return {'features': {$in : [value]}}
+        // case 'preferedTenant':
+        //     return {'preferedTenant': value}
         default:
             return {}
     }
 }
 
-function setSorter (key:string, value:any) {
-    switch (key) {
+function setSorter (value:any) {
+    switch (value) {
         case 'HighToLow':
-            return {'price': -1}
+            return {price: -1}
         case 'LowToHigh':
-            return {'price': 1}
+            return {price: 1}
         case 'MostRecent':
-            return {'updated': -1}
+            return {updated: -1}
         default:
-            return {}
+            return {updated: -1}
+    }
+}
+
+function priceSetter (reqParams: any, queryArray: string[], priceQuery: string) {
+    if (priceQuery === 'minprice') {
+        if (queryArray.includes('maxprice')) {
+            return {$and: [{'price': {$gte: Number.parseInt(reqParams['minprice'], 10)}}, {'price' : {$lte: Number.parseInt(reqParams['maxprice'], 10)}}]}
+        }
+        return {'price': {$gte: Number.parseInt(reqParams['minprice'], 10)}}
+    }
+    else if (priceQuery === 'maxprice') {
+        if (queryArray.includes('minprice')) {
+            return {$and: [{'price': {$gte: Number.parseInt(reqParams['minprice'], 10)}}, {'price' : {$lte: Number.parseInt(reqParams['maxprice'], 10)}}]}
+        }
+        return {'price': {$lte: Number.parseInt(reqParams['maxprice'], 10)}}
     }
 }
 
@@ -60,15 +71,21 @@ function setSorter (key:string, value:any) {
 // get all properties
 PropertyRouter.get('/api/properties', async (req: Request, res: Response) => {
     try {
-        let filter: any = {}
-        let sorting:any = {}
+        let filter: any = {availability:'Available'}
+        let sorting:any = {updated: -1}
         let pageNum: number = 1
         const queries = Object.keys(req.query)
         if (queries.length > 0) {
             queries.forEach(key => {
                 if (req.query[key]) {
+                    if (key === 'maxprice' || key === 'minprice') {
+                        filter = Object.assign(filter, priceSetter(req.query, queries, key))
+                    }
+                    if (key === 'page') {
+                        pageNum = Number.parseInt(req.query[key] as string, 10)
+                    }
                     if (key === 'sorting') {
-                        sorting = Object.assign(sorting, setSorter(key, req.query[key]))
+                        sorting = setSorter(req.query[key])
                     }
                     if (key === 'page') {
                         pageNum = Number.parseInt(req.query[key] as string, 10)
@@ -77,6 +94,7 @@ PropertyRouter.get('/api/properties', async (req: Request, res: Response) => {
                 }
             })
         }
+        console.log(filter, sorting)
         const properties = await Property.aggregate([
             {
                 $match: filter
@@ -88,14 +106,17 @@ PropertyRouter.get('/api/properties', async (req: Request, res: Response) => {
                 $skip: (pageNum - 1) * pageSize
             },
             {
-                $limit: pageNum
+                $limit: pageSize
             }
 
         ])
-        const resultCount = await Property.countDocuments(filter)
-        const totalPages = Math.floor(resultCount / pageSize)
 
-        res.send({ok: true, data: {properties, currPage: pageNum, totalPages}})
+
+
+        const resultCount = await Property.countDocuments(filter)
+        const totalPages = Math.ceil(resultCount / pageSize)
+
+        res.send({ok: true, data: {properties, currPage: pageNum, totalPages, resultCount}})
     } catch (error) {
         res.status(400).send({ok:false, error: error.message})
     }
@@ -128,7 +149,7 @@ PropertyRouter.get('/api/property/related-properties', async (req: Request, res:
 // ***************************** admin restricted endpoints ***********************************************
 
 // create new property
-PropertyRouter.patch('/api/properties', adminAuth, async (req: Request, res: Response) => {
+PropertyRouter.post('/api/properties', adminAuth, async (req: Request, res: Response) => {
     try {
         const newProperty = new Property({
             ...req.body
@@ -157,13 +178,15 @@ PropertyRouter.patch('/api/properties/:id', adminAuth, async (req: Request, res:
         if (Object.keys(update).length > 0) {
             update.updated = Date.now()
         }
-        const updatedProperty = await Property.findByIdAndUpdate(req.params.id, {$set: update})
+        const updatedProperty = await Property.findByIdAndUpdate(req.params.id, {$set: update}, {runValidators:true})
+
         if (!updatedProperty) {
             throw new Error('Update requested failed!')
         }
 
-        res.status(201).send({ok: true, data: updatedProperty})
+        res.status(200).send({ok: true})
     } catch (error) {
+        // console.log(error)
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return

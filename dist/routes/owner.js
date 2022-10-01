@@ -16,13 +16,16 @@ exports.OwnerRouter = void 0;
 const owner_1 = require("../models/owner");
 const express_1 = __importDefault(require("express"));
 const middleware_1 = __importDefault(require("../middleware"));
+const multerUpload_1 = __importDefault(require("../config/multerUpload"));
+const cloudinary_1 = __importDefault(require("../config/cloudinary"));
+const multer_1 = require("multer");
 const OwnerRouter = express_1.default.Router();
 exports.OwnerRouter = OwnerRouter;
 // query helper function
 function setFilter(key, value) {
     switch (key) {
-        case 'name':
-            return { 'name': { "$regex": value, $options: 'i' } };
+        case 'fullname':
+            return { 'fullname': { "$regex": value, $options: 'i' } };
         case 'email':
             return { 'email': value };
         default:
@@ -84,6 +87,37 @@ OwnerRouter.get('/api/owners', middleware_1.default, (req, res) => __awaiter(voi
         res.status(400).send({ ok: false, error: error.message });
     }
 }));
+// upload owner avatar
+OwnerRouter.patch('/api/owners/:id/avatarUpload', middleware_1.default, multerUpload_1.default.single('avatar'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const owner = yield owner_1.Owner.findById(req.params.id);
+        if (!owner) {
+            throw new Error('Owner not found!');
+        }
+        if (owner.avatar) {
+            yield cloudinary_1.default.v2.uploader.destroy(owner.avatarDeleteId);
+        }
+        const result = yield cloudinary_1.default.v2.uploader.upload(req.file.path, { folder: "Owners/Avatars/",
+            public_id: req.file.originalname
+        });
+        owner.avatar = result.secure_url;
+        owner.avatarDeleteId = result.public_id;
+        owner.updated = Date.now();
+        const updatedOwner = yield owner.save();
+        res.send({ ok: true, data: updatedOwner });
+    }
+    catch (error) {
+        console.log(error);
+        if (error instanceof multer_1.MulterError) {
+            res.status(400).send({ ok: false, error: `Multer Upload Error : ${error.message}` });
+        }
+        if (error.name === 'ValidationError') {
+            res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
+            return;
+        }
+        res.status(400).send({ ok: false, error: error.message });
+    }
+}));
 // update owner account
 OwnerRouter.patch('/api/owners/:id', middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -94,7 +128,7 @@ OwnerRouter.patch('/api/owners/:id', middleware_1.default, (req, res) => __await
         if (Object.keys(update).length > 0) {
             update.updated = Date.now();
         }
-        const updatedOwner = yield owner_1.Owner.findByIdAndUpdate(req.params.id, { $set: update });
+        const updatedOwner = yield owner_1.Owner.findByIdAndUpdate(req.params.id, { $set: update }, { runValidators: true });
         if (!updatedOwner) {
             throw new Error('Update request failed!');
         }
@@ -102,7 +136,7 @@ OwnerRouter.patch('/api/owners/:id', middleware_1.default, (req, res) => __await
     }
     catch (error) {
         if (error.name === 'ValidationError') {
-            res.status(400).send({ ok: false, error: 'Validation Error!' });
+            res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
         res.status(400).send({ ok: false, error: error.message });

@@ -1,14 +1,17 @@
 import {Owner} from '../models/owner'
 import express, { Request, Response } from 'express'
 import adminAuth from '../middleware'
+import multerUpload from '../config/multerUpload'
+import cloudinary from '../config/cloudinary'
+import { MulterError } from 'multer'
 
 const OwnerRouter = express.Router()
 
 // query helper function
 function setFilter(key:string, value:any): any {
     switch (key) {
-        case 'name':
-            return {'name': { "$regex": value, $options: 'i'}}
+        case 'fullname':
+            return {'fullname': { "$regex": value, $options: 'i'}}
         case 'email':
             return {'email': value}
         default:
@@ -76,7 +79,41 @@ OwnerRouter.get('/api/owners', adminAuth, async (req: Request, res: Response) =>
     }
 })
 
+// upload owner avatar
+OwnerRouter.patch('/api/owners/:id/avatarUpload', adminAuth, multerUpload.single('avatar'), async (req: Request, res: Response) => {
+    try {
+        const owner = await Owner.findById(req.params.id)
+        if (!owner) {
+            throw new Error('Owner not found!')
+        }
+        if(owner.avatar){
+            await cloudinary.v2.uploader.destroy(owner.avatarDeleteId)
+        }
+        const result = await cloudinary.v2.uploader.upload(req.file.path,
+            { folder: "Owners/Avatars/",
+               public_id: req.file.originalname
+            }
+        )
+        owner.avatar = result.secure_url
+        owner.avatarDeleteId = result.public_id
+        owner.updated = Date.now()
 
+        const updatedOwner = await owner.save()
+
+        res.send({ok:true, data: updatedOwner})
+    } catch (error) {
+        console.log(error)
+        if (error instanceof MulterError) {
+            res.status(400).send({ok: false, error:`Multer Upload Error : ${error.message}`})
+        }
+        if (error.name === 'ValidationError') {
+            res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
+            return
+        }
+
+        res.status(400).send({ok:false, error: error.message})
+    }
+})
 
 // update owner account
 OwnerRouter.patch('/api/owners/:id', adminAuth, async (req: Request, res: Response) => {
@@ -88,7 +125,7 @@ OwnerRouter.patch('/api/owners/:id', adminAuth, async (req: Request, res: Respon
         if (Object.keys(update).length > 0) {
             update.updated = Date.now()
         }
-        const updatedOwner = await Owner.findByIdAndUpdate(req.params.id, {$set: update})
+        const updatedOwner = await Owner.findByIdAndUpdate(req.params.id, {$set: update}, {runValidators:true})
         if (!updatedOwner) {
             throw new Error('Update request failed!')
         }
@@ -96,7 +133,7 @@ OwnerRouter.patch('/api/owners/:id', adminAuth, async (req: Request, res: Respon
         res.send({ok: true, data: updatedOwner})
     } catch (error) {
         if (error.name === 'ValidationError') {
-            res.status(400).send({ok: false, error:'Validation Error!'})
+            res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
         res.status(400).send({ok:false, error: error.message})

@@ -19,8 +19,12 @@ export type Quater = {
     ref: string
 }
 
+export type District = {
+    name: string,
+    ref: string
+}
+
 export type PreferredTenant = {
-    age: number,
     genter: string,
     type: string
 }
@@ -63,7 +67,9 @@ export interface IOwner extends Document {
     email: string,
     phone: string,
     address: Address,
-    updated: number
+    updated: number,
+    avatar?: string,
+    avatarDeleteId?: string
 }
 
 export interface IInquiry extends Document {
@@ -82,16 +88,17 @@ export interface IProperty extends Document {
     propertyType: string,
     updated: number,
     bedroom?: string,
-    propertSize: number,
+    propertySize: number,
     facilities: Types.Array<string>,
     furnishedState: string,
     amenities: Types.Array<string>,
+    features?: Types.Array<string>,
     description: string,
     coords:Coords,
     town: string,
     quater: Quater,
     street: string,
-    district: string,
+    district: District,
     media?: Media,
     rentSummary: RentSummary,
     rules: Types.Array<string>,

@@ -16,26 +16,21 @@ exports.PropertyRouter = void 0;
 const property_1 = require("../models/property");
 const express_1 = __importDefault(require("express"));
 const middleware_1 = __importDefault(require("../middleware"));
+const mongoose_1 = require("mongoose");
 const PropertyRouter = express_1.default.Router();
 exports.PropertyRouter = PropertyRouter;
-const pageSize = 24; // number of documents returned per request for the get all properties route
+const pageSize = 2; // number of documents returned per request for the get all properties route
 // query helper function
 function setFilter(key, value) {
     switch (key) {
         case 'ownerId':
-            return { 'ownerId': value.toString() };
-        case 'ownerId':
-            return { 'ownerId': { "$regex": value, $options: 'i' } };
-        case 'maxprice':
-            return { 'price': { $lte: Number.parseInt(value, 10) } };
-        case 'minprice':
-            return { 'price': { $gte: Number.parseInt(value, 10) } };
+            return { 'ownerId': new mongoose_1.Types.ObjectId(value) };
         case 'bedroomCount':
-            return { 'bedroomCount': value };
+            return { 'bedroom': value.toString() };
         case 'propertyType':
             return { 'propertyType': value };
-        case 'propertSize':
-            return { 'propertSize': { $gte: Number.parseInt(value, 10) } };
+        case 'propertySize':
+            return { 'propertySize': { $gte: Number.parseInt(value, 10) } };
         case 'distanceFromRoad':
             return { 'distanceFromRoad': { $lte: Number.parseInt(value, 10) } };
         case 'costFromRoad':
@@ -43,42 +38,62 @@ function setFilter(key, value) {
         case 'furnishedState':
             return { 'furnishedState': value };
         case 'amenities':
-            return { 'amenities': { $in: value } };
+            return { 'amenities': { $in: [value] } };
         case 'facilities':
-            return { 'facilities': { $in: value } };
-        case 'amenities':
-            return { 'amenities': { $in: value } };
-        case 'preferedTenant':
-            return { 'preferedTenant': value };
+            return { 'facilities': { $in: [value] } };
+        case 'features':
+            return { 'features': { $in: [value] } };
+        // case 'preferedTenant':
+        //     return {'preferedTenant': value}
         default:
             return {};
     }
 }
-function setSorter(key, value) {
-    switch (key) {
+function setSorter(value) {
+    switch (value) {
         case 'HighToLow':
-            return { 'price': -1 };
+            return { price: -1 };
         case 'LowToHigh':
-            return { 'price': 1 };
+            return { price: 1 };
         case 'MostRecent':
-            return { 'updated': -1 };
+            return { updated: -1 };
         default:
-            return {};
+            return { updated: -1 };
+    }
+}
+function priceSetter(reqParams, queryArray, priceQuery) {
+    if (priceQuery === 'minprice') {
+        if (queryArray.includes('maxprice')) {
+            return { $and: [{ 'price': { $gte: Number.parseInt(reqParams['minprice'], 10) } }, { 'price': { $lte: Number.parseInt(reqParams['maxprice'], 10) } }] };
+        }
+        return { 'price': { $gte: Number.parseInt(reqParams['minprice'], 10) } };
+    }
+    else if (priceQuery === 'maxprice') {
+        if (queryArray.includes('minprice')) {
+            return { $and: [{ 'price': { $gte: Number.parseInt(reqParams['minprice'], 10) } }, { 'price': { $lte: Number.parseInt(reqParams['maxprice'], 10) } }] };
+        }
+        return { 'price': { $lte: Number.parseInt(reqParams['maxprice'], 10) } };
     }
 }
 // ***************************** public enpoints ***********************************************
 // get all properties
 PropertyRouter.get('/api/properties', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let filter = {};
-        let sorting = {};
+        let filter = { availability: 'Available' };
+        let sorting = { updated: -1 };
         let pageNum = 1;
         const queries = Object.keys(req.query);
         if (queries.length > 0) {
             queries.forEach(key => {
                 if (req.query[key]) {
+                    if (key === 'maxprice' || key === 'minprice') {
+                        filter = Object.assign(filter, priceSetter(req.query, queries, key));
+                    }
+                    if (key === 'page') {
+                        pageNum = Number.parseInt(req.query[key], 10);
+                    }
                     if (key === 'sorting') {
-                        sorting = Object.assign(sorting, setSorter(key, req.query[key]));
+                        sorting = setSorter(req.query[key]);
                     }
                     if (key === 'page') {
                         pageNum = Number.parseInt(req.query[key], 10);
@@ -87,6 +102,7 @@ PropertyRouter.get('/api/properties', (req, res) => __awaiter(void 0, void 0, vo
                 }
             });
         }
+        console.log(filter, sorting);
         const properties = yield property_1.Property.aggregate([
             {
                 $match: filter
@@ -98,12 +114,12 @@ PropertyRouter.get('/api/properties', (req, res) => __awaiter(void 0, void 0, vo
                 $skip: (pageNum - 1) * pageSize
             },
             {
-                $limit: pageNum
+                $limit: pageSize
             }
         ]);
         const resultCount = yield property_1.Property.countDocuments(filter);
-        const totalPages = Math.floor(resultCount / pageSize);
-        res.send({ ok: true, data: { properties, currPage: pageNum, totalPages } });
+        const totalPages = Math.ceil(resultCount / pageSize);
+        res.send({ ok: true, data: { properties, currPage: pageNum, totalPages, resultCount } });
     }
     catch (error) {
         res.status(400).send({ ok: false, error: error.message });
@@ -134,7 +150,7 @@ PropertyRouter.get('/api/property/related-properties', (req, res) => __awaiter(v
 }));
 // ***************************** admin restricted endpoints ***********************************************
 // create new property
-PropertyRouter.patch('/api/properties', middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+PropertyRouter.post('/api/properties', middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const newProperty = new property_1.Property(Object.assign({}, req.body));
         const property = yield newProperty.save();
@@ -158,13 +174,14 @@ PropertyRouter.patch('/api/properties/:id', middleware_1.default, (req, res) => 
         if (Object.keys(update).length > 0) {
             update.updated = Date.now();
         }
-        const updatedProperty = yield property_1.Property.findByIdAndUpdate(req.params.id, { $set: update });
+        const updatedProperty = yield property_1.Property.findByIdAndUpdate(req.params.id, { $set: update }, { runValidators: true });
         if (!updatedProperty) {
             throw new Error('Update requested failed!');
         }
-        res.status(201).send({ ok: true, data: updatedProperty });
+        res.status(200).send({ ok: true });
     }
     catch (error) {
+        // console.log(error)
         if (error.name === 'ValidationError') {
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;

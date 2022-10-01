@@ -15,6 +15,12 @@ const ownerSchema = new Schema<IOwner>({
         type: String,
         required: true
     },
+    avatar: {
+        type: String,
+    },
+    avatarDeleteId: {
+        type: String,
+    },
     address: {
         town: {
             type: String,
@@ -35,6 +41,7 @@ const ownerSchema = new Schema<IOwner>({
         default: Date.now()
     }
 })
+
 
 const Owner = model<IOwner>('Owners', ownerSchema)
 export {Owner}
