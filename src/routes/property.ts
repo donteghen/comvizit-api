@@ -1,7 +1,8 @@
 import { Property } from "../models/property";
 import express, { Request, Response } from 'express'
 import adminAuth from "../middleware";
-import { Types } from "mongoose";
+import { Types , PipelineStage} from "mongoose";
+import { categoryAggregator } from "../utils/queryMaker";
 
 const PropertyRouter = express.Router()
 
@@ -31,8 +32,8 @@ function setFilter(key:string, value:any): any {
             return {'facilities': {$in : [value]}}
         case 'features':
             return {'features': {$in : [value]}}
-        // case 'preferedTenant':
-        //     return {'preferedTenant': value}
+        case 'town':
+            return {'town': { "$regex": value, $options: 'i'}}
         default:
             return {}
     }
@@ -117,6 +118,43 @@ PropertyRouter.get('/api/properties', async (req: Request, res: Response) => {
         const totalPages = Math.ceil(resultCount / pageSize)
 
         res.send({ok: true, data: {properties, currPage: pageNum, totalPages, resultCount}})
+    } catch (error) {
+        res.status(400).send({ok:false, error: error.message})
+    }
+})
+
+// search using quaterref index for property's quater.ref and return various category counts
+PropertyRouter.get('/api/search-property-categories/:quaterRef', async (req: Request, res: Response) => {
+    try {
+        const catAggregator = categoryAggregator(req.params.quaterRef)
+        const quaters = Property.aggregate(catAggregator)
+        res.send({ok: true, data: quaters})
+    } catch (error) {
+        res.status(400).send({ok:false, error: error.message})
+    }
+})
+
+
+// search with autocomplete index for quater and return matching quater name & ref
+PropertyRouter.get('/api/search-quaters/:quaterRef', async (req: Request, res: Response) => {
+    try {
+        const quaters = Property.aggregate([
+            {
+                $search:{
+                        index: 'autocomplete',
+                        autocomplete: {
+                          query: req.params.quaterRef,
+                          path: 'quater.ref'
+                        }
+                    }
+            },
+            {
+                $project:{
+                        "quater": 1,
+                }
+            }
+        ])
+        res.send({ok: true, data: quaters})
     } catch (error) {
         res.status(400).send({ok:false, error: error.message})
     }

@@ -17,6 +17,7 @@ const property_1 = require("../models/property");
 const express_1 = __importDefault(require("express"));
 const middleware_1 = __importDefault(require("../middleware"));
 const mongoose_1 = require("mongoose");
+const queryMaker_1 = require("../utils/queryMaker");
 const PropertyRouter = express_1.default.Router();
 exports.PropertyRouter = PropertyRouter;
 const pageSize = 2; // number of documents returned per request for the get all properties route
@@ -43,8 +44,8 @@ function setFilter(key, value) {
             return { 'facilities': { $in: [value] } };
         case 'features':
             return { 'features': { $in: [value] } };
-        // case 'preferedTenant':
-        //     return {'preferedTenant': value}
+        case 'town':
+            return { 'town': { "$regex": value, $options: 'i' } };
         default:
             return {};
     }
@@ -120,6 +121,42 @@ PropertyRouter.get('/api/properties', (req, res) => __awaiter(void 0, void 0, vo
         const resultCount = yield property_1.Property.countDocuments(filter);
         const totalPages = Math.ceil(resultCount / pageSize);
         res.send({ ok: true, data: { properties, currPage: pageNum, totalPages, resultCount } });
+    }
+    catch (error) {
+        res.status(400).send({ ok: false, error: error.message });
+    }
+}));
+// search using quaterref index for property's quater.ref and return various category counts
+PropertyRouter.get('/api/search-property-categories/:quaterRef', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const catAggregator = (0, queryMaker_1.categoryAggregator)(req.params.quaterRef);
+        const quaters = property_1.Property.aggregate(catAggregator);
+        res.send({ ok: true, data: quaters });
+    }
+    catch (error) {
+        res.status(400).send({ ok: false, error: error.message });
+    }
+}));
+// search with autocomplete index for quater and return matching quater name & ref
+PropertyRouter.get('/api/search-quaters/:quaterRef', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const quaters = property_1.Property.aggregate([
+            {
+                $search: {
+                    index: 'autocomplete',
+                    autocomplete: {
+                        query: req.params.quaterRef,
+                        path: 'quater.ref'
+                    }
+                }
+            },
+            {
+                $project: {
+                    "quater": 1,
+                }
+            }
+        ]);
+        res.send({ ok: true, data: quaters });
     }
     catch (error) {
         res.status(400).send({ ok: false, error: error.message });
