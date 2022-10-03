@@ -73,7 +73,7 @@ ContactRouter.get('/api/contacts/:id', adminAuth, async (req: Request, res: Resp
 })
 
 // make contact as replied
-ContactRouter.patch('/api/contacts/:id/update', async (req: Request, res: Response) => {
+ContactRouter.patch('/api/contacts/:id/reply', async (req: Request, res: Response) => {
     try {
         const contact = await Contact.findById(req.params.id)
         if (!contact) {
@@ -94,7 +94,7 @@ ContactRouter.patch('/api/contacts/:id/update', async (req: Request, res: Respon
 })
 
 // delete contact
-ContactRouter.delete('/api/contacts/:id/update', async (req: Request, res: Response) => {
+ContactRouter.delete('/api/contacts/:id', async (req: Request, res: Response) => {
     try {
         const contact = await Contact.findByIdAndDelete(req.params.id)
         if (!contact) {

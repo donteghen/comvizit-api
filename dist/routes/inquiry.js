@@ -86,7 +86,7 @@ InquiryRouter.get('/api/inquiries/:id', middleware_1.default, (req, res) => __aw
     }
 }));
 // make inquiry as replied
-InquiryRouter.patch('/api/inquiries/:id/update', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+InquiryRouter.patch('/api/inquiries/:id/reply', middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const inquiry = yield inquiry_1.Inquiry.findById(req.params.id);
         if (!inquiry) {
@@ -106,7 +106,7 @@ InquiryRouter.patch('/api/inquiries/:id/update', (req, res) => __awaiter(void 0,
     }
 }));
 // delete inquiries
-InquiryRouter.delete('/api/inquiries/:id/update', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+InquiryRouter.delete('/api/inquiries/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const inquiry = yield inquiry_1.Inquiry.findByIdAndDelete(req.params.id);
         if (!inquiry) {

@@ -84,7 +84,7 @@ ContactRouter.get('/api/contacts/:id', middleware_1.default, (req, res) => __awa
     }
 }));
 // make contact as replied
-ContactRouter.patch('/api/contacts/:id/update', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+ContactRouter.patch('/api/contacts/:id/reply', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const contact = yield contact_1.Contact.findById(req.params.id);
         if (!contact) {
@@ -104,7 +104,7 @@ ContactRouter.patch('/api/contacts/:id/update', (req, res) => __awaiter(void 0, 
     }
 }));
 // delete contact
-ContactRouter.delete('/api/contacts/:id/update', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+ContactRouter.delete('/api/contacts/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const contact = yield contact_1.Contact.findByIdAndDelete(req.params.id);
         if (!contact) {

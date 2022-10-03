@@ -76,7 +76,7 @@ InquiryRouter.get('/api/inquiries/:id', adminAuth, async (req: Request, res: Res
 })
 
 // make inquiry as replied
-InquiryRouter.patch('/api/inquiries/:id/update', async (req: Request, res: Response) => {
+InquiryRouter.patch('/api/inquiries/:id/reply', adminAuth, async (req: Request, res: Response) => {
     try {
         const inquiry = await Inquiry.findById(req.params.id)
         if (!inquiry) {
@@ -98,7 +98,7 @@ InquiryRouter.patch('/api/inquiries/:id/update', async (req: Request, res: Respo
 })
 
 // delete inquiries
-InquiryRouter.delete('/api/inquiries/:id/update', async (req: Request, res: Response) => {
+InquiryRouter.delete('/api/inquiries/:id', async (req: Request, res: Response) => {
     try {
         const inquiry = await Inquiry.findByIdAndDelete(req.params.id)
         if (!inquiry) {
