@@ -1,8 +1,8 @@
 import { Property } from "../models/property";
 import express, { Request, Response } from 'express'
 import adminAuth from "../middleware";
-import { Types , PipelineStage} from "mongoose";
-import { categoryAggregator } from "../utils/queryMaker";
+import { Types } from "mongoose";
+import { categoryAggregator, townAggregator } from "../utils/queryMaker";
 
 const PropertyRouter = express.Router()
 
@@ -155,6 +155,17 @@ PropertyRouter.get('/api/search-quaters/:quaterRef', async (req: Request, res: R
             }
         ])
         res.send({ok: true, data: quaters})
+    } catch (error) {
+        res.status(400).send({ok:false, error: error.message})
+    }
+})
+
+
+// get property count for popular towns
+PropertyRouter.get('/api/count-properties-per-town', async (req: Request, res: Response) => {
+    try {
+        const towncountlist = Property.aggregate(townAggregator())
+        res.send({ok: true, data: towncountlist})
     } catch (error) {
         res.status(400).send({ok:false, error: error.message})
     }

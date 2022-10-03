@@ -1,5 +1,5 @@
 import { PipelineStage } from "mongoose"
-export function categoryAggregator (quaterRef: string): PipelineStage | any{
+export function categoryAggregator (quaterRef: string): PipelineStage | any {
     return [
             // search for quater ref using default index
 
@@ -13,7 +13,8 @@ export function categoryAggregator (quaterRef: string): PipelineStage | any{
                }
             },
             {
-            // studio
+              $facet: {
+                // studio
             "Studio": [
               {
                 $match: {propertyType: 'Studio'},
@@ -305,6 +306,80 @@ export function categoryAggregator (quaterRef: string): PipelineStage | any{
                 {
                   $count: "waterreservoir_count"
                 }
-                ],
+                ]
+              }
             }]
+}
+
+
+export function townAggregator () : PipelineStage | any  {
+  return [
+    {
+      $facet: 
+      {
+        "Douala": [
+          {
+            $match: {town: 'Douala'},
+          },
+          {
+            $count: "douala_count"
+          }
+          ],
+          
+          "Yaounde": [
+          {
+            $match: {town: 'Yaounde'},
+          },
+          {
+            $count: "yaounde_count"
+          }
+          ],
+      
+          "Buea": [
+          {
+            $match: {town: 'Buea'},
+          },
+          {
+            $count: "buea_count"
+          }
+          ],
+              
+          "Bafoussam": [
+          {
+            $match: {town: 'bafoussam'},
+          },
+          {
+            $count: "bafoussam_count"
+          }
+          ],
+          
+           "Bamenda": [
+          {
+            $match: {town: 'Bamenda'},
+          },
+          {
+            $count: "bamenda_count"
+          }
+          ],
+          
+           "Limbe": [
+          {
+            $match: {town: 'Limbe'},
+          },
+          {
+            $count: "limbe_count"
+          }
+          ],
+          
+           "Kribi": [
+          {
+            $match: {town: 'Kribi'},
+          },
+          {
+            $count: "kribi_count"
+          }
+          ]
+      }
+    }
+  ]
 }
