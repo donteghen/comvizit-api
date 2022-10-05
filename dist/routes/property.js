@@ -46,6 +46,10 @@ function setFilter(key, value) {
             return { 'features': { $in: [value] } };
         case 'town':
             return { 'town': { "$regex": value, $options: 'i' } };
+        case 'districtref':
+            return { 'district.ref': value };
+        case 'quaterref':
+            return { 'quater.ref': value };
         default:
             return {};
     }
@@ -130,7 +134,7 @@ PropertyRouter.get('/api/properties', (req, res) => __awaiter(void 0, void 0, vo
 PropertyRouter.get('/api/search-property-categories/:quaterRef', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const catAggregator = (0, queryMaker_1.categoryAggregator)(req.params.quaterRef);
-        const quaters = property_1.Property.aggregate(catAggregator);
+        const quaters = yield property_1.Property.aggregate(catAggregator);
         res.send({ ok: true, data: quaters });
     }
     catch (error) {
@@ -140,7 +144,7 @@ PropertyRouter.get('/api/search-property-categories/:quaterRef', (req, res) => _
 // search with autocomplete index for quater and return matching quater name & ref
 PropertyRouter.get('/api/search-quaters/:quaterRef', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const quaters = property_1.Property.aggregate([
+        const quaters = yield property_1.Property.aggregate([
             {
                 $search: {
                     index: 'autocomplete',
@@ -154,9 +158,20 @@ PropertyRouter.get('/api/search-quaters/:quaterRef', (req, res) => __awaiter(voi
                 $project: {
                     "quater": 1,
                 }
-            }
+            },
+            { $limit: 10 }
         ]);
         res.send({ ok: true, data: quaters });
+    }
+    catch (error) {
+        res.status(400).send({ ok: false, error: error.message });
+    }
+}));
+// get property count for popular towns
+PropertyRouter.get('/api/count-properties-per-town', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const towncountlist = yield property_1.Property.aggregate((0, queryMaker_1.townAggregator)());
+        res.send({ ok: true, data: towncountlist });
     }
     catch (error) {
         res.status(400).send({ ok: false, error: error.message });
@@ -175,10 +190,10 @@ PropertyRouter.get('/api/properties/:id', (req, res) => __awaiter(void 0, void 0
         res.status(400).send({ ok: false, error: error.message });
     }
 }));
-// get properties in same quater
-PropertyRouter.get('/api/property/related-properties', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+// get properties in same district
+PropertyRouter.get('/api/property/related-properties/:districtref', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const relatedProperties = yield property_1.Property.find({ quater: req.body.quater }).limit(4);
+        const relatedProperties = yield property_1.Property.find({ 'district.ref': req.params.districtref }).limit(4);
         res.send({ ok: true, data: relatedProperties });
     }
     catch (error) {

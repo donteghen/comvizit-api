@@ -69,7 +69,7 @@ OwnerRouter.post('/api/owners', middleware_1.default, (req, res) => __awaiter(vo
     }
 }));
 // get all owners
-OwnerRouter.get('/api/owners', middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+OwnerRouter.get('/api/owners', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let filter = {};
         const queries = Object.keys(req.query);
@@ -107,7 +107,7 @@ OwnerRouter.patch('/api/owners/:id/avatarUpload', middleware_1.default, multerUp
         res.send({ ok: true, data: updatedOwner });
     }
     catch (error) {
-        console.log(error);
+        // console.log(error)
         if (error instanceof multer_1.MulterError) {
             res.status(400).send({ ok: false, error: `Multer Upload Error : ${error.message}` });
         }

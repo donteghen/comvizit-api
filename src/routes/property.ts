@@ -34,6 +34,10 @@ function setFilter(key:string, value:any): any {
             return {'features': {$in : [value]}}
         case 'town':
             return {'town': { "$regex": value, $options: 'i'}}
+        case 'districtref':
+            return {'district.ref': value}
+        case 'quaterref':
+            return {'quater.ref': value}
         default:
             return {}
     }
@@ -127,7 +131,7 @@ PropertyRouter.get('/api/properties', async (req: Request, res: Response) => {
 PropertyRouter.get('/api/search-property-categories/:quaterRef', async (req: Request, res: Response) => {
     try {
         const catAggregator = categoryAggregator(req.params.quaterRef)
-        const quaters = Property.aggregate(catAggregator)
+        const quaters = await Property.aggregate(catAggregator)
         res.send({ok: true, data: quaters})
     } catch (error) {
         res.status(400).send({ok:false, error: error.message})
@@ -138,7 +142,7 @@ PropertyRouter.get('/api/search-property-categories/:quaterRef', async (req: Req
 // search with autocomplete index for quater and return matching quater name & ref
 PropertyRouter.get('/api/search-quaters/:quaterRef', async (req: Request, res: Response) => {
     try {
-        const quaters = Property.aggregate([
+        const quaters = await Property.aggregate([
             {
                 $search:{
                         index: 'autocomplete',
@@ -152,7 +156,8 @@ PropertyRouter.get('/api/search-quaters/:quaterRef', async (req: Request, res: R
                 $project:{
                         "quater": 1,
                 }
-            }
+            },
+            {$limit: 10}
         ])
         res.send({ok: true, data: quaters})
     } catch (error) {
@@ -164,7 +169,7 @@ PropertyRouter.get('/api/search-quaters/:quaterRef', async (req: Request, res: R
 // get property count for popular towns
 PropertyRouter.get('/api/count-properties-per-town', async (req: Request, res: Response) => {
     try {
-        const towncountlist = Property.aggregate(townAggregator())
+        const towncountlist = await Property.aggregate(townAggregator())
         res.send({ok: true, data: towncountlist})
     } catch (error) {
         res.status(400).send({ok:false, error: error.message})
@@ -184,10 +189,10 @@ PropertyRouter.get('/api/properties/:id', async (req: Request, res: Response) =>
     }
 })
 
-// get properties in same quater
-PropertyRouter.get('/api/property/related-properties', async (req: Request, res: Response) => {
+// get properties in same district
+PropertyRouter.get('/api/property/related-properties/:districtref', async (req: Request, res: Response) => {
     try {
-        const relatedProperties = await Property.find({quater: req.body.quater}).limit(4)
+        const relatedProperties = await Property.find({'district.ref': req.params.districtref}).limit(4)
 
         res.send({ok:true, data: relatedProperties})
     } catch (error) {

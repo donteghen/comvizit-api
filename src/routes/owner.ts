@@ -61,7 +61,7 @@ OwnerRouter.post('/api/owners', adminAuth, async (req: Request, res: Response) =
 })
 
 // get all owners
-OwnerRouter.get('/api/owners', adminAuth, async (req: Request, res: Response) => {
+OwnerRouter.get('/api/owners', async (req: Request, res: Response) => {
     try {
         let filter: any = {}
         const queries = Object.keys(req.query)
@@ -102,7 +102,7 @@ OwnerRouter.patch('/api/owners/:id/avatarUpload', adminAuth, multerUpload.single
 
         res.send({ok:true, data: updatedOwner})
     } catch (error) {
-        console.log(error)
+        // console.log(error)
         if (error instanceof MulterError) {
             res.status(400).send({ok: false, error:`Multer Upload Error : ${error.message}`})
         }

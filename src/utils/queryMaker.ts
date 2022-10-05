@@ -315,7 +315,7 @@ export function categoryAggregator (quaterRef: string): PipelineStage | any {
 export function townAggregator () : PipelineStage | any  {
   return [
     {
-      $facet: 
+      $facet:
       {
         "Douala": [
           {
@@ -325,7 +325,7 @@ export function townAggregator () : PipelineStage | any  {
             $count: "douala_count"
           }
           ],
-          
+
           "Yaounde": [
           {
             $match: {town: 'Yaounde'},
@@ -334,7 +334,7 @@ export function townAggregator () : PipelineStage | any  {
             $count: "yaounde_count"
           }
           ],
-      
+
           "Buea": [
           {
             $match: {town: 'Buea'},
@@ -343,7 +343,7 @@ export function townAggregator () : PipelineStage | any  {
             $count: "buea_count"
           }
           ],
-              
+
           "Bafoussam": [
           {
             $match: {town: 'bafoussam'},
@@ -352,7 +352,7 @@ export function townAggregator () : PipelineStage | any  {
             $count: "bafoussam_count"
           }
           ],
-          
+
            "Bamenda": [
           {
             $match: {town: 'Bamenda'},
@@ -361,7 +361,7 @@ export function townAggregator () : PipelineStage | any  {
             $count: "bamenda_count"
           }
           ],
-          
+
            "Limbe": [
           {
             $match: {town: 'Limbe'},
@@ -370,7 +370,7 @@ export function townAggregator () : PipelineStage | any  {
             $count: "limbe_count"
           }
           ],
-          
+
            "Kribi": [
           {
             $match: {town: 'Kribi'},
