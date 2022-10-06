@@ -14,7 +14,7 @@ const propertySchema = new Schema<IProperty>({
     propertyType: {
         type: String,
         required: true,
-        enum: ['Studio', 'Apartment', 'Private Room', 'Villa', 'House']
+        enum: ['Studio', 'Apartment', 'Private Room', 'Villa', 'House', 'Office']
     },
     bedroom: {
         type: String,

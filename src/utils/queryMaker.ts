@@ -90,6 +90,16 @@ export function categoryAggregator (quaterRef: string): PipelineStage | any {
               }
               ],
 
+              // Office
+              "Office": [
+                {
+                  $match: {propertyType: 'Office'},
+                },
+                {
+                  $count: "office_count"
+                }
+                ],
+
               // private room
               "PrivateRoom": [
               {

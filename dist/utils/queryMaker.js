@@ -84,6 +84,15 @@ function categoryAggregator(quaterRef) {
                         $count: "villa_count"
                     }
                 ],
+                // Office
+                "Office": [
+                    {
+                        $match: { propertyType: 'Office' },
+                    },
+                    {
+                        $count: "office_count"
+                    }
+                ],
                 // private room
                 "PrivateRoom": [
                     {
