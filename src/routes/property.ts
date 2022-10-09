@@ -34,10 +34,10 @@ function setFilter(key:string, value:any): any {
             return {'features': {$in : [value]}}
         case 'town':
             return {'town': { "$regex": value, $options: 'i'}}
-        case 'districtref':
-            return {'district.ref': value}
-        case 'quaterref':
-            return {'quater.ref': value}
+        // case 'districtref':
+        //     return {'district.ref': value}
+        // case 'quaterref':
+        //     return {'quater.ref': value}
         default:
             return {}
     }
@@ -74,7 +74,7 @@ function priceSetter (reqParams: any, queryArray: string[], priceQuery: string) 
 // ***************************** public enpoints ***********************************************
 
 // get all properties
-PropertyRouter.get('/api/properties', async (req: Request, res: Response) => {
+PropertyRouter.get('/api/properties-in-quater/:quaterref', async (req: Request, res: Response) => {
     try {
         let filter: any = {availability:'Available'}
         let sorting:any = {updated: -1}
@@ -100,9 +100,11 @@ PropertyRouter.get('/api/properties', async (req: Request, res: Response) => {
             })
         }
         console.log(filter, sorting)
+        const mainfilter = {$and: [{'quater.ref':req.params.quaterref}, filter]}
+        console.log(mainfilter)
         const properties = await Property.aggregate([
             {
-                $match: filter
+                $match: mainfilter
             },
             {
                 $sort: sorting
@@ -118,7 +120,7 @@ PropertyRouter.get('/api/properties', async (req: Request, res: Response) => {
 
 
 
-        const resultCount = await Property.countDocuments(filter)
+        const resultCount = await Property.countDocuments(mainfilter)
         const totalPages = Math.ceil(resultCount / pageSize)
 
         res.send({ok: true, data: {properties, currPage: pageNum, totalPages, resultCount}})

@@ -46,10 +46,10 @@ function setFilter(key, value) {
             return { 'features': { $in: [value] } };
         case 'town':
             return { 'town': { "$regex": value, $options: 'i' } };
-        case 'districtref':
-            return { 'district.ref': value };
-        case 'quaterref':
-            return { 'quater.ref': value };
+        // case 'districtref':
+        //     return {'district.ref': value}
+        // case 'quaterref':
+        //     return {'quater.ref': value}
         default:
             return {};
     }
@@ -82,7 +82,7 @@ function priceSetter(reqParams, queryArray, priceQuery) {
 }
 // ***************************** public enpoints ***********************************************
 // get all properties
-PropertyRouter.get('/api/properties', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+PropertyRouter.get('/api/properties-in-quater/:quaterref', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let filter = { availability: 'Available' };
         let sorting = { updated: -1 };
@@ -108,9 +108,11 @@ PropertyRouter.get('/api/properties', (req, res) => __awaiter(void 0, void 0, vo
             });
         }
         console.log(filter, sorting);
+        const mainfilter = { $and: [{ 'quater.ref': req.params.quaterref }, filter] };
+        console.log(mainfilter);
         const properties = yield property_1.Property.aggregate([
             {
-                $match: filter
+                $match: mainfilter
             },
             {
                 $sort: sorting
@@ -122,7 +124,7 @@ PropertyRouter.get('/api/properties', (req, res) => __awaiter(void 0, void 0, vo
                 $limit: pageSize
             }
         ]);
-        const resultCount = yield property_1.Property.countDocuments(filter);
+        const resultCount = yield property_1.Property.countDocuments(mainfilter);
         const totalPages = Math.ceil(resultCount / pageSize);
         res.send({ ok: true, data: { properties, currPage: pageNum, totalPages, resultCount } });
     }
