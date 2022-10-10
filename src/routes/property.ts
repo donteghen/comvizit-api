@@ -57,6 +57,7 @@ function setSorter (value:any) {
 }
 
 function priceSetter (reqParams: any, queryArray: string[], priceQuery: string) {
+    // console.log(priceQuery, Number.parseInt(reqParams['minprice'], 10), Number.parseInt(reqParams['maxprice'], 10))
     if (priceQuery === 'minprice') {
         if (queryArray.includes('maxprice')) {
             return {$and: [{'price': {$gte: Number.parseInt(reqParams['minprice'], 10)}}, {'price' : {$lte: Number.parseInt(reqParams['maxprice'], 10)}}]}
@@ -99,7 +100,6 @@ PropertyRouter.get('/api/properties-in-quater/:quaterref', async (req: Request, 
                 }
             })
         }
-        console.log(filter, sorting)
         const mainfilter = {$and: [{'quater.ref':req.params.quaterref}, filter]}
         console.log(mainfilter)
         const properties = await Property.aggregate([

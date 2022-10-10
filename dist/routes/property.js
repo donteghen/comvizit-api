@@ -67,6 +67,7 @@ function setSorter(value) {
     }
 }
 function priceSetter(reqParams, queryArray, priceQuery) {
+    // console.log(priceQuery, Number.parseInt(reqParams['minprice'], 10), Number.parseInt(reqParams['maxprice'], 10))
     if (priceQuery === 'minprice') {
         if (queryArray.includes('maxprice')) {
             return { $and: [{ 'price': { $gte: Number.parseInt(reqParams['minprice'], 10) } }, { 'price': { $lte: Number.parseInt(reqParams['maxprice'], 10) } }] };
@@ -107,7 +108,6 @@ PropertyRouter.get('/api/properties-in-quater/:quaterref', (req, res) => __await
                 }
             });
         }
-        console.log(filter, sorting);
         const mainfilter = { $and: [{ 'quater.ref': req.params.quaterref }, filter] };
         console.log(mainfilter);
         const properties = yield property_1.Property.aggregate([
