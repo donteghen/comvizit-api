@@ -141,7 +141,7 @@ function categoryAggregator(quaterRef) {
                         $match: { furnishedState: 'Furnished' },
                     },
                     {
-                        $count: "FurnishedState_count"
+                        $count: "furnishedState_count"
                     }
                 ],
                 "UnfurnishedState": [
@@ -201,7 +201,7 @@ function categoryAggregator(quaterRef) {
                         $count: "garden_count"
                     }
                 ],
-                "Security Cam": [
+                "SecurityCam": [
                     {
                         $match: { facilities: { $in: ['Security Cam'] } },
                     },
@@ -209,7 +209,7 @@ function categoryAggregator(quaterRef) {
                         $count: "securitycam_count"
                     }
                 ],
-                "Security Guard": [
+                "SecurityGuard": [
                     {
                         $match: { facilities: { $in: ['Security Guard'] } },
                     },

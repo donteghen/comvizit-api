@@ -27,7 +27,7 @@ function setFilter(key:string, value:any): any {
         case 'furnishedState':
             return {'furnishedState': value}
         case 'amenities':
-            return {'amenities': {$in : [value]}}
+            return {'amenities': {$all : value}}
         case 'facilities':
             return {'facilities': {$in : [value]}}
         case 'features':
@@ -159,6 +159,7 @@ PropertyRouter.get('/api/search-quaters/:quaterRef', async (req: Request, res: R
                         "quater": 1,
                 }
             },
+            {$group: {_id : '$quater'}},
             {$limit: 10}
         ])
         res.send({ok: true, data: quaters})

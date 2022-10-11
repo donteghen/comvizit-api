@@ -155,7 +155,7 @@ export function categoryAggregator (quaterRef: string): PipelineStage | any {
                   $match: {furnishedState: 'Furnished'},
                 },
                 {
-                  $count: "FurnishedState_count"
+                  $count: "furnishedState_count"
                 }
                 ],
 
@@ -224,7 +224,7 @@ export function categoryAggregator (quaterRef: string): PipelineStage | any {
                 }
                 ],
 
-                 "Security Cam": [
+                 "SecurityCam": [
                 {
                   $match: {facilities: {$in : ['Security Cam']}},
                 },
@@ -233,7 +233,7 @@ export function categoryAggregator (quaterRef: string): PipelineStage | any {
                 }
                 ],
 
-                "Security Guard": [
+                "SecurityGuard": [
                 {
                   $match: {facilities: {$in : ['Security Guard']}},
                 },

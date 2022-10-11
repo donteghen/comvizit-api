@@ -39,7 +39,7 @@ function setFilter(key, value) {
         case 'furnishedState':
             return { 'furnishedState': value };
         case 'amenities':
-            return { 'amenities': { $in: [value] } };
+            return { 'amenities': { $all: value } };
         case 'facilities':
             return { 'facilities': { $in: [value] } };
         case 'features':
@@ -161,6 +161,7 @@ PropertyRouter.get('/api/search-quaters/:quaterRef', (req, res) => __awaiter(voi
                     "quater": 1,
                 }
             },
+            { $group: { _id: '$quater' } },
             { $limit: 10 }
         ]);
         res.send({ ok: true, data: quaters });
