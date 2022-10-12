@@ -6,7 +6,7 @@ import { categoryAggregator, townAggregator } from "../utils/queryMaker";
 
 const PropertyRouter = express.Router()
 
-const pageSize: number = 2 // number of documents returned per request for the get all properties route
+const pageSize: number = 24 // number of documents returned per request for the get all properties route
 
 
 // query helper function
@@ -222,7 +222,16 @@ PropertyRouter.post('/api/properties', adminAuth, async (req: Request, res: Resp
     }
 })
 
+// get all properties
+PropertyRouter.get('/api/properties', adminAuth, async (req: Request, res: Response) => {
+    try {
+        const properties = await Property.find()
 
+        res.send({ok:true, data: properties})
+    } catch (error) {
+        res.status(400).send({ok:false, error: error.message})
+    }
+})
 
 
 // update property
@@ -242,6 +251,31 @@ PropertyRouter.patch('/api/properties/:id', adminAuth, async (req: Request, res:
         }
 
         res.status(200).send({ok: true})
+    } catch (error) {
+        // console.log(error)
+        if (error.name === 'ValidationError') {
+            res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
+            return
+        }
+        res.status(400).send({ok:false, error: error.message})
+    }
+})
+
+// update property media
+PropertyRouter.patch('/api/properties/:id/update-media', adminAuth, async (req: Request, res: Response) => {
+    try {
+        const {photos, videos, virtualTours} = req.body.media
+        const property = await Property.findById(req.params.id)
+        if (!property) {
+            throw new Error('Request property not found!')
+        }
+
+        property.media.photos = photos ? photos : property.media.photos
+        property.media.videos = videos ? videos : property.media.videos
+        property.media.virtualTours = virtualTours ? virtualTours : property.media.virtualTours
+        const updatedProperty = await property.save()
+
+        res.status(200).send({ok: true, data: updatedProperty})
     } catch (error) {
         // console.log(error)
         if (error.name === 'ValidationError') {

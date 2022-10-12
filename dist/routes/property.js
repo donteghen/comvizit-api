@@ -20,7 +20,7 @@ const mongoose_1 = require("mongoose");
 const queryMaker_1 = require("../utils/queryMaker");
 const PropertyRouter = express_1.default.Router();
 exports.PropertyRouter = PropertyRouter;
-const pageSize = 2; // number of documents returned per request for the get all properties route
+const pageSize = 24; // number of documents returned per request for the get all properties route
 // query helper function
 function setFilter(key, value) {
     switch (key) {
@@ -219,6 +219,16 @@ PropertyRouter.post('/api/properties', middleware_1.default, (req, res) => __awa
         res.status(400).send({ ok: false, error: error.message });
     }
 }));
+// get all properties
+PropertyRouter.get('/api/properties', middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const properties = yield property_1.Property.find();
+        res.send({ ok: true, data: properties });
+    }
+    catch (error) {
+        res.status(400).send({ ok: false, error: error.message });
+    }
+}));
 // update property
 PropertyRouter.patch('/api/properties/:id', middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -234,6 +244,29 @@ PropertyRouter.patch('/api/properties/:id', middleware_1.default, (req, res) => 
             throw new Error('Update requested failed!');
         }
         res.status(200).send({ ok: true });
+    }
+    catch (error) {
+        // console.log(error)
+        if (error.name === 'ValidationError') {
+            res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
+            return;
+        }
+        res.status(400).send({ ok: false, error: error.message });
+    }
+}));
+// update property media
+PropertyRouter.patch('/api/properties/:id/update-media', middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { photos, videos, virtualTours } = req.body.media;
+        const property = yield property_1.Property.findById(req.params.id);
+        if (!property) {
+            throw new Error('Request property not found!');
+        }
+        property.media.photos = photos ? photos : property.media.photos;
+        property.media.videos = videos ? videos : property.media.videos;
+        property.media.virtualTours = virtualTours ? virtualTours : property.media.virtualTours;
+        const updatedProperty = yield property.save();
+        res.status(200).send({ ok: true, data: updatedProperty });
     }
     catch (error) {
         // console.log(error)

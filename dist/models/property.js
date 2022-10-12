@@ -86,7 +86,6 @@ const propertySchema = new mongoose_1.Schema({
     media: {
         photos: {
             type: [String],
-            required: true
         },
         virtualTours: [{
                 title: {

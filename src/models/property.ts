@@ -85,7 +85,6 @@ const propertySchema = new Schema<IProperty>({
     media: {
         photos: {
             type: [String],
-            required: true
         },
         virtualTours: [{
             title: {
