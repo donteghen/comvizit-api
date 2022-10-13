@@ -25,7 +25,7 @@ export type District = {
 }
 
 export type PreferredTenant = {
-    genter: string,
+    gender: string,
     type: string
 }
 

@@ -1,17 +1,13 @@
 import { PipelineStage } from "mongoose"
 export function categoryAggregator (quaterRef: string): PipelineStage | any {
     return [
-            // search for quater ref using default index
-
+            // match  quater ref
             {
-               $search: {
-                index: 'quaterref',
-                text: {
-                  query: quaterRef,
-                  path: 'quater.ref'
-                }
-               }
+              $match: {
+                'quater.ref': quaterRef
+              }
             },
+
             {
               $facet: {
                 // studio

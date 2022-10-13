@@ -3,14 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.townAggregator = exports.categoryAggregator = void 0;
 function categoryAggregator(quaterRef) {
     return [
-        // search for quater ref using default index
+        // match  quater ref
         {
-            $search: {
-                index: 'quaterref',
-                text: {
-                    query: quaterRef,
-                    path: 'quater.ref'
-                }
+            $match: {
+                'quater.ref': quaterRef
             }
         },
         {
