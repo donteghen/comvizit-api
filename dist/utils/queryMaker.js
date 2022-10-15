@@ -173,6 +173,14 @@ function categoryAggregator(quaterRef) {
                         $count: "privatetoilet_count"
                     }
                 ],
+                "PrivateKitchen": [
+                    {
+                        $match: { facilities: { $in: ['Private Kitchen'] } },
+                    },
+                    {
+                        $count: "privatekitchen_count"
+                    }
+                ],
                 "Parking": [
                     {
                         $match: { facilities: { $in: ['Parking'] } },

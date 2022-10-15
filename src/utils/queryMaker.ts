@@ -192,6 +192,14 @@ export function categoryAggregator (quaterRef: string): PipelineStage | any {
                   $count: "privatetoilet_count"
                 }
                 ],
+                "PrivateKitchen": [
+                  {
+                    $match: {facilities: {$in : ['Private Kitchen']}},
+                  },
+                  {
+                    $count: "privatekitchen_count"
+                  }
+                  ],
 
                 "Parking": [
                 {
