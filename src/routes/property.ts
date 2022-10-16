@@ -101,7 +101,7 @@ PropertyRouter.get('/api/properties-in-quater/:quaterref', async (req: Request, 
             })
         }
         const mainfilter = {$and: [{'quater.ref':req.params.quaterref}, filter]}
-        console.log(mainfilter)
+        // console.log(mainfilter)
         const properties = await Property.aggregate([
             {
                 $match: mainfilter
@@ -121,6 +121,58 @@ PropertyRouter.get('/api/properties-in-quater/:quaterref', async (req: Request, 
 
 
         const resultCount = await Property.countDocuments(mainfilter)
+        const totalPages = Math.ceil(resultCount / pageSize)
+
+        res.send({ok: true, data: {properties, currPage: pageNum, totalPages, resultCount}})
+    } catch (error) {
+        res.status(400).send({ok:false, error: error.message})
+    }
+})
+// get all properties
+PropertyRouter.get('/api/properties', async (req: Request, res: Response) => {
+    try {
+        let filter: any = {}
+        let sorting:any = {updated: -1}
+        let pageNum: number = 1
+        const queries = Object.keys(req.query)
+        if (queries.length > 0) {
+            queries.forEach(key => {
+                if (req.query[key]) {
+                    if (key === 'maxprice' || key === 'minprice') {
+                        filter = Object.assign(filter, priceSetter(req.query, queries, key))
+                    }
+                    if (key === 'page') {
+                        pageNum = Number.parseInt(req.query[key] as string, 10)
+                    }
+                    if (key === 'sorting') {
+                        sorting = setSorter(req.query[key])
+                    }
+                    if (key === 'page') {
+                        pageNum = Number.parseInt(req.query[key] as string, 10)
+                    }
+                    filter = Object.assign(filter, setFilter(key, req.query[key]))
+                }
+            })
+        }
+        const properties = await Property.aggregate([
+            {
+                $match: filter
+            },
+            {
+                $sort: sorting
+            },
+            {
+                $skip: (pageNum - 1) * pageSize
+            },
+            {
+                $limit: pageSize
+            }
+
+        ])
+
+
+
+        const resultCount = await Property.countDocuments(filter)
         const totalPages = Math.ceil(resultCount / pageSize)
 
         res.send({ok: true, data: {properties, currPage: pageNum, totalPages, resultCount}})
@@ -192,11 +244,15 @@ PropertyRouter.get('/api/properties/:id', async (req: Request, res: Response) =>
     }
 })
 
-// get properties in same district
-PropertyRouter.get('/api/property/related-properties/:districtref', async (req: Request, res: Response) => {
+// get properties in same quater
+PropertyRouter.get('/api/property/:propertyId/related-properties/:quaterref', async (req: Request, res: Response) => {
     try {
-        const relatedProperties = await Property.find({'district.ref': req.params.districtref}).limit(4)
-
+        const relatedProperties = await Property.find({
+            $and: [
+                {'quater.ref': req.params.quaterref},
+                {_id : {$ne : req.params.propertyId}}
+            ]})
+            .limit(4)
         res.send({ok:true, data: relatedProperties})
     } catch (error) {
         res.status(400).send({ok:false, error: error.message})
@@ -222,16 +278,7 @@ PropertyRouter.post('/api/properties', adminAuth, async (req: Request, res: Resp
     }
 })
 
-// get all properties
-PropertyRouter.get('/api/properties', adminAuth, async (req: Request, res: Response) => {
-    try {
-        const properties = await Property.find()
 
-        res.send({ok:true, data: properties})
-    } catch (error) {
-        res.status(400).send({ok:false, error: error.message})
-    }
-})
 
 
 // update property

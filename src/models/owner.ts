@@ -40,6 +40,9 @@ const ownerSchema = new Schema<IOwner>({
         required: true,
         default: Date.now()
     }
+}, {
+    virtuals: true,
+    timestamps: true
 })
 
 

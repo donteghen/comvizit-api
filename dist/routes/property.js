@@ -109,7 +109,7 @@ PropertyRouter.get('/api/properties-in-quater/:quaterref', (req, res) => __await
             });
         }
         const mainfilter = { $and: [{ 'quater.ref': req.params.quaterref }, filter] };
-        console.log(mainfilter);
+        // console.log(mainfilter)
         const properties = yield property_1.Property.aggregate([
             {
                 $match: mainfilter
@@ -125,6 +125,54 @@ PropertyRouter.get('/api/properties-in-quater/:quaterref', (req, res) => __await
             }
         ]);
         const resultCount = yield property_1.Property.countDocuments(mainfilter);
+        const totalPages = Math.ceil(resultCount / pageSize);
+        res.send({ ok: true, data: { properties, currPage: pageNum, totalPages, resultCount } });
+    }
+    catch (error) {
+        res.status(400).send({ ok: false, error: error.message });
+    }
+}));
+// get all properties
+PropertyRouter.get('/api/properties', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        let filter = {};
+        let sorting = { updated: -1 };
+        let pageNum = 1;
+        const queries = Object.keys(req.query);
+        if (queries.length > 0) {
+            queries.forEach(key => {
+                if (req.query[key]) {
+                    if (key === 'maxprice' || key === 'minprice') {
+                        filter = Object.assign(filter, priceSetter(req.query, queries, key));
+                    }
+                    if (key === 'page') {
+                        pageNum = Number.parseInt(req.query[key], 10);
+                    }
+                    if (key === 'sorting') {
+                        sorting = setSorter(req.query[key]);
+                    }
+                    if (key === 'page') {
+                        pageNum = Number.parseInt(req.query[key], 10);
+                    }
+                    filter = Object.assign(filter, setFilter(key, req.query[key]));
+                }
+            });
+        }
+        const properties = yield property_1.Property.aggregate([
+            {
+                $match: filter
+            },
+            {
+                $sort: sorting
+            },
+            {
+                $skip: (pageNum - 1) * pageSize
+            },
+            {
+                $limit: pageSize
+            }
+        ]);
+        const resultCount = yield property_1.Property.countDocuments(filter);
         const totalPages = Math.ceil(resultCount / pageSize);
         res.send({ ok: true, data: { properties, currPage: pageNum, totalPages, resultCount } });
     }
@@ -193,10 +241,16 @@ PropertyRouter.get('/api/properties/:id', (req, res) => __awaiter(void 0, void 0
         res.status(400).send({ ok: false, error: error.message });
     }
 }));
-// get properties in same district
-PropertyRouter.get('/api/property/related-properties/:districtref', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+// get properties in same quater
+PropertyRouter.get('/api/property/:propertyId/related-properties/:quaterref', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const relatedProperties = yield property_1.Property.find({ 'district.ref': req.params.districtref }).limit(4);
+        const relatedProperties = yield property_1.Property.find({
+            $and: [
+                { 'quater.ref': req.params.quaterref },
+                { _id: { $ne: req.params.propertyId } }
+            ]
+        })
+            .limit(4);
         res.send({ ok: true, data: relatedProperties });
     }
     catch (error) {
@@ -216,16 +270,6 @@ PropertyRouter.post('/api/properties', middleware_1.default, (req, res) => __awa
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message });
-    }
-}));
-// get all properties
-PropertyRouter.get('/api/properties', middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const properties = yield property_1.Property.find();
-        res.send({ ok: true, data: properties });
-    }
-    catch (error) {
         res.status(400).send({ ok: false, error: error.message });
     }
 }));

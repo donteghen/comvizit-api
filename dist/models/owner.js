@@ -40,6 +40,9 @@ const ownerSchema = new mongoose_1.Schema({
         required: true,
         default: Date.now()
     }
+}, {
+    virtuals: true,
+    timestamps: true
 });
 const Owner = (0, mongoose_1.model)('Owners', ownerSchema);
 exports.Owner = Owner;
