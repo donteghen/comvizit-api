@@ -93,9 +93,6 @@ PropertyRouter.get('/api/properties-in-quater/:quaterref', async (req: Request, 
                     if (key === 'sorting') {
                         sorting = setSorter(req.query[key])
                     }
-                    if (key === 'page') {
-                        pageNum = Number.parseInt(req.query[key] as string, 10)
-                    }
                     filter = Object.assign(filter, setFilter(key, req.query[key]))
                 }
             })
@@ -132,50 +129,17 @@ PropertyRouter.get('/api/properties-in-quater/:quaterref', async (req: Request, 
 PropertyRouter.get('/api/properties', async (req: Request, res: Response) => {
     try {
         let filter: any = {}
-        let sorting:any = {updated: -1}
-        let pageNum: number = 1
         const queries = Object.keys(req.query)
         if (queries.length > 0) {
             queries.forEach(key => {
                 if (req.query[key]) {
-                    if (key === 'maxprice' || key === 'minprice') {
-                        filter = Object.assign(filter, priceSetter(req.query, queries, key))
-                    }
-                    if (key === 'page') {
-                        pageNum = Number.parseInt(req.query[key] as string, 10)
-                    }
-                    if (key === 'sorting') {
-                        sorting = setSorter(req.query[key])
-                    }
-                    if (key === 'page') {
-                        pageNum = Number.parseInt(req.query[key] as string, 10)
-                    }
                     filter = Object.assign(filter, setFilter(key, req.query[key]))
                 }
             })
         }
-        const properties = await Property.aggregate([
-            {
-                $match: filter
-            },
-            {
-                $sort: sorting
-            },
-            {
-                $skip: (pageNum - 1) * pageSize
-            },
-            {
-                $limit: pageSize
-            }
+        const properties = await Property.find(filter)
 
-        ])
-
-
-
-        const resultCount = await Property.countDocuments(filter)
-        const totalPages = Math.ceil(resultCount / pageSize)
-
-        res.send({ok: true, data: {properties, currPage: pageNum, totalPages, resultCount}})
+        res.send({ok: true, data: properties})
     } catch (error) {
         res.status(400).send({ok:false, error: error.message})
     }

@@ -33,6 +33,9 @@ const inquirySchema = new Schema<IInquiry>({
         required: true,
         default: Date.now()
     }
+}, {
+    virtuals: true,
+    timestamps: true
 })
 
 const Inquiry = model<IInquiry>('Inquiries', inquirySchema)

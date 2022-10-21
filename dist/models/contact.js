@@ -25,6 +25,9 @@ const contactSchema = new mongoose_1.Schema({
         required: true,
         default: Date.now()
     }
+}, {
+    virtuals: true,
+    timestamps: true
 });
 const Contact = (0, mongoose_1.model)('Contacts', contactSchema);
 exports.Contact = Contact;

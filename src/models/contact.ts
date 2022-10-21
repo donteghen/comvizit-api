@@ -25,6 +25,9 @@ const contactSchema = new Schema<IContact>({
         required: true,
         default: Date.now()
     }
+}, {
+    virtuals: true,
+    timestamps: true
 })
 
 const Contact = model<IContact>('Contacts', contactSchema)

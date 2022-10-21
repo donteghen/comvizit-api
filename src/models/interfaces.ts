@@ -108,3 +108,12 @@ export interface IProperty extends Document {
     availability: string,
     rentUtilities: RentUtilities
 }
+
+export interface IUser extends Document {
+    name: string,
+    email: string,
+    password: string,
+    isAdmin: boolean,
+    // avatar?: boolean,
+    // avatarDeleteId?: string,
+}

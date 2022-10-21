@@ -33,6 +33,9 @@ const inquirySchema = new mongoose_1.Schema({
         required: true,
         default: Date.now()
     }
+}, {
+    virtuals: true,
+    timestamps: true
 });
 const Inquiry = (0, mongoose_1.model)('Inquiries', inquirySchema);
 exports.Inquiry = Inquiry;

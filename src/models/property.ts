@@ -175,6 +175,9 @@ const propertySchema = new Schema<IProperty>({
         required: true,
         default: Date.now()
     }
+}, {
+    virtuals: true,
+    timestamps: true
 })
 
 
