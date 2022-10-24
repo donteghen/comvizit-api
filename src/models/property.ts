@@ -5,7 +5,7 @@ const propertySchema = new Schema<IProperty>({
     ownerId: {
         type: Schema.Types.ObjectId,
         required: true,
-        ref: 'Owner'
+        ref: 'Owners'
     },
     price: {
         type: Number,
@@ -149,7 +149,7 @@ const propertySchema = new Schema<IProperty>({
         default: 'Available'
     },
     rentUtilities: {
-        eletricity: {
+        electricity: {
             type: Boolean,
             default: false,
             required: true

@@ -6,7 +6,7 @@ const propertySchema = new mongoose_1.Schema({
     ownerId: {
         type: mongoose_1.Schema.Types.ObjectId,
         required: true,
-        ref: 'Owner'
+        ref: 'Owners'
     },
     price: {
         type: Number,
@@ -150,7 +150,7 @@ const propertySchema = new mongoose_1.Schema({
         default: 'Available'
     },
     rentUtilities: {
-        eletricity: {
+        electricity: {
             type: Boolean,
             default: false,
             required: true

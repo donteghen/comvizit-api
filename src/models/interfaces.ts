@@ -48,7 +48,7 @@ export type RentSummary = {
 }
 
 export type RentUtilities = {
-    eletricity: boolean,
+    electricity: boolean,
     water: boolean,
     internet: boolean,
     maintenance: boolean

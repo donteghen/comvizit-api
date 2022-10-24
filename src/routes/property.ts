@@ -137,7 +137,7 @@ PropertyRouter.get('/api/properties', async (req: Request, res: Response) => {
                 }
             })
         }
-        const properties = await Property.find(filter)
+        const properties = await Property.find(filter).populate('ownerId').exec()
 
         res.send({ok: true, data: properties})
     } catch (error) {
@@ -198,7 +198,7 @@ PropertyRouter.get('/api/count-properties-per-town', async (req: Request, res: R
 // get single properties by id
 PropertyRouter.get('/api/properties/:id', async (req: Request, res: Response) => {
     try {
-        const property = await Property.findById(req.params.id)
+        const property = await Property.findById(req.params.id).populate('ownerId').exec()
         if (!property) {
             throw new Error('Property not found!')
         }
@@ -226,7 +226,7 @@ PropertyRouter.get('/api/property/:propertyId/related-properties/:quaterref', as
 // ***************************** admin restricted endpoints ***********************************************
 
 // create new property
-PropertyRouter.post('/api/properties', adminAuth, async (req: Request, res: Response) => {
+PropertyRouter.post('/api/properties', async (req: Request, res: Response) => {
     try {
         const newProperty = new Property({
             ...req.body
@@ -246,7 +246,7 @@ PropertyRouter.post('/api/properties', adminAuth, async (req: Request, res: Resp
 
 
 // update property
-PropertyRouter.patch('/api/properties/:id', adminAuth, async (req: Request, res: Response) => {
+PropertyRouter.patch('/api/properties/:id', async (req: Request, res: Response) => {
     try {
         const update: any = {}
         Object.keys(req.body).forEach(key => {
@@ -263,7 +263,7 @@ PropertyRouter.patch('/api/properties/:id', adminAuth, async (req: Request, res:
 
         res.status(200).send({ok: true})
     } catch (error) {
-        // console.log(error)
+        console.log(error)
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
@@ -273,7 +273,7 @@ PropertyRouter.patch('/api/properties/:id', adminAuth, async (req: Request, res:
 })
 
 // update property media
-PropertyRouter.patch('/api/properties/:id/update-media', adminAuth, async (req: Request, res: Response) => {
+PropertyRouter.patch('/api/properties/:id/update-media', async (req: Request, res: Response) => {
     try {
         const {photos, videos, virtualTours} = req.body.media
         const property = await Property.findById(req.params.id)

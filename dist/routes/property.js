@@ -141,7 +141,7 @@ PropertyRouter.get('/api/properties', (req, res) => __awaiter(void 0, void 0, vo
                 }
             });
         }
-        const properties = yield property_1.Property.find(filter);
+        const properties = yield property_1.Property.find(filter).populate('ownerId').exec();
         res.send({ ok: true, data: properties });
     }
     catch (error) {
@@ -199,7 +199,7 @@ PropertyRouter.get('/api/count-properties-per-town', (req, res) => __awaiter(voi
 // get single properties by id
 PropertyRouter.get('/api/properties/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const property = yield property_1.Property.findById(req.params.id);
+        const property = yield property_1.Property.findById(req.params.id).populate('ownerId').exec();
         if (!property) {
             throw new Error('Property not found!');
         }
@@ -227,7 +227,7 @@ PropertyRouter.get('/api/property/:propertyId/related-properties/:quaterref', (r
 }));
 // ***************************** admin restricted endpoints ***********************************************
 // create new property
-PropertyRouter.post('/api/properties', middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+PropertyRouter.post('/api/properties', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const newProperty = new property_1.Property(Object.assign({}, req.body));
         const property = yield newProperty.save();
@@ -242,7 +242,7 @@ PropertyRouter.post('/api/properties', middleware_1.default, (req, res) => __awa
     }
 }));
 // update property
-PropertyRouter.patch('/api/properties/:id', middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+PropertyRouter.patch('/api/properties/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const update = {};
         Object.keys(req.body).forEach(key => {
@@ -258,7 +258,7 @@ PropertyRouter.patch('/api/properties/:id', middleware_1.default, (req, res) => 
         res.status(200).send({ ok: true });
     }
     catch (error) {
-        // console.log(error)
+        console.log(error);
         if (error.name === 'ValidationError') {
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
@@ -267,7 +267,7 @@ PropertyRouter.patch('/api/properties/:id', middleware_1.default, (req, res) => 
     }
 }));
 // update property media
-PropertyRouter.patch('/api/properties/:id/update-media', middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+PropertyRouter.patch('/api/properties/:id/update-media', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { photos, videos, virtualTours } = req.body.media;
         const property = yield property_1.Property.findById(req.params.id);
