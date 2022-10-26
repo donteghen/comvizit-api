@@ -98,7 +98,7 @@ OwnerRouter.patch('/api/owners/:id/avatarUpload', middleware_1.default, multerUp
             yield cloudinary_1.default.v2.uploader.destroy(owner.avatarDeleteId);
         }
         const result = yield cloudinary_1.default.v2.uploader.upload(req.file.path, { folder: "Owners/Avatars/",
-            public_id: req.file.originalname
+            public_id: owner === null || owner === void 0 ? void 0 : owner.fullname.replace(' ', '-')
         });
         owner.avatar = result.secure_url;
         owner.avatarDeleteId = result.public_id;
@@ -107,7 +107,6 @@ OwnerRouter.patch('/api/owners/:id/avatarUpload', middleware_1.default, multerUp
         res.send({ ok: true, data: updatedOwner });
     }
     catch (error) {
-        // console.log(error)
         if (error instanceof multer_1.MulterError) {
             res.status(400).send({ ok: false, error: `Multer Upload Error : ${error.message}` });
         }

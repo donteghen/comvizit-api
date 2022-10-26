@@ -226,7 +226,7 @@ PropertyRouter.get('/api/property/:propertyId/related-properties/:quaterref', as
 // ***************************** admin restricted endpoints ***********************************************
 
 // create new property
-PropertyRouter.post('/api/properties', async (req: Request, res: Response) => {
+PropertyRouter.post('/api/properties', adminAuth, async (req: Request, res: Response) => {
     try {
         const newProperty = new Property({
             ...req.body
@@ -246,7 +246,7 @@ PropertyRouter.post('/api/properties', async (req: Request, res: Response) => {
 
 
 // update property
-PropertyRouter.patch('/api/properties/:id', async (req: Request, res: Response) => {
+PropertyRouter.patch('/api/properties/:id', adminAuth, async (req: Request, res: Response) => {
     try {
         const update: any = {}
         Object.keys(req.body).forEach(key => {
@@ -273,7 +273,7 @@ PropertyRouter.patch('/api/properties/:id', async (req: Request, res: Response) 
 })
 
 // update property media
-PropertyRouter.patch('/api/properties/:id/update-media', async (req: Request, res: Response) => {
+PropertyRouter.patch('/api/properties/:id/update-media', adminAuth, async (req: Request, res: Response) => {
     try {
         const {photos, videos, virtualTours} = req.body.media
         const property = await Property.findById(req.params.id)

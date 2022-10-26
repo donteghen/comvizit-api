@@ -82,16 +82,18 @@ OwnerRouter.get('/api/owners', async (req: Request, res: Response) => {
 // upload owner avatar
 OwnerRouter.patch('/api/owners/:id/avatarUpload', adminAuth, multerUpload.single('avatar'), async (req: Request, res: Response) => {
     try {
+
         const owner = await Owner.findById(req.params.id)
         if (!owner) {
             throw new Error('Owner not found!')
         }
+
         if(owner.avatar){
             await cloudinary.v2.uploader.destroy(owner.avatarDeleteId)
         }
         const result = await cloudinary.v2.uploader.upload(req.file.path,
             { folder: "Owners/Avatars/",
-               public_id: req.file.originalname
+               public_id: owner?.fullname.replace(' ', '-')
             }
         )
         owner.avatar = result.secure_url
@@ -102,7 +104,7 @@ OwnerRouter.patch('/api/owners/:id/avatarUpload', adminAuth, multerUpload.single
 
         res.send({ok:true, data: updatedOwner})
     } catch (error) {
-        // console.log(error)
+
         if (error instanceof MulterError) {
             res.status(400).send({ok: false, error:`Multer Upload Error : ${error.message}`})
         }
