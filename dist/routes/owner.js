@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.OwnerRouter = void 0;
 const owner_1 = require("../models/owner");
 const express_1 = __importDefault(require("express"));
-const middleware_1 = __importDefault(require("../middleware"));
 const multerUpload_1 = __importDefault(require("../config/multerUpload"));
 const cloudinary_1 = __importDefault(require("../config/cloudinary"));
 const multer_1 = require("multer");
@@ -48,7 +47,7 @@ OwnerRouter.get('/api/owners/:id', (req, res) => __awaiter(void 0, void 0, void 
 }));
 // ***************************** admin restricted endpoints ***********************************************
 // create new owner account
-OwnerRouter.post('/api/owners', middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+OwnerRouter.post('/api/owners', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { fullname, email, phone, address } = req.body;
         const newOwner = new owner_1.Owner({
@@ -88,7 +87,7 @@ OwnerRouter.get('/api/owners', (req, res) => __awaiter(void 0, void 0, void 0, f
     }
 }));
 // upload owner avatar
-OwnerRouter.patch('/api/owners/:id/avatarUpload', middleware_1.default, multerUpload_1.default.single('avatar'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+OwnerRouter.patch('/api/owners/:id/avatarUpload', multerUpload_1.default.single('avatar'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const owner = yield owner_1.Owner.findById(req.params.id);
         if (!owner) {
@@ -118,7 +117,7 @@ OwnerRouter.patch('/api/owners/:id/avatarUpload', middleware_1.default, multerUp
     }
 }));
 // update owner account
-OwnerRouter.patch('/api/owners/:id', middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+OwnerRouter.patch('/api/owners/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const update = {};
         Object.keys(req.body).forEach(key => {
@@ -142,7 +141,7 @@ OwnerRouter.patch('/api/owners/:id', middleware_1.default, (req, res) => __await
     }
 }));
 // delete owner account
-OwnerRouter.delete('/api/owners/:id', middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+OwnerRouter.delete('/api/owners/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const deletedOwner = yield owner_1.Owner.findByIdAndDelete(req.params.id);
         if (!deletedOwner) {

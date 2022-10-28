@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PropertyRouter = void 0;
 const property_1 = require("../models/property");
 const express_1 = __importDefault(require("express"));
-const middleware_1 = __importDefault(require("../middleware"));
 const mongoose_1 = require("mongoose");
 const queryMaker_1 = require("../utils/queryMaker");
 const PropertyRouter = express_1.default.Router();
@@ -227,7 +226,7 @@ PropertyRouter.get('/api/property/:propertyId/related-properties/:quaterref', (r
 }));
 // ***************************** admin restricted endpoints ***********************************************
 // create new property
-PropertyRouter.post('/api/properties', middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+PropertyRouter.post('/api/properties', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const newProperty = new property_1.Property(Object.assign({}, req.body));
         const property = yield newProperty.save();
@@ -242,7 +241,7 @@ PropertyRouter.post('/api/properties', middleware_1.default, (req, res) => __awa
     }
 }));
 // update property
-PropertyRouter.patch('/api/properties/:id', middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+PropertyRouter.patch('/api/properties/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const update = {};
         Object.keys(req.body).forEach(key => {
@@ -267,7 +266,7 @@ PropertyRouter.patch('/api/properties/:id', middleware_1.default, (req, res) => 
     }
 }));
 // update property media
-PropertyRouter.patch('/api/properties/:id/update-media', middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+PropertyRouter.patch('/api/properties/:id/update-media', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { photos, videos, virtualTours } = req.body.media;
         const property = yield property_1.Property.findById(req.params.id);
@@ -290,7 +289,7 @@ PropertyRouter.patch('/api/properties/:id/update-media', middleware_1.default, (
     }
 }));
 // delete property
-PropertyRouter.delete('/api/properties/:id', middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+PropertyRouter.delete('/api/properties/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const deletedproperty = yield property_1.Property.findByIdAndDelete(req.params.id);
         if (!deletedproperty) {

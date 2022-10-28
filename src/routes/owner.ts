@@ -1,6 +1,5 @@
 import {Owner} from '../models/owner'
 import express, { Request, Response } from 'express'
-import adminAuth from '../middleware'
 import multerUpload from '../config/multerUpload'
 import cloudinary from '../config/cloudinary'
 import { MulterError } from 'multer'
@@ -40,7 +39,7 @@ OwnerRouter.get('/api/owners/:id', async (req: Request, res: Response) => {
 // ***************************** admin restricted endpoints ***********************************************
 
 // create new owner account
-OwnerRouter.post('/api/owners', adminAuth, async (req: Request, res: Response) => {
+OwnerRouter.post('/api/owners',  async (req: Request, res: Response) => {
     try {
         const {fullname, email, phone, address} = req.body
         const newOwner = new Owner({
@@ -80,7 +79,7 @@ OwnerRouter.get('/api/owners', async (req: Request, res: Response) => {
 })
 
 // upload owner avatar
-OwnerRouter.patch('/api/owners/:id/avatarUpload', adminAuth, multerUpload.single('avatar'), async (req: Request, res: Response) => {
+OwnerRouter.patch('/api/owners/:id/avatarUpload',  multerUpload.single('avatar'), async (req: Request, res: Response) => {
     try {
 
         const owner = await Owner.findById(req.params.id)
@@ -118,7 +117,7 @@ OwnerRouter.patch('/api/owners/:id/avatarUpload', adminAuth, multerUpload.single
 })
 
 // update owner account
-OwnerRouter.patch('/api/owners/:id', adminAuth, async (req: Request, res: Response) => {
+OwnerRouter.patch('/api/owners/:id',  async (req: Request, res: Response) => {
     try {
         const update: any = {}
         Object.keys(req.body).forEach(key => {
@@ -144,7 +143,7 @@ OwnerRouter.patch('/api/owners/:id', adminAuth, async (req: Request, res: Respon
 
 
 // delete owner account
-OwnerRouter.delete('/api/owners/:id', adminAuth, async (req: Request, res: Response) => {
+OwnerRouter.delete('/api/owners/:id',  async (req: Request, res: Response) => {
     try {
         const deletedOwner = await Owner.findByIdAndDelete(req.params.id)
         if (!deletedOwner) {

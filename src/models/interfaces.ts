@@ -109,11 +109,13 @@ export interface IProperty extends Document {
     rentUtilities: RentUtilities
 }
 
-export interface IUser extends Document {
-    name: string,
+export interface IAdmin extends Document {
+    username: string,
     email: string,
     password: string,
-    isAdmin: boolean,
-    // avatar?: boolean,
-    // avatarDeleteId?: string,
+    approved: boolean
 }
+
+// export interface IAdminMethods {
+//     fullName(): string;
+//   }

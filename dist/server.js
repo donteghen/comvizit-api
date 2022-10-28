@@ -14,28 +14,55 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.app = void 0;
 const express_1 = __importDefault(require("express"));
+const express_session_1 = __importDefault(require("express-session"));
+const connectRedis = require('connect-redis');
+const redis_1 = require("redis");
+const passport_1 = __importDefault(require("passport"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 // local module imports
 const dbconfig_1 = require("./config/dbconfig");
+const middleware_1 = require("./middleware");
 // import router
 const owner_1 = require("./routes/owner");
 const property_1 = require("./routes/property");
 const inquiry_1 = require("./routes/inquiry");
 const contact_1 = require("./routes/contact");
+const admin_1 = require("./routes/admin");
 // global settings
 dotenv_1.default.config();
 (0, dbconfig_1.connectDb)();
+(0, middleware_1.passportConfig)();
+// configure Redis
+const redisClient = (0, redis_1.createClient)({ legacyMode: true });
+redisClient.connect().catch(console.error);
+const RedisStore = connectRedis(express_session_1.default);
 // declare and initail parameters
 const app = (0, express_1.default)();
 exports.app = app;
+const SESSION_SECRET = process.env.SESSION_SECRET;
 // middleware
+app.use((0, express_session_1.default)({
+    store: new RedisStore({ client: redisClient }),
+    secret: SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: false,
+        httpOnly: false,
+        maxAge: 1000 * 60 * 10, // session max age in milliseconds
+    },
+}));
+app.use(passport_1.default.initialize());
+app.use(passport_1.default.session());
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
+app.use(express_1.default.urlencoded({ extended: true }));
 app.use(property_1.PropertyRouter);
 app.use(owner_1.OwnerRouter);
 app.use(contact_1.ContactRouter);
 app.use(inquiry_1.InquiryRouter);
+app.use(admin_1.AdminRouter);
 //  Routes
 app.get('/api/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

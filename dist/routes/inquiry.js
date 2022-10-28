@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.InquiryRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const inquiry_1 = require("../models/inquiry");
-const middleware_1 = __importDefault(require("../middleware"));
 const InquiryRouter = express_1.default.Router();
 exports.InquiryRouter = InquiryRouter;
 // query helper function
@@ -54,7 +53,7 @@ InquiryRouter.post('/api/inquiries', (req, res) => __awaiter(void 0, void 0, voi
 }));
 // ***************************** admin restricted endpoints ***********************************************
 // get all inquiries (with or without query string)
-InquiryRouter.get('/api/inquiries', middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+InquiryRouter.get('/api/inquiries', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let filter = {};
         const queries = Object.keys(req.query);
@@ -73,7 +72,7 @@ InquiryRouter.get('/api/inquiries', middleware_1.default, (req, res) => __awaite
     }
 }));
 // get single inquiry by id
-InquiryRouter.get('/api/inquiries/:id', middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+InquiryRouter.get('/api/inquiries/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const inquiry = yield inquiry_1.Inquiry.findById(req.params.id);
         if (!inquiry) {
@@ -86,7 +85,7 @@ InquiryRouter.get('/api/inquiries/:id', middleware_1.default, (req, res) => __aw
     }
 }));
 // make inquiry as replied
-InquiryRouter.patch('/api/inquiries/:id/reply', middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+InquiryRouter.patch('/api/inquiries/:id/reply', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const inquiry = yield inquiry_1.Inquiry.findById(req.params.id);
         if (!inquiry) {

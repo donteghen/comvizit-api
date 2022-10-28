@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express'
 import { Contact } from "../models/contact";
-import adminAuth from '../middleware';
+
 const ContactRouter = express.Router()
 
 // query helper function
@@ -41,7 +41,7 @@ ContactRouter.post('/api/contacts', async (req: Request, res: Response) => {
 // ***************************** admin restricted endpoints ***********************************************
 
 // get all contact (with or without query string)
-ContactRouter.get('/api/contacts', adminAuth, async (req: Request, res: Response) => {
+ContactRouter.get('/api/contacts',  async (req: Request, res: Response) => {
     try {
         let filter: any = {}
         const queries = Object.keys(req.query)
@@ -60,7 +60,7 @@ ContactRouter.get('/api/contacts', adminAuth, async (req: Request, res: Response
 })
 
 // get single contact by id
-ContactRouter.get('/api/contacts/:id', adminAuth, async (req: Request, res: Response) => {
+ContactRouter.get('/api/contacts/:id',  async (req: Request, res: Response) => {
     try {
         const contact = await Contact.findById(req.params.id)
         if (!contact) {

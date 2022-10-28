@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express'
 import { Inquiry } from "../models/inquiry";
-import adminAuth from '../middleware';
+
 
 const InquiryRouter = express.Router()
 
@@ -44,7 +44,7 @@ InquiryRouter.post('/api/inquiries', async (req: Request, res: Response) => {
 // ***************************** admin restricted endpoints ***********************************************
 
 // get all inquiries (with or without query string)
-InquiryRouter.get('/api/inquiries', adminAuth, async (req: Request, res: Response) => {
+InquiryRouter.get('/api/inquiries',  async (req: Request, res: Response) => {
     try {
         let filter: any = {}
         const queries = Object.keys(req.query)
@@ -63,7 +63,7 @@ InquiryRouter.get('/api/inquiries', adminAuth, async (req: Request, res: Respons
 })
 
 // get single inquiry by id
-InquiryRouter.get('/api/inquiries/:id', adminAuth, async (req: Request, res: Response) => {
+InquiryRouter.get('/api/inquiries/:id',  async (req: Request, res: Response) => {
     try {
         const inquiry = await Inquiry.findById(req.params.id)
         if (!inquiry) {
@@ -76,7 +76,7 @@ InquiryRouter.get('/api/inquiries/:id', adminAuth, async (req: Request, res: Res
 })
 
 // make inquiry as replied
-InquiryRouter.patch('/api/inquiries/:id/reply', adminAuth, async (req: Request, res: Response) => {
+InquiryRouter.patch('/api/inquiries/:id/reply',  async (req: Request, res: Response) => {
     try {
         const inquiry = await Inquiry.findById(req.params.id)
         if (!inquiry) {

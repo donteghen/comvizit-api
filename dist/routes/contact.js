@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ContactRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const contact_1 = require("../models/contact");
-const middleware_1 = __importDefault(require("../middleware"));
 const ContactRouter = express_1.default.Router();
 exports.ContactRouter = ContactRouter;
 // query helper function
@@ -52,7 +51,7 @@ ContactRouter.post('/api/contacts', (req, res) => __awaiter(void 0, void 0, void
 }));
 // ***************************** admin restricted endpoints ***********************************************
 // get all contact (with or without query string)
-ContactRouter.get('/api/contacts', middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+ContactRouter.get('/api/contacts', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let filter = {};
         const queries = Object.keys(req.query);
@@ -71,7 +70,7 @@ ContactRouter.get('/api/contacts', middleware_1.default, (req, res) => __awaiter
     }
 }));
 // get single contact by id
-ContactRouter.get('/api/contacts/:id', middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+ContactRouter.get('/api/contacts/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const contact = yield contact_1.Contact.findById(req.params.id);
         if (!contact) {

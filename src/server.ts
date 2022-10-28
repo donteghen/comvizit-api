@@ -1,35 +1,60 @@
 import express, {Request, Response} from 'express'
-
+import session from 'express-session'
+const connectRedis = require('connect-redis')
+import { createClient } from 'redis'
+import passport from 'passport'
 import cors from 'cors'
 import dotenv from 'dotenv'
 
+
 // local module imports
 import {connectDb} from './config/dbconfig'
-
+import { passportConfig } from './middleware'
 // import router
 import { OwnerRouter } from './routes/owner'
 import { PropertyRouter } from './routes/property'
 import { InquiryRouter } from './routes/inquiry'
 import { ContactRouter } from './routes/contact'
+import {AdminRouter} from './routes/admin'
 
 // global settings
 dotenv.config()
 connectDb()
-
-
+passportConfig()
+// configure Redis
+const redisClient = createClient({ legacyMode: true });
+redisClient.connect().catch(console.error);
+const RedisStore = connectRedis(session);
 
 
 // declare and initail parameters
 const app = express()
-
+const SESSION_SECRET = process.env.SESSION_SECRET;
 
 // middleware
+app.use(
+ session({
+   store: new RedisStore({ client: redisClient }),
+   secret: SESSION_SECRET,
+   resave: false,
+   saveUninitialized: false,
+   cookie: {
+     secure: false,  // if true only transmit cookie over https
+     httpOnly: false, // if true prevent client side JS from reading the cookie
+     maxAge: 1000 * 60 * 10, // session max age in milliseconds
+   },
+ })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(cors())
 app.use(express.json())
+app.use(express.urlencoded({extended: true}))
 app.use(PropertyRouter)
 app.use(OwnerRouter)
 app.use(ContactRouter)
 app.use(InquiryRouter)
+app.use(AdminRouter)
 
 //  Routes
 app.get('/api/', async (req: Request, res: Response) => {
