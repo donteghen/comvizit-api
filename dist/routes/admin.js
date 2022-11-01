@@ -19,7 +19,17 @@ const passport_1 = __importDefault(require("passport"));
 const middleware_1 = require("../middleware");
 const AdminRouter = express_1.default.Router();
 exports.AdminRouter = AdminRouter;
-const auth = 
+// fetch admin to makes sure the client is still authenticated
+// fetch admin
+AdminRouter.get('/api/admin', middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        res.send({ ok: true, data: req.user });
+    }
+    catch (error) {
+        // console.log(error)
+        res.status(400).send({ ok: false, error: error.message });
+    }
+}));
 // admin signup route
 AdminRouter.post('/api/admins/signup', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -28,7 +38,7 @@ AdminRouter.post('/api/admins/signup', (req, res) => __awaiter(void 0, void 0, v
             username, email, password
         });
         const admin = yield newAdmin.save();
-        res.send({ ok: true, data: admin });
+        res.send({ ok: true });
     }
     catch (error) {
         if (error.name === 'ValidationError') {
@@ -39,13 +49,12 @@ AdminRouter.post('/api/admins/signup', (req, res) => __awaiter(void 0, void 0, v
     }
 }));
 // admin login route
-AdminRouter.post('/api/admins/login', passport_1.default.authenticate("local", {
-    failureRedirect: "/api/",
-}), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+AdminRouter.post('/api/admins/login', passport_1.default.authenticate("local", {}), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         res.send({ ok: true, data: req.user });
     }
     catch (error) {
+        // console.log(error)
         res.status(400).send({ ok: false, error: error.message });
     }
 }));

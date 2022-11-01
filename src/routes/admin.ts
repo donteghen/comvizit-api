@@ -5,7 +5,19 @@ import { isLoggedIn } from '../middleware'
 
 const AdminRouter = express.Router()
 
-const auth =
+// fetch admin to makes sure the client is still authenticated
+// fetch admin
+AdminRouter.get('/api/admin', isLoggedIn, async (req: Request, res: Response) => {
+try {
+
+    res.send({ok: true, data: req.user})
+
+} catch (error) {
+    // console.log(error)
+    res.status(400).send({ok:false, error: error.message})
+}
+})
+
 // admin signup route
 AdminRouter.post('/api/admins/signup', async (req: Request, res: Response) => {
     try {
@@ -14,7 +26,7 @@ AdminRouter.post('/api/admins/signup', async (req: Request, res: Response) => {
             username, email, password
         })
         const admin = await newAdmin.save()
-        res.send({ok:true, data: admin})
+        res.send({ok:true})
     } catch (error) {
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
@@ -26,12 +38,14 @@ AdminRouter.post('/api/admins/signup', async (req: Request, res: Response) => {
 
 // admin login route
 AdminRouter.post('/api/admins/login', passport.authenticate("local", {
-      failureRedirect: "/api/",
+
     }), async (req: Request, res: Response) => {
     try {
+
         res.send({ok: true, data: req.user})
 
     } catch (error) {
+        // console.log(error)
         res.status(400).send({ok:false, error: error.message})
     }
 })

@@ -19,17 +19,18 @@ const admin_1 = require("./models/admin");
 const bcryptjs_1 = require("bcryptjs");
 const passportConfig = () => {
     passport_1.default.use(new passport_local_1.Strategy({ usernameField: "email", passwordField: "password" }, (email, password, done) => __awaiter(void 0, void 0, void 0, function* () {
-        const user = yield admin_1.Admin.findOne({ email });
-        if (typeof user.approved !== 'boolean' || !user.approved) {
+        const admin = yield admin_1.Admin.findOne({ email });
+        if (typeof admin.approved !== 'boolean' || !admin.approved) {
             return done(new Error('Admin permissions pending!'), null);
         }
-        if (!user) {
+        if (!admin) {
             return done(null, false, { message: "Invalid credentials.\n" });
         }
-        if (!(0, bcryptjs_1.compareSync)(password, user.password)) {
+        if (!(0, bcryptjs_1.compareSync)(password, admin.password)) {
+            console.log('wrong password');
             return done(null, false, { message: "Invalid credentials.\n" });
         }
-        return done(null, user);
+        return done(null, admin);
     })));
     passport_1.default.serializeUser((user, done) => {
         done(null, user.id);
@@ -44,9 +45,9 @@ const passportConfig = () => {
 };
 exports.passportConfig = passportConfig;
 function isLoggedIn(req, res, next) {
-    console.log(req.session, req.sessionID, req.isAuthenticated());
+    // console.log(req.session, req.sessionID, req.isAuthenticated())
     if (!req.isAuthenticated()) {
-        throw new Error('Access restricted!');
+        next('Access restricted!');
     }
     next();
 }

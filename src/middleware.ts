@@ -9,17 +9,19 @@ const passportConfig = () => {
       new LocalStrategy(
         { usernameField: "email", passwordField: "password" },
         async (email, password, done) => {
-          const user = await Admin.findOne({ email });
-          if (typeof user.approved !== 'boolean' || !user.approved) {
+          const admin = await Admin.findOne({ email });
+
+          if (typeof admin.approved !== 'boolean' || !admin.approved) {
             return done(new Error('Admin permissions pending!'), null)
           }
-          if (!user) {
+          if (!admin) {
             return done(null, false, { message: "Invalid credentials.\n" });
           }
-          if (!compareSync(password, user.password)) {
+          if (!compareSync(password, admin.password)) {
+            console.log('wrong password')
             return done(null, false, { message: "Invalid credentials.\n" });
           }
-          return done(null, user);
+          return done(null, admin);
 
         }
       )
@@ -39,9 +41,9 @@ const passportConfig = () => {
 };
 
 function isLoggedIn (req: Request, res: Response, next:NextFunction) {
-    console.log(req.session, req.sessionID, req.isAuthenticated())
+     // console.log(req.session, req.sessionID, req.isAuthenticated())
     if (!req.isAuthenticated()) {
-        throw new Error ('Access restricted!')
+        next('Access restricted!')
     }
     next()
 }

@@ -41,13 +41,17 @@ app.use(
    cookie: {
      secure: false,  // if true only transmit cookie over https
      httpOnly: false, // if true prevent client side JS from reading the cookie
-     maxAge: 1000 * 60 * 10, // session max age in milliseconds
+     maxAge: 1000 * 60 * 60 , // session max age in milliseconds
    },
  })
 );
+app.use(cors({
+  origin: ["http://localhost:3000", "http://localhost:8080"],
+  allowedHeaders: ['Content-Type', 'Origin', 'Authorization'],
+  credentials:true
+}))
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 app.use(PropertyRouter)
