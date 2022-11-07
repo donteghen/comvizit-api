@@ -17,6 +17,7 @@ const property_1 = require("../models/property");
 const express_1 = __importDefault(require("express"));
 const mongoose_1 = require("mongoose");
 const queryMaker_1 = require("../utils/queryMaker");
+const middleware_1 = require("../middleware");
 const PropertyRouter = express_1.default.Router();
 exports.PropertyRouter = PropertyRouter;
 const pageSize = 24; // number of documents returned per request for the get all properties route
@@ -129,7 +130,7 @@ PropertyRouter.get('/api/properties-in-quater/:quaterref', (req, res) => __await
     }
 }));
 // get all properties
-PropertyRouter.get('/api/properties', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+PropertyRouter.get('/api/properties', middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let filter = {};
         const queries = Object.keys(req.query);
@@ -226,7 +227,7 @@ PropertyRouter.get('/api/property/:propertyId/related-properties/:quaterref', (r
 }));
 // ***************************** admin restricted endpoints ***********************************************
 // create new property
-PropertyRouter.post('/api/properties', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+PropertyRouter.post('/api/properties', middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const newProperty = new property_1.Property(Object.assign({}, req.body));
         const property = yield newProperty.save();
@@ -241,7 +242,7 @@ PropertyRouter.post('/api/properties', (req, res) => __awaiter(void 0, void 0, v
     }
 }));
 // update property
-PropertyRouter.patch('/api/properties/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+PropertyRouter.patch('/api/properties/:id', middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const update = {};
         Object.keys(req.body).forEach(key => {
@@ -266,7 +267,7 @@ PropertyRouter.patch('/api/properties/:id', (req, res) => __awaiter(void 0, void
     }
 }));
 // update property media
-PropertyRouter.patch('/api/properties/:id/update-media', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+PropertyRouter.patch('/api/properties/:id/update-media', middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { photos, videos, virtualTours } = req.body.media;
         const property = yield property_1.Property.findById(req.params.id);
@@ -289,7 +290,7 @@ PropertyRouter.patch('/api/properties/:id/update-media', (req, res) => __awaiter
     }
 }));
 // delete property
-PropertyRouter.delete('/api/properties/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+PropertyRouter.delete('/api/properties/:id', middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const deletedproperty = yield property_1.Property.findByIdAndDelete(req.params.id);
         if (!deletedproperty) {

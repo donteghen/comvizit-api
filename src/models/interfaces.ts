@@ -1,3 +1,4 @@
+import { kStringMaxLength } from 'buffer';
 import { Document, Types } from 'mongoose';
 
 export type PropertyVideo = {
@@ -54,6 +55,17 @@ export type RentUtilities = {
     maintenance: boolean
 }
 
+export interface IComplain {
+    target: string,
+    subject: string,
+    message: string,
+    fullname: string,
+    email: string,
+    phone: string,
+    processed: boolean,
+    updated: number
+}
+
 export interface IContact extends Document {
     fullname: string,
     email: string,
@@ -64,6 +76,7 @@ export interface IContact extends Document {
 
 export interface IOwner extends Document {
     fullname: string,
+    lang:string,
     email: string,
     phone: string,
     address: Address,

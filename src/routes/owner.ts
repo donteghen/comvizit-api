@@ -3,6 +3,7 @@ import express, { Request, Response } from 'express'
 import multerUpload from '../config/multerUpload'
 import cloudinary from '../config/cloudinary'
 import { MulterError } from 'multer'
+import { isLoggedIn } from '../middleware'
 
 const OwnerRouter = express.Router()
 
@@ -41,7 +42,7 @@ OwnerRouter.get('/api/owners/:id', async (req: Request, res: Response) => {
 // create new owner account
 OwnerRouter.post('/api/owners',  async (req: Request, res: Response) => {
     try {
-        const {fullname, email, phone, address} = req.body
+        const {fullname, email, phone, address, lang} = req.body
         const newOwner = new Owner({
             fullname,
             email,
@@ -60,7 +61,7 @@ OwnerRouter.post('/api/owners',  async (req: Request, res: Response) => {
 })
 
 // get all owners
-OwnerRouter.get('/api/owners', async (req: Request, res: Response) => {
+OwnerRouter.get('/api/owners', isLoggedIn, async (req: Request, res: Response) => {
     try {
         let filter: any = {}
         const queries = Object.keys(req.query)
@@ -79,7 +80,7 @@ OwnerRouter.get('/api/owners', async (req: Request, res: Response) => {
 })
 
 // upload owner avatar
-OwnerRouter.patch('/api/owners/:id/avatarUpload',  multerUpload.single('avatar'), async (req: Request, res: Response) => {
+OwnerRouter.patch('/api/owners/:id/avatarUpload', isLoggedIn,  multerUpload.single('avatar'), async (req: Request, res: Response) => {
     try {
 
         const owner = await Owner.findById(req.params.id)
@@ -117,7 +118,7 @@ OwnerRouter.patch('/api/owners/:id/avatarUpload',  multerUpload.single('avatar')
 })
 
 // update owner account
-OwnerRouter.patch('/api/owners/:id',  async (req: Request, res: Response) => {
+OwnerRouter.patch('/api/owners/:id', isLoggedIn,  async (req: Request, res: Response) => {
     try {
         const update: any = {}
         Object.keys(req.body).forEach(key => {
@@ -143,7 +144,7 @@ OwnerRouter.patch('/api/owners/:id',  async (req: Request, res: Response) => {
 
 
 // delete owner account
-OwnerRouter.delete('/api/owners/:id',  async (req: Request, res: Response) => {
+OwnerRouter.delete('/api/owners/:id', isLoggedIn,  async (req: Request, res: Response) => {
     try {
         const deletedOwner = await Owner.findByIdAndDelete(req.params.id)
         if (!deletedOwner) {

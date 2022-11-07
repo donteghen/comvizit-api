@@ -15,6 +15,7 @@ import { OwnerRouter } from './routes/owner'
 import { PropertyRouter } from './routes/property'
 import { InquiryRouter } from './routes/inquiry'
 import { ContactRouter } from './routes/contact'
+import {ComplainRouter} from './routes/complain'
 import {AdminRouter} from './routes/admin'
 
 // global settings
@@ -57,6 +58,7 @@ app.use(express.urlencoded({extended: true}))
 app.use(PropertyRouter)
 app.use(OwnerRouter)
 app.use(ContactRouter)
+app.use(ComplainRouter)
 app.use(InquiryRouter)
 app.use(AdminRouter)
 

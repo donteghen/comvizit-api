@@ -28,6 +28,7 @@ const owner_1 = require("./routes/owner");
 const property_1 = require("./routes/property");
 const inquiry_1 = require("./routes/inquiry");
 const contact_1 = require("./routes/contact");
+const complain_1 = require("./routes/complain");
 const admin_1 = require("./routes/admin");
 // global settings
 dotenv_1.default.config();
@@ -65,6 +66,7 @@ app.use(express_1.default.urlencoded({ extended: true }));
 app.use(property_1.PropertyRouter);
 app.use(owner_1.OwnerRouter);
 app.use(contact_1.ContactRouter);
+app.use(complain_1.ComplainRouter);
 app.use(inquiry_1.InquiryRouter);
 app.use(admin_1.AdminRouter);
 //  Routes

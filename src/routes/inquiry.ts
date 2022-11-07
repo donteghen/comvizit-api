@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express'
+import { isLoggedIn } from '../middleware';
 import { Inquiry } from "../models/inquiry";
 
 
@@ -44,7 +45,7 @@ InquiryRouter.post('/api/inquiries', async (req: Request, res: Response) => {
 // ***************************** admin restricted endpoints ***********************************************
 
 // get all inquiries (with or without query string)
-InquiryRouter.get('/api/inquiries',  async (req: Request, res: Response) => {
+InquiryRouter.get('/api/inquiries', isLoggedIn,  async (req: Request, res: Response) => {
     try {
         let filter: any = {}
         const queries = Object.keys(req.query)
@@ -63,7 +64,7 @@ InquiryRouter.get('/api/inquiries',  async (req: Request, res: Response) => {
 })
 
 // get single inquiry by id
-InquiryRouter.get('/api/inquiries/:id',  async (req: Request, res: Response) => {
+InquiryRouter.get('/api/inquiries/:id', isLoggedIn,  async (req: Request, res: Response) => {
     try {
         const inquiry = await Inquiry.findById(req.params.id)
         if (!inquiry) {
@@ -76,7 +77,7 @@ InquiryRouter.get('/api/inquiries/:id',  async (req: Request, res: Response) => 
 })
 
 // make inquiry as replied
-InquiryRouter.patch('/api/inquiries/:id/reply',  async (req: Request, res: Response) => {
+InquiryRouter.patch('/api/inquiries/:id/reply', isLoggedIn,  async (req: Request, res: Response) => {
     try {
         const inquiry = await Inquiry.findById(req.params.id)
         if (!inquiry) {
@@ -98,7 +99,7 @@ InquiryRouter.patch('/api/inquiries/:id/reply',  async (req: Request, res: Respo
 })
 
 // delete inquiries
-InquiryRouter.delete('/api/inquiries/:id', async (req: Request, res: Response) => {
+InquiryRouter.delete('/api/inquiries/:id', isLoggedIn, async (req: Request, res: Response) => {
     try {
         const inquiry = await Inquiry.findByIdAndDelete(req.params.id)
         if (!inquiry) {

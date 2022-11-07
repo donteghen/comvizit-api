@@ -7,6 +7,11 @@ const ownerSchema = new Schema<IOwner>({
         type: String,
         required: true
     },
+    lang: {
+        type: String,
+        required: true,
+        enum: ['French', 'English', 'English & French']
+    },
     email: {
         type: String,
         required: true

@@ -1,13 +1,13 @@
 import express, { Request, Response } from 'express'
 import { isLoggedIn } from '../middleware';
-import { Contact } from "../models/contact";
+import { Complain } from "../models/complain";
 
-const ContactRouter = express.Router()
+const ComplainRouter = express.Router()
 
 // query helper function
 function setFilter(key:string, value:any): any {
     switch (key) {
-        case 'replied':
+        case 'processed':
             return {'replied': value}
         case 'email':
             return {'email': value}
@@ -18,18 +18,21 @@ function setFilter(key:string, value:any): any {
 
 // ***************************** public enpoints ***********************************************
 
-// create new contact
-ContactRouter.post('/api/contacts', async (req: Request, res: Response) => {
+// create new complain
+ComplainRouter.post('/api/complains', async (req: Request, res: Response) => {
     try {
-        const {fullname, email, phone } = req.body
-        const newContact = new Contact({
+        const {fullname, email, phone, target, subject, message } = req.body
+        const newComplain = new Complain({
             fullname,
             email,
-            phone
+            phone,
+            target,
+            subject,
+            message
         })
-        const contact = await newContact.save()
+        const complain = await newComplain.save()
 
-        res.send({ok: true, data: contact})
+        res.send({ok: true, data: complain})
     } catch (error) {
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
@@ -41,8 +44,8 @@ ContactRouter.post('/api/contacts', async (req: Request, res: Response) => {
 
 // ***************************** admin restricted endpoints ***********************************************
 
-// get all contact (with or without query string)
-ContactRouter.get('/api/contacts', isLoggedIn,  async (req: Request, res: Response) => {
+// get all complains (with or without query string)
+ComplainRouter.get('/api/complains', isLoggedIn,  async (req: Request, res: Response) => {
     try {
         let filter: any = {}
         const queries = Object.keys(req.query)
@@ -53,38 +56,38 @@ ContactRouter.get('/api/contacts', isLoggedIn,  async (req: Request, res: Respon
                 }
             })
         }
-        const contacts = await Contact.find(filter)
-        res.send({ok: true, data: contacts})
+        const complains = await Complain.find(filter)
+        res.send({ok: true, data: complains})
     } catch (error) {
         res.status(400).send({ok:false, error: error.message})
     }
 })
 
-// get single contact by id
-ContactRouter.get('/api/contacts/:id',isLoggedIn, async (req: Request, res: Response) => {
+// get single complain by id
+ComplainRouter.get('/api/complains/:id', isLoggedIn,  async (req: Request, res: Response) => {
     try {
-        const contact = await Contact.findById(req.params.id)
-        if (!contact) {
+        const complain = await Complain.findById(req.params.id)
+        if (!complain) {
             throw new Error('Not Found!')
         }
-        res.send({ok: true, data: contact})
+        res.send({ok: true, data: complain})
     } catch (error) {
         res.status(400).send({ok:false, error: error.message})
     }
 })
 
-// make contact as replied
-ContactRouter.patch('/api/contacts/:id/reply', isLoggedIn, async (req: Request, res: Response) => {
+// make complain as processed
+ComplainRouter.patch('/api/complains/:id/process', isLoggedIn, async (req: Request, res: Response) => {
     try {
-        const contact = await Contact.findById(req.params.id)
-        if (!contact) {
+        const complain = await Complain.findById(req.params.id)
+        if (!complain) {
             throw new Error('Not Found!')
         }
-        contact.replied = true
-        contact.updated = Date.now()
+        complain.processed = true
+        complain.updated = Date.now()
 
-        const updateContact = await contact.save()
-        res.send({ok: true, data: updateContact})
+        const updateComplain = await complain.save()
+        res.send({ok: true, data: updateComplain})
     } catch (error) {
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
@@ -94,11 +97,11 @@ ContactRouter.patch('/api/contacts/:id/reply', isLoggedIn, async (req: Request, 
     }
 })
 
-// delete contact
-ContactRouter.delete('/api/contacts/:id', isLoggedIn, async (req: Request, res: Response) => {
+// delete a complain by id
+ComplainRouter.delete('/api/complains/:id', isLoggedIn, async (req: Request, res: Response) => {
     try {
-        const contact = await Contact.findByIdAndDelete(req.params.id)
-        if (!contact) {
+        const complain = await Complain.findByIdAndDelete(req.params.id)
+        if (!complain) {
             throw new Error('Not Found!')
         }
         res.send({ok: true})
@@ -109,5 +112,5 @@ ContactRouter.delete('/api/contacts/:id', isLoggedIn, async (req: Request, res: 
 
 
 export {
-    ContactRouter
+    ComplainRouter
 }
