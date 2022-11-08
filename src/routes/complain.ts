@@ -89,6 +89,7 @@ ComplainRouter.patch('/api/complains/:id/process', isLoggedIn, async (req: Reque
         const updateComplain = await complain.save()
         res.send({ok: true, data: updateComplain})
     } catch (error) {
+        // console.log(error)
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return

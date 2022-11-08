@@ -99,6 +99,7 @@ ComplainRouter.patch('/api/complains/:id/process', middleware_1.isLoggedIn, (req
         res.send({ ok: true, data: updateComplain });
     }
     catch (error) {
+        // console.log(error)
         if (error.name === 'ValidationError') {
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
