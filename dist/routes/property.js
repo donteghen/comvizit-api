@@ -46,10 +46,10 @@ function setFilter(key, value) {
             return { 'features': { $in: [value] } };
         case 'town':
             return { 'town': { "$regex": value, $options: 'i' } };
-        // case 'districtref':
-        //     return {'district.ref': value}
-        // case 'quaterref':
-        //     return {'quater.ref': value}
+        case 'districtref':
+            return { 'district.ref': value };
+        case 'quaterref':
+            return { 'quater.ref': value };
         default:
             return {};
     }
@@ -130,7 +130,7 @@ PropertyRouter.get('/api/properties-in-quater/:quaterref', (req, res) => __await
     }
 }));
 // get all properties
-PropertyRouter.get('/api/properties', middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+PropertyRouter.get('/api/properties', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let filter = {};
         const queries = Object.keys(req.query);
@@ -141,6 +141,7 @@ PropertyRouter.get('/api/properties', middleware_1.isLoggedIn, (req, res) => __a
                 }
             });
         }
+        console.log(filter);
         const properties = yield property_1.Property.find(filter).populate('ownerId').exec();
         res.send({ ok: true, data: properties });
     }
@@ -170,6 +171,11 @@ PropertyRouter.get('/api/search-quaters/:quaterRef', (req, res) => __awaiter(voi
                         query: req.params.quaterRef,
                         path: 'quater.ref'
                     }
+                }
+            },
+            {
+                $match: {
+                    "availability": "Available"
                 }
             },
             {

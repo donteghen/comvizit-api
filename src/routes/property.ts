@@ -34,10 +34,10 @@ function setFilter(key:string, value:any): any {
             return {'features': {$in : [value]}}
         case 'town':
             return {'town': { "$regex": value, $options: 'i'}}
-        // case 'districtref':
-        //     return {'district.ref': value}
-        // case 'quaterref':
-        //     return {'quater.ref': value}
+        case 'districtref':
+            return {'district.ref': value}
+        case 'quaterref':
+            return {'quater.ref': value}
         default:
             return {}
     }
@@ -126,7 +126,7 @@ PropertyRouter.get('/api/properties-in-quater/:quaterref', async (req: Request, 
     }
 })
 // get all properties
-PropertyRouter.get('/api/properties', isLoggedIn, async (req: Request, res: Response) => {
+PropertyRouter.get('/api/properties', async (req: Request, res: Response) => {
     try {
         let filter: any = {}
         const queries = Object.keys(req.query)
@@ -137,6 +137,7 @@ PropertyRouter.get('/api/properties', isLoggedIn, async (req: Request, res: Resp
                 }
             })
         }
+        console.log(filter, )
         const properties = await Property.find(filter).populate('ownerId').exec()
 
         res.send({ok: true, data: properties})
@@ -161,14 +162,20 @@ PropertyRouter.get('/api/search-property-categories/:quaterRef', async (req: Req
 PropertyRouter.get('/api/search-quaters/:quaterRef', async (req: Request, res: Response) => {
     try {
         const quaters = await Property.aggregate([
+
             {
                 $search:{
-                        index: 'autocomplete',
-                        autocomplete: {
-                          query: req.params.quaterRef,
-                          path: 'quater.ref'
-                        }
+                    index: 'autocomplete',
+                    autocomplete: {
+                        query: req.params.quaterRef,
+                        path: 'quater.ref'
                     }
+                }
+            },
+            {
+                $match: {
+                    "availability": "Available"
+                }
             },
             {
                 $project:{

@@ -128,7 +128,3 @@ export interface IAdmin extends Document {
     password: string,
     approved: boolean
 }
-
-// export interface IAdminMethods {
-//     fullName(): string;
-//   }

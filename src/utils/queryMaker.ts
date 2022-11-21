@@ -4,7 +4,7 @@ export function categoryAggregator (quaterRef: string): PipelineStage | any {
             // match  quater ref
             {
               $match: {
-                'quater.ref': quaterRef
+                'quater.ref': quaterRef,
               }
             },
 

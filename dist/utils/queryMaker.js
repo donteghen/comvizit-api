@@ -6,7 +6,7 @@ function categoryAggregator(quaterRef) {
         // match  quater ref
         {
             $match: {
-                'quater.ref': quaterRef
+                'quater.ref': quaterRef,
             }
         },
         {

@@ -145,9 +145,9 @@ const propertySchema = new mongoose_1.Schema({
     },
     availability: {
         type: String,
-        enum: ['Available', 'Taken'],
+        enum: ['Inactive', 'Available', 'Taken'],
         required: true,
-        default: 'Available'
+        default: 'Inactive'
     },
     rentUtilities: {
         electricity: {
