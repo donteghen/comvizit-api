@@ -20,6 +20,7 @@ const bcryptjs_1 = require("bcryptjs");
 const passportConfig = () => {
     passport_1.default.use(new passport_local_1.Strategy({ usernameField: "email", passwordField: "password" }, (email, password, done) => __awaiter(void 0, void 0, void 0, function* () {
         const admin = yield admin_1.Admin.findOne({ email });
+        console.log(admin, 'this admin was found');
         if (typeof admin.approved !== 'boolean' || !admin.approved) {
             return done(new Error('Admin permissions pending!'), null);
         }

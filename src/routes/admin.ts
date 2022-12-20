@@ -45,7 +45,7 @@ AdminRouter.post('/api/admins/login', passport.authenticate("local", {
         res.send({ok: true, data: req.user})
 
     } catch (error) {
-        // console.log(error)
+        console.log(error)
         res.status(400).send({ok:false, error: error.message})
     }
 })

@@ -10,7 +10,7 @@ const passportConfig = () => {
         { usernameField: "email", passwordField: "password" },
         async (email, password, done) => {
           const admin = await Admin.findOne({ email });
-
+          console.log(admin, 'this admin was found')
           if (typeof admin.approved !== 'boolean' || !admin.approved) {
             return done(new Error('Admin permissions pending!'), null)
           }
