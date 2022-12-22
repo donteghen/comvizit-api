@@ -128,3 +128,18 @@ export interface IAdmin extends Document {
     password: string,
     approved: boolean
 }
+
+export interface IFeaturedProperties extends Document {
+    propertyId: Types.ObjectId,
+    duration: number,
+    startedAt: number,
+    status: string
+}
+
+export interface ITag extends Document {
+    type: string,
+    title: string,
+    status: string,
+    refId: Types.ObjectId,
+    createdDate: number
+}
