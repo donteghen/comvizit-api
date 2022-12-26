@@ -22,18 +22,20 @@ const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 // local module imports
 const dbconfig_1 = require("./config/dbconfig");
-const middleware_1 = require("./middleware");
+const auth_middleware_1 = require("./middleware/auth-middleware");
 // import router
-const owner_1 = require("./routes/owner");
 const property_1 = require("./routes/property");
 const inquiry_1 = require("./routes/inquiry");
 const contact_1 = require("./routes/contact");
 const complain_1 = require("./routes/complain");
-const admin_1 = require("./routes/admin");
+const user_1 = require("./routes/user");
+const tag_1 = require("./routes/tag");
+const featured_properties_1 = require("./routes/featured-properties");
+const cron_1 = __importDefault(require("./services/cron"));
 // global settings
 dotenv_1.default.config();
 (0, dbconfig_1.connectDb)();
-(0, middleware_1.passportConfig)();
+(0, auth_middleware_1.passportConfig)();
 // configure Redis
 const redisClient = (0, redis_1.createClient)({ legacyMode: true });
 redisClient.connect().catch(console.error);
@@ -64,11 +66,14 @@ app.use(passport_1.default.session());
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use(property_1.PropertyRouter);
-app.use(owner_1.OwnerRouter);
 app.use(contact_1.ContactRouter);
 app.use(complain_1.ComplainRouter);
 app.use(inquiry_1.InquiryRouter);
-app.use(admin_1.AdminRouter);
+app.use(user_1.UserRouter);
+app.use(featured_properties_1.FeaturedRouter);
+app.use(tag_1.TagRouter);
+// start all cron jobs
+(0, cron_1.default)();
 //  Routes
 app.get('/api/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

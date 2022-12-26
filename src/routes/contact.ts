@@ -1,6 +1,9 @@
 import express, { Request, Response } from 'express'
-import { isLoggedIn } from '../middleware';
+import { NOT_FOUND } from '../constants/error';
+import { isAdmin, isLoggedIn } from '../middleware/auth-middleware';
 import { Contact } from "../models/contact";
+import { mailer } from '../helper/mailer';
+import {notifyNewContactMe} from '../utils/mailer-templates'
 
 const ContactRouter = express.Router()
 
@@ -28,6 +31,10 @@ ContactRouter.post('/api/contacts', async (req: Request, res: Response) => {
             phone
         })
         const contact = await newContact.save()
+        // Send a notification email to the admin
+        const _link = `${process.env.CLIENT_URL}/dashboard`
+        const _success = await mailer(process.env.SENDGRID_VERIFIED_SENDER, notifyNewContactMe.subject, notifyNewContactMe.heading,
+        notifyNewContactMe.detail, _link, notifyNewContactMe.linkText )
 
         res.send({ok: true, data: contact})
     } catch (error) {
@@ -35,14 +42,14 @@ ContactRouter.post('/api/contacts', async (req: Request, res: Response) => {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
-        res.status(400).send({ok:false, error: error.message})
+        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
 
 // ***************************** admin restricted endpoints ***********************************************
 
 // get all contact (with or without query string)
-ContactRouter.get('/api/contacts', isLoggedIn,  async (req: Request, res: Response) => {
+ContactRouter.get('/api/contacts', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
         let filter: any = {}
         const queries = Object.keys(req.query)
@@ -56,20 +63,20 @@ ContactRouter.get('/api/contacts', isLoggedIn,  async (req: Request, res: Respon
         const contacts = await Contact.find(filter)
         res.send({ok: true, data: contacts})
     } catch (error) {
-        res.status(400).send({ok:false, error: error.message})
+        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
 
 // get single contact by id
-ContactRouter.get('/api/contacts/:id',isLoggedIn, async (req: Request, res: Response) => {
+ContactRouter.get('/api/contacts/:id', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
         const contact = await Contact.findById(req.params.id)
         if (!contact) {
-            throw new Error('Not Found!')
+            throw NOT_FOUND
         }
         res.send({ok: true, data: contact})
     } catch (error) {
-        res.status(400).send({ok:false, error: error.message})
+        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
 
@@ -78,7 +85,7 @@ ContactRouter.patch('/api/contacts/:id/reply', isLoggedIn, async (req: Request, 
     try {
         const contact = await Contact.findById(req.params.id)
         if (!contact) {
-            throw new Error('Not Found!')
+            throw NOT_FOUND
         }
         contact.replied = true
         contact.updated = Date.now()
@@ -90,7 +97,7 @@ ContactRouter.patch('/api/contacts/:id/reply', isLoggedIn, async (req: Request, 
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
-        res.status(400).send({ok:false, error:error?.message})
+        res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
     }
 })
 
@@ -99,11 +106,11 @@ ContactRouter.delete('/api/contacts/:id', isLoggedIn, async (req: Request, res: 
     try {
         const contact = await Contact.findByIdAndDelete(req.params.id)
         if (!contact) {
-            throw new Error('Not Found!')
+            throw NOT_FOUND
         }
         res.send({ok: true})
     } catch (error) {
-        res.status(400).send({ok:false, error:error?.message})
+        res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
     }
 })
 

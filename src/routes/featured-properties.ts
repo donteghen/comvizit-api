@@ -1,10 +1,17 @@
 import express, { Request, Response } from 'express'
-import { isLoggedIn } from '../middleware';
+import { DELETE_OPERATION_FAILED, INVALID_REQUEST, NOT_FOUND, PROPERTY_IS_ALREADY_FEATURED } from '../constants/error';
+import { isAdmin, isLoggedIn } from '../middleware/auth-middleware';
 import { FeaturedProperties } from "../models/featured-properties";
 
 const FeaturedRouter = express.Router()
 
-// query helper function
+/**
+ * Get featured properties search query filter
+ * @Method Tag
+ * @param {string} key
+ * @param {any} value
+ * @returns {any} any
+ */
 function setFilter(key:string, value:any): any {
     switch (key) {
         case 'propertyId':
@@ -17,6 +24,7 @@ function setFilter(key:string, value:any): any {
 }
 
 // ***************************** public enpoints ***********************************************
+
 // get all featured properties (with or without query string)
 FeaturedRouter.get('/api/featured/properties',  async (req: Request, res: Response) => {
     try {
@@ -32,34 +40,36 @@ FeaturedRouter.get('/api/featured/properties',  async (req: Request, res: Respon
         const featuredProperties = await FeaturedProperties.find(filter)
         res.send({ok: true, data: featuredProperties})
     } catch (error) {
-        res.status(400).send({ok:false, error: error.message})
+        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
 
 // get a singlefeatured property by Id
 FeaturedRouter.get('/api/featured/properties/:propertyId',  async (req: Request, res: Response) => {
-    try {        
+    try {
         const featuredProperty= await FeaturedProperties.findById(req.params.propertyId)
         if (!featuredProperty) {
-            throw new Error('Featured Property Not Found!')
+            throw NOT_FOUND
         }
         res.send({ok: true, data: featuredProperty})
     } catch (error) {
-        res.status(400).send({ok:false, error: error.message})
+        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
 
 // ***************************** admin restricted endpoints ***********************************************
 
 // create new featured property
-FeaturedRouter.post('/api/featured/properties/create', isLoggedIn, async (req: Request, res: Response) => {
+FeaturedRouter.post('/api/featured/properties/create', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
-        const {propertyId, duration, startedAt, status} = req.body
+        const {propertyId, duration} = req.body
+        const AlreadyFeatured = await FeaturedProperties.findOne({propertyId})
+        if (AlreadyFeatured) {
+            throw PROPERTY_IS_ALREADY_FEATURED
+        }
         const newFeaturedProperty = new FeaturedProperties({
-            propertyId, 
-            duration, 
-            startedAt, 
-            status
+            propertyId,
+            duration : Number(duration)
         })
         const featuredProperty = await newFeaturedProperty.save()
 
@@ -69,24 +79,24 @@ FeaturedRouter.post('/api/featured/properties/create', isLoggedIn, async (req: R
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
-        res.status(400).send({ok:false, error: error.message})
+        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
 
 // update featured property's status
-FeaturedRouter.patch('/api/featured/properties/:propertyId/status/update', isLoggedIn, async (req: Request, res: Response) => {
+FeaturedRouter.patch('/api/featured/properties/:propertyId/status/update', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
         if (req.body.status) {
-            const featuredProperty = await FeaturedProperties.findById(req.params.id)
+            const featuredProperty = await FeaturedProperties.findById(req.params.propertyId)
             if (!featuredProperty) {
-                throw new Error('Featured Property Not Found!')
+                throw NOT_FOUND
             }
-            featuredProperty.status = req.body.status 
+            featuredProperty.status = req.body.status
             const updateFeaturedProperty = await featuredProperty.save()
             res.send({ok: true, data: updateFeaturedProperty})
         }
         else {
-            throw new Error('Please Provide a featured property status for update!')
+            throw INVALID_REQUEST
         }
     } catch (error) {
         // console.log(error)
@@ -94,19 +104,23 @@ FeaturedRouter.patch('/api/featured/properties/:propertyId/status/update', isLog
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
-        res.status(400).send({ok:false, error:error?.message})
+        res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
     }
 })
 
 // delete a featured property by id
-FeaturedRouter.delete('/api/featured/properties/:propertyId/delete', isLoggedIn, async (req: Request, res: Response) => {
+FeaturedRouter.delete('/api/featured/properties/:propertyId/delete', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
-        const featuredProperty = await FeaturedProperties.findByIdAndDelete(req.params.id)
+        const featuredProperty = await FeaturedProperties.findByIdAndDelete(req.params.propertyId)
         if (!featuredProperty) {
-            throw new Error('Featured Property Not Found!')
+            throw DELETE_OPERATION_FAILED
         }
         res.send({ok: true})
     } catch (error) {
-        res.status(400).send({ok:false, error:error?.message})
+        res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
     }
 })
+
+export {
+    FeaturedRouter
+}

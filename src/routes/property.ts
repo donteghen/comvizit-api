@@ -3,7 +3,13 @@ import express, { Request, Response } from 'express'
 
 import { Types } from "mongoose";
 import { categoryAggregator, townAggregator } from "../utils/queryMaker";
-import { isLoggedIn } from "../middleware";
+import { isAdmin, isLoggedIn } from "../middleware/auth-middleware";
+import {DELETE_OPERATION_FAILED, NOT_AUTHORIZED, NOT_FOUND, NOT_PROPERTY_OWNER, SAVE_OPERATION_FAILED} from '../constants/error'
+import {notifyPropertyAvailability} from '../utils/mailer-templates'
+import { mailer } from "../helper/mailer";
+import { IUser } from "../models/interfaces";
+import { User } from "../models/user";
+
 const PropertyRouter = express.Router()
 
 const pageSize: number = 24 // number of documents returned per request for the get all properties route
@@ -74,7 +80,7 @@ function priceSetter (reqParams: any, queryArray: string[], priceQuery: string) 
 
 // ***************************** public enpoints ***********************************************
 
-// get all properties
+// get all properties in quater
 PropertyRouter.get('/api/properties-in-quater/:quaterref', async (req: Request, res: Response) => {
     try {
         let filter: any = {availability:'Available'}
@@ -122,11 +128,11 @@ PropertyRouter.get('/api/properties-in-quater/:quaterref', async (req: Request, 
 
         res.send({ok: true, data: {properties, currPage: pageNum, totalPages, resultCount}})
     } catch (error) {
-        res.status(400).send({ok:false, error: error.message})
+        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
 // get all properties
-PropertyRouter.get('/api/properties', async (req: Request, res: Response) => {
+PropertyRouter.get('/api/properties', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
         let filter: any = {}
         const queries = Object.keys(req.query)
@@ -142,7 +148,7 @@ PropertyRouter.get('/api/properties', async (req: Request, res: Response) => {
 
         res.send({ok: true, data: properties})
     } catch (error) {
-        res.status(400).send({ok:false, error: error.message})
+        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
 
@@ -153,7 +159,7 @@ PropertyRouter.get('/api/search-property-categories/:quaterRef', async (req: Req
         const quaters = await Property.aggregate(catAggregator)
         res.send({ok: true, data: quaters})
     } catch (error) {
-        res.status(400).send({ok:false, error: error.message})
+        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
 
@@ -187,7 +193,7 @@ PropertyRouter.get('/api/search-quaters/:quaterRef', async (req: Request, res: R
         ])
         res.send({ok: true, data: quaters})
     } catch (error) {
-        res.status(400).send({ok:false, error: error.message})
+        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
 
@@ -198,7 +204,7 @@ PropertyRouter.get('/api/count-properties-per-town', async (req: Request, res: R
         const towncountlist = await Property.aggregate(townAggregator())
         res.send({ok: true, data: towncountlist})
     } catch (error) {
-        res.status(400).send({ok:false, error: error.message})
+        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
 
@@ -207,11 +213,11 @@ PropertyRouter.get('/api/properties/:id', async (req: Request, res: Response) =>
     try {
         const property = await Property.findById(req.params.id).populate('ownerId').exec()
         if (!property) {
-            throw new Error('Property not found!')
+            throw NOT_FOUND
         }
         res.send({ok:true, data: property})
     } catch (error) {
-        res.status(400).send({ok:false, error: error.message})
+        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
 
@@ -226,14 +232,16 @@ PropertyRouter.get('/api/property/:propertyId/related-properties/:quaterref', as
             .limit(4)
         res.send({ok:true, data: relatedProperties})
     } catch (error) {
-        res.status(400).send({ok:false, error: error.message})
+        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
 
-// ***************************** admin restricted endpoints ***********************************************
+// ***************************** Restricted endpoints ***********************************************
+
+
 
 // create new property
-PropertyRouter.post('/api/properties', isLoggedIn,  async (req: Request, res: Response) => {
+PropertyRouter.post('/api/properties', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
         const newProperty = new Property({
             ...req.body
@@ -245,15 +253,57 @@ PropertyRouter.post('/api/properties', isLoggedIn,  async (req: Request, res: Re
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
-        res.status(400).send({ok:false, error: error.message})
+        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+    }
+})
+
+// update property availability status
+PropertyRouter.patch('/api/properties/:id/availability/update', isLoggedIn, async (req: Request, res: Response) => {
+    try {
+        let propertyOwner: IUser | any | undefined
+
+        // check if user is landlord or admin and property belongs to that user(landlord)
+        if (req.user.role !== 'ADMIN' && req.user.role !== 'LANDLORD') {
+            throw NOT_AUTHORIZED
+        }
+        const property = await Property.findById(req.params.id)
+        if (!property) {
+            throw NOT_FOUND
+        }
+        if (req.user.role === 'LANDLORD') {
+            if (property.ownerId.toString() === req.user.id) {
+                throw NOT_PROPERTY_OWNER
+            }
+            propertyOwner = req.user
+        }
+        if (req.user.role === 'ADMIN') {
+            propertyOwner = await User.findById(req.user.id)
+        }
+        // update property availability
+        property.availability = req.body.availability
+        const updatedProperty = await property.save()
+        if (!updatedProperty) {
+            throw SAVE_OPERATION_FAILED
+        }
+        // notify the property owner
+        const {subject, heading, detail, linkText} = notifyPropertyAvailability(req.user.email, property._id.toString(), req.body.availability)
+        const link = `${process.env.CLIENT_URL}/dashboard`
+        const success = await mailer(propertyOwner.email, subject, heading, detail, link, linkText )
+
+        res.status(200).send({ok: true})
+    } catch (error) {
+        console.log(error)
+        if (error.name === 'ValidationError') {
+            res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
+            return
+        }
+        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
 
 
-
-
 // update property
-PropertyRouter.patch('/api/properties/:id', isLoggedIn,  async (req: Request, res: Response) => {
+PropertyRouter.patch('/api/properties/:id/update', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
         const update: any = {}
         Object.keys(req.body).forEach(key => {
@@ -265,7 +315,7 @@ PropertyRouter.patch('/api/properties/:id', isLoggedIn,  async (req: Request, re
         const updatedProperty = await Property.findByIdAndUpdate(req.params.id, {$set: update}, {runValidators:true})
 
         if (!updatedProperty) {
-            throw new Error('Update requested failed!')
+            throw SAVE_OPERATION_FAILED
         }
 
         res.status(200).send({ok: true})
@@ -275,17 +325,17 @@ PropertyRouter.patch('/api/properties/:id', isLoggedIn,  async (req: Request, re
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
-        res.status(400).send({ok:false, error: error.message})
+        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
 
 // update property media
-PropertyRouter.patch('/api/properties/:id/update-media',  isLoggedIn, async (req: Request, res: Response) => {
+PropertyRouter.patch('/api/properties/:id/update-media',  isLoggedIn, isAdmin,  async (req: Request, res: Response) => {
     try {
         const {photos, videos, virtualTours} = req.body.media
         const property = await Property.findById(req.params.id)
         if (!property) {
-            throw new Error('Request property not found!')
+            throw NOT_FOUND
         }
 
         property.media.photos = photos ? photos : property.media.photos
@@ -300,7 +350,7 @@ PropertyRouter.patch('/api/properties/:id/update-media',  isLoggedIn, async (req
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
-        res.status(400).send({ok:false, error: error.message})
+        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
 
@@ -309,12 +359,12 @@ PropertyRouter.delete('/api/properties/:id', isLoggedIn, async (req: Request, re
     try {
         const deletedproperty = await Property.findByIdAndDelete(req.params.id)
         if (!deletedproperty) {
-            throw new Error('Property deletion failed!')
+            throw DELETE_OPERATION_FAILED
         }
 
         res.status(201).send({ok: true})
     } catch (error) {
-        res.status(400).send({ok:false, error: error.message})
+        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
 

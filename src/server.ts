@@ -9,14 +9,16 @@ import dotenv from 'dotenv'
 
 // local module imports
 import {connectDb} from './config/dbconfig'
-import { passportConfig } from './middleware'
+import { passportConfig } from './middleware/auth-middleware'
 // import router
-import { OwnerRouter } from './routes/owner'
 import { PropertyRouter } from './routes/property'
 import { InquiryRouter } from './routes/inquiry'
 import { ContactRouter } from './routes/contact'
 import {ComplainRouter} from './routes/complain'
-import {AdminRouter} from './routes/admin'
+import {UserRouter} from './routes/user'
+import {TagRouter} from './routes/tag'
+import {FeaturedRouter} from './routes/featured-properties'
+import main from './services/cron'
 
 // global settings
 dotenv.config()
@@ -56,11 +58,15 @@ app.use(passport.session());
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 app.use(PropertyRouter)
-app.use(OwnerRouter)
 app.use(ContactRouter)
 app.use(ComplainRouter)
 app.use(InquiryRouter)
-app.use(AdminRouter)
+app.use(UserRouter)
+app.use(FeaturedRouter)
+app.use(TagRouter)
+
+// start all cron jobs
+main()
 
 //  Routes
 app.get('/api/', async (req: Request, res: Response) => {

@@ -14,8 +14,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ComplainRouter = void 0;
 const express_1 = __importDefault(require("express"));
-const middleware_1 = require("../middleware");
+const error_1 = require("../constants/error");
+const auth_middleware_1 = require("../middleware/auth-middleware");
 const complain_1 = require("../models/complain");
+const mailer_1 = require("../helper/mailer");
+const mailer_templates_1 = require("../utils/mailer-templates");
 const ComplainRouter = express_1.default.Router();
 exports.ComplainRouter = ComplainRouter;
 // query helper function
@@ -32,6 +35,7 @@ function setFilter(key, value) {
 // ***************************** public enpoints ***********************************************
 // create new complain
 ComplainRouter.post('/api/complains', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
         const { fullname, email, phone, target, subject, message } = req.body;
         const newComplain = new complain_1.Complain({
@@ -43,6 +47,9 @@ ComplainRouter.post('/api/complains', (req, res) => __awaiter(void 0, void 0, vo
             message
         });
         const complain = yield newComplain.save();
+        // Send a notification email to the admin
+        const _link = `${process.env.CLIENT_URL}/dashboard`;
+        const _success = yield (0, mailer_1.mailer)(process.env.SENDGRID_VERIFIED_SENDER, mailer_templates_1.notifyNewComplained.subject, mailer_templates_1.notifyNewComplained.heading, mailer_templates_1.notifyNewComplained.detail, _link, mailer_templates_1.notifyNewComplained.linkText);
         res.send({ ok: true, data: complain });
     }
     catch (error) {
@@ -50,12 +57,13 @@ ComplainRouter.post('/api/complains', (req, res) => __awaiter(void 0, void 0, vo
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message });
+        res.status(400).send({ ok: false, error: error.message, code: (_a = error.code) !== null && _a !== void 0 ? _a : 1000 });
     }
 }));
 // ***************************** admin restricted endpoints ***********************************************
 // get all complains (with or without query string)
-ComplainRouter.get('/api/complains', middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+ComplainRouter.get('/api/complains', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _b;
     try {
         let filter = {};
         const queries = Object.keys(req.query);
@@ -70,15 +78,15 @@ ComplainRouter.get('/api/complains', middleware_1.isLoggedIn, (req, res) => __aw
         res.send({ ok: true, data: complains });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message });
+        res.status(400).send({ ok: false, error: error.message, code: (_b = error.code) !== null && _b !== void 0 ? _b : 1000 });
     }
 }));
 // get single complain by id
-ComplainRouter.get('/api/complains/:id', middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+ComplainRouter.get('/api/complains/:id', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const complain = yield complain_1.Complain.findById(req.params.id);
         if (!complain) {
-            throw new Error('Not Found!');
+            throw error_1.NOT_FOUND;
         }
         res.send({ ok: true, data: complain });
     }
@@ -87,11 +95,12 @@ ComplainRouter.get('/api/complains/:id', middleware_1.isLoggedIn, (req, res) => 
     }
 }));
 // make complain as processed
-ComplainRouter.patch('/api/complains/:id/process', middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+ComplainRouter.patch('/api/complains/:id/process', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _c;
     try {
         const complain = yield complain_1.Complain.findById(req.params.id);
         if (!complain) {
-            throw new Error('Not Found!');
+            throw error_1.NOT_FOUND;
         }
         complain.processed = true;
         complain.updated = Date.now();
@@ -104,15 +113,15 @@ ComplainRouter.patch('/api/complains/:id/process', middleware_1.isLoggedIn, (req
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message });
+        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_c = error.code) !== null && _c !== void 0 ? _c : 1000 });
     }
 }));
 // delete a complain by id
-ComplainRouter.delete('/api/complains/:id', middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+ComplainRouter.delete('/api/complains/:id/delete', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const complain = yield complain_1.Complain.findByIdAndDelete(req.params.id);
         if (!complain) {
-            throw new Error('Not Found!');
+            throw error_1.DELETE_OPERATION_FAILED;
         }
         res.send({ ok: true });
     }

@@ -1,6 +1,9 @@
 import express, { Request, Response } from 'express'
-import { isLoggedIn } from '../middleware';
+import { isAdmin, isLoggedIn } from '../middleware/auth-middleware';
 import { Inquiry } from "../models/inquiry";
+import { mailer } from '../helper/mailer';
+import {notifyNewInquiry} from '../utils/mailer-templates'
+import { NOT_FOUND } from '../constants/error';
 
 
 const InquiryRouter = express.Router()
@@ -32,20 +35,25 @@ InquiryRouter.post('/api/inquiries', async (req: Request, res: Response) => {
         })
         const inquiry = await newInquiry.save()
 
+        // Send a notification email to the admin
+        const _link = `${process.env.CLIENT_URL}/dashboard`
+        const _success = await mailer(process.env.SENDGRID_VERIFIED_SENDER, notifyNewInquiry.subject, notifyNewInquiry.heading,
+        notifyNewInquiry.detail, _link, notifyNewInquiry.linkText )
+
         res.send({ok: true, data: inquiry})
     } catch (error) {
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
-        res.status(400).send({ok:false, error: error.message})
+        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
 
 // ***************************** admin restricted endpoints ***********************************************
 
 // get all inquiries (with or without query string)
-InquiryRouter.get('/api/inquiries', isLoggedIn,  async (req: Request, res: Response) => {
+InquiryRouter.get('/api/inquiries', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
         let filter: any = {}
         const queries = Object.keys(req.query)
@@ -59,29 +67,29 @@ InquiryRouter.get('/api/inquiries', isLoggedIn,  async (req: Request, res: Respo
         const inquiries = await Inquiry.find(filter)
         res.send({ok: true, data: inquiries})
     } catch (error) {
-        res.status(400).send({ok:false, error: error.message})
+        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
 
 // get single inquiry by id
-InquiryRouter.get('/api/inquiries/:id', isLoggedIn,  async (req: Request, res: Response) => {
+InquiryRouter.get('/api/inquiries/:id', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
         const inquiry = await Inquiry.findById(req.params.id)
         if (!inquiry) {
-            throw new Error('Not Found!')
+            throw NOT_FOUND
         }
         res.send({ok: true, data: inquiry})
     } catch (error) {
-        res.status(400).send({ok:false, error: error.message})
+        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
 
 // make inquiry as replied
-InquiryRouter.patch('/api/inquiries/:id/reply', isLoggedIn,  async (req: Request, res: Response) => {
+InquiryRouter.patch('/api/inquiries/:id/reply', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
         const inquiry = await Inquiry.findById(req.params.id)
         if (!inquiry) {
-            throw new Error('Not Found!')
+            throw NOT_FOUND
         }
 
         inquiry.replied = true
@@ -94,20 +102,20 @@ InquiryRouter.patch('/api/inquiries/:id/reply', isLoggedIn,  async (req: Request
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
-        res.status(400).send({ok:false, error:error?.message})
+        res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
     }
 })
 
 // delete inquiries
-InquiryRouter.delete('/api/inquiries/:id', isLoggedIn, async (req: Request, res: Response) => {
+InquiryRouter.delete('/api/inquiries/:id', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
         const inquiry = await Inquiry.findByIdAndDelete(req.params.id)
         if (!inquiry) {
-            throw new Error('Not Found!')
+            throw NOT_FOUND
         }
         res.send({ok: true})
     } catch (error) {
-        res.status(400).send({ok:false, error:error?.message})
+        res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
     }
 })
 

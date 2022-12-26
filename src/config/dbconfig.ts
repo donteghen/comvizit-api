@@ -12,7 +12,6 @@ export async function clearDb () {
      const collections = await connection.db.collections()
      for(const currCollection of collections) {
           currCollection.deleteMany({})
-
      }
 }
 

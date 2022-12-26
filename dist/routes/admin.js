@@ -14,14 +14,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdminRouter = void 0;
 const express_1 = __importDefault(require("express"));
-const admin_1 = require("../models/admin");
+const user_1 = require("../models/user");
 const passport_1 = __importDefault(require("passport"));
-const middleware_1 = require("../middleware");
+const auth_middleware_1 = require("../middleware/auth-middleware");
 const AdminRouter = express_1.default.Router();
 exports.AdminRouter = AdminRouter;
 // fetch admin to makes sure the client is still authenticated
 // fetch admin
-AdminRouter.get('/api/admin', middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+AdminRouter.get('/api/admin', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         res.send({ ok: true, data: req.user });
     }
@@ -34,7 +34,7 @@ AdminRouter.get('/api/admin', middleware_1.isLoggedIn, (req, res) => __awaiter(v
 AdminRouter.post('/api/admins/signup', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { email, password, username } = req.body;
-        const newAdmin = new admin_1.Admin({
+        const newAdmin = new user_1.Admin({
             username, email, password
         });
         const admin = yield newAdmin.save();
@@ -59,7 +59,7 @@ AdminRouter.post('/api/admins/login', passport_1.default.authenticate("local", {
     }
 }));
 // admin logout route
-AdminRouter.get('/api/admins/logout', middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+AdminRouter.get('/api/admins/logout', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         req.session.destroy((err) => {
             if (err) {
@@ -73,9 +73,9 @@ AdminRouter.get('/api/admins/logout', middleware_1.isLoggedIn, (req, res) => __a
     }
 }));
 // admin get all admins testing
-AdminRouter.get('/api/admins', middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+AdminRouter.get('/api/admins', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const admins = yield admin_1.Admin.find();
+        const admins = yield user_1.Admin.find();
         res.send({ ok: true, data: admins });
     }
     catch (error) {

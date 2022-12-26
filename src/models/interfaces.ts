@@ -1,6 +1,17 @@
 import { kStringMaxLength } from 'buffer';
 import { Document, Types } from 'mongoose';
 
+export type ErrorResponse = {
+    name: string,
+    code: number,
+    message: string,
+    messageFr: string
+}
+export type SuccessResponse = {
+    message: string,
+    messageFr: string
+}
+
 export type PropertyVideo = {
     title: string,
     src: string
@@ -74,17 +85,6 @@ export interface IContact extends Document {
     updated: number
 }
 
-export interface IOwner extends Document {
-    fullname: string,
-    lang:string,
-    email: string,
-    phone: string,
-    address: Address,
-    updated: number,
-    avatar?: string,
-    avatarDeleteId?: string
-}
-
 export interface IInquiry extends Document {
     fullname: string,
     email: string,
@@ -122,11 +122,19 @@ export interface IProperty extends Document {
     rentUtilities: RentUtilities
 }
 
-export interface IAdmin extends Document {
-    username: string,
+export interface IUser extends Document {
+    fullname: string,
+    lang:string,
     email: string,
     password: string,
-    approved: boolean
+    phone: string,
+    address: Address,
+    updated: number,
+    avatar?: string,
+    avatarDeleteId?: string,
+    approved: boolean,
+    isVerified: boolean,
+    role: string
 }
 
 export interface IFeaturedProperties extends Document {
@@ -139,6 +147,7 @@ export interface IFeaturedProperties extends Document {
 export interface ITag extends Document {
     type: string,
     title: string,
+    code: string,
     status: string,
     refId: Types.ObjectId,
     createdDate: number
