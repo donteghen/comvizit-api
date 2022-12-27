@@ -20,7 +20,7 @@ const passportConfig = () => {
             return done(null, false, { message: "Invalid credentials.\n" });
           }
           if (!compareSync(password, user.password)) {
-            console.log('Wrong password!')
+            // console.log('Wrong password!')
             return done(null, false, { message: "Invalid credentials.\n" });
           }
           return done(null, user);
@@ -44,7 +44,7 @@ const passportConfig = () => {
 
 // helper function that checks if user is authenticated
 function isLoggedIn (req: Request, res: Response, next:NextFunction) {
-     console.log(req.sessionID, req.isAuthenticated(), req.user)
+     // console.log(req.sessionID, req.isAuthenticated(), req.user)
     if (!req.isAuthenticated()) {
         next('Access restricted!')
     }

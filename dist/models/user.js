@@ -110,6 +110,6 @@ userSchema.pre('save', function (next) {
         next();
     });
 });
-const User = (0, mongoose_1.model)('Admins', userSchema);
+const User = (0, mongoose_1.model)('Users', userSchema);
 exports.User = User;
 //# sourceMappingURL=user.js.map

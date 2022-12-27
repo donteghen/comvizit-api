@@ -15,7 +15,7 @@ const featured_properties_1 = require("../models/featured-properties");
 const redisClient = (0, redis_1.createClient)({ legacyMode: true });
 const CronJob = require('cron-cluster')(redisClient).CronJob;
 function updatePropertyFeaturingCron() {
-    const job = new CronJob('*/25 * * * * *', function () {
+    const job = new CronJob('0 6 * * *', function () {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 console.log('working on cron*************************************');

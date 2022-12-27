@@ -30,7 +30,7 @@ const passportConfig = () => {
             return done(null, false, { message: "Invalid credentials.\n" });
         }
         if (!(0, bcryptjs_1.compareSync)(password, user.password)) {
-            console.log('Wrong password!');
+            // console.log('Wrong password!')
             return done(null, false, { message: "Invalid credentials.\n" });
         }
         return done(null, user);
@@ -49,7 +49,7 @@ const passportConfig = () => {
 exports.passportConfig = passportConfig;
 // helper function that checks if user is authenticated
 function isLoggedIn(req, res, next) {
-    console.log(req.sessionID, req.isAuthenticated(), req.user);
+    // console.log(req.sessionID, req.isAuthenticated(), req.user)
     if (!req.isAuthenticated()) {
         next('Access restricted!');
     }

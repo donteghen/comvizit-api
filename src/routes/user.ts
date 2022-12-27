@@ -31,7 +31,7 @@ function setFilter(key:string, value:any): any {
 
 // ***************************** public enpoints ***********************************************
 
-// get user profile of a tenant by id and role === 'TENANT'
+// get landlord's profile of a landlord(for property owner card on client) by id and role === 'LANDLORD'
 UserRouter.get('/api/users/landlords/:id', async (req: Request, res: Response) => {
     try {
         const query = {
@@ -135,24 +135,6 @@ UserRouter.patch('/api/users/all/:id/avatarUpload', isLoggedIn,  multerUpload.si
     }
 })
 
-// get all landlords
-UserRouter.get('/api/users/landlords', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
-    try {
-        let filter: any = {'role':'LANDLORD'}
-        const queries = Object.keys(req.query)
-        if (queries.length > 0) {
-            queries.forEach(key => {
-                if (req.query[key]) {
-                    filter = Object.assign(filter, setFilter(key, req.query[key]))
-                }
-            })
-        }
-        const landlords = await User.find(filter)
-        res.send({ok: true, data: landlords})
-    } catch (error) {
-        res.status(400).send({ok: false, error: error.message, code:error.code??1000})
-    }
-})
 
 
 // fetch current user session, if any
@@ -182,7 +164,7 @@ UserRouter.post('/api/users/signup', async (req: Request, res: Response) => {
 
         // Send a notification email to the admin
         const _link = `${process.env.CLIENT_URL}`
-        const adminEmail = process.env.ADMIN_EMAIL
+        const adminEmail = process.env.SENDGRID_VERIFIED_SENDER
         const _success = await mailer(adminEmail, notifyAccountCreated.subject, notifyAccountCreated.heading,
                 notifyAccountCreated.detail, link, notifyAccountCreated.linkText )
 
@@ -275,7 +257,8 @@ UserRouter.get('/api/users/tenants', isLoggedIn, isAdmin, async (req: Request, r
     }
 })
 
-// get all tenants
+
+// get all landlords
 UserRouter.get('/api/users/landlords', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
         let filter: any = {role: 'LANDLORD'}

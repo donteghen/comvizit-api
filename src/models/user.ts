@@ -91,7 +91,7 @@ const userSchema = new Schema<IUser>({
 
 
 userSchema.pre('save', async function (next: NextFunction){
-    const user = this
+    const user: IUser = this
 
     if (user.isModified('password')) {
         const passwordHash = await hash(user.password, 8)
@@ -100,5 +100,5 @@ userSchema.pre('save', async function (next: NextFunction){
     next()
 })
 
-const User = model<IUser>('Admins', userSchema)
+const User = model<IUser>('Users', userSchema)
 export {User}
