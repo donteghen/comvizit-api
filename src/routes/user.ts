@@ -85,10 +85,10 @@ UserRouter.patch('/api/users/all/:id/verify', async (req: Request, res: Response
 // ***************************** Shared Restricted endpoints ***********************************************
 
 // upload authenticated user's avatar
-UserRouter.patch('/api/users/all/:id/avatarUpload', isLoggedIn,  multerUpload.single('avatar'), async (req: Request, res: Response) => {
+UserRouter.patch('/api/user/avatarUpload', isLoggedIn,  multerUpload.single('avatar'), async (req: Request, res: Response) => {
     try {
 
-        const user = await User.findById(req.params.id)
+        const user = await User.findOne({email: req.user.email})
         if (!user) {
             throw NO_USER
         }
@@ -100,11 +100,11 @@ UserRouter.patch('/api/users/all/:id/avatarUpload', isLoggedIn,  multerUpload.si
         const folderPath = (role: string): string => {
             switch (role) {
                 case 'TENANT':
-                    return 'Users/Tenants/Avatars/'
+                    return 'Avatars/Users/Tenants'
                 case 'LANDLORD':
-                    return 'Users/Landlords/Avatars/'
+                    return 'Avatars/Users/Landlords'
                 case 'ADMIN':
-                    return 'Users/Admins/Avatars/'
+                    return 'Avatars/Users/Admins'
                 default:
                     throw new Error('Invalid user role, avatar upload failed!')
             }
@@ -163,7 +163,7 @@ UserRouter.post('/api/users/signup', async (req: Request, res: Response) => {
             verifyAccountTemplate.detail, link, verifyAccountTemplate.linkText )
 
         // Send a notification email to the admin
-        const _link = `${process.env.CLIENT_URL}`
+        const _link = `${process.env.CLIENT_URL}/dashboard`
         const adminEmail = process.env.SENDGRID_VERIFIED_SENDER
         const _success = await mailer(adminEmail, notifyAccountCreated.subject, notifyAccountCreated.heading,
                 notifyAccountCreated.detail, link, notifyAccountCreated.linkText )
@@ -216,11 +216,11 @@ UserRouter.patch('/api/users/all/:id/profile/update', isLoggedIn,  async (req: R
         if (Object.keys(updatedProps).length > 0) {
             updatedProps.updated = Date.now()
         }
-        const updatedUser = await User.findByIdAndUpdate(req.params.id, {$set: updatedProps}, {runValidators:true})
-        if (!updatedUser) {
+        const userIsUpdated = await User.findByIdAndUpdate(req.params.id, {$set: updatedProps}, {runValidators:true})
+        if (!userIsUpdated) {
             throw USER_UPDATE_OPERATION_FAILED
         }
-
+        const updatedUser = await User.findById(req.params.id)
         res.send({ok: true, data: updatedUser})
     } catch (error) {
         if (error.name === 'ValidationError') {
@@ -299,10 +299,17 @@ UserRouter.get('/api/users/admins', isLoggedIn, isAdmin, async (req: Request, re
 // approve user's account
 UserRouter.patch('/api/users/all/:id/approve', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
-
+        // check if the session user is an admin, if no then it should fail as only an admin can approve a landlord or tenant account
+        if (req.user.role !== 'ADMIN') {
+            throw NOT_AUTHORIZED
+        }
         const user = await User.findById(req.params.id)
         if (!user) {
             throw NO_USER
+        }
+        // check if the user being approved is an admin, if yes then it should fail as only the superadmin can approve an admin user
+        if (user.role === 'ADMIN') {
+            throw NOT_AUTHORIZED
         }
 
         user.approved = true

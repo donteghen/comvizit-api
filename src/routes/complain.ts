@@ -1,9 +1,10 @@
 import express, { Request, Response } from 'express'
 import { NOT_FOUND, DELETE_OPERATION_FAILED } from '../constants/error';
-import { isAdmin, isLoggedIn } from '../middleware/auth-middleware';
+import { isAdmin, isLoggedIn, isTenant } from '../middleware/auth-middleware';
 import { Complain } from "../models/complain";
 import { mailer } from '../helper/mailer';
 import {notifyNewComplained} from '../utils/mailer-templates'
+import { Types } from 'mongoose';
 
 
 const ComplainRouter = express.Router()
@@ -13,8 +14,10 @@ function setFilter(key:string, value:any): any {
     switch (key) {
         case 'processed':
             return {'replied': value}
-        case 'email':
-            return {'email': value}
+        case 'type':
+            return {'type': value}
+        case 'target':
+            return {'target': new Types.ObjectId(value)}
         default:
             return {}
     }
@@ -23,14 +26,13 @@ function setFilter(key:string, value:any): any {
 // ***************************** public enpoints ***********************************************
 
 // create new complain
-ComplainRouter.post('/api/complains', async (req: Request, res: Response) => {
+ComplainRouter.post('/api/complains', isLoggedIn, isTenant, async (req: Request, res: Response) => {
     try {
-        const {fullname, email, phone, target, subject, message } = req.body
+        const {type, targetId, subject, message } = req.body
         const newComplain = new Complain({
-            fullname,
-            email,
-            phone,
-            target,
+            plaintiveId: new Types.ObjectId(req.user.id),
+            type,
+            targetId,
             subject,
             message
         })

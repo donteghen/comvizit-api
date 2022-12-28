@@ -17,7 +17,7 @@ exports.notifyAccountCreated = {
 exports.welcomeTemplate = {
     subject: 'Welcome to Comvizit',
     heading: 'Welcome to Comvizit, the one of a kind property rental platform',
-    detail: 'Thanks for verifying your account. You account registration is now completely, so you may start enjoying the features.<br/> <strong>Visit your profile</strong>',
+    detail: 'Thanks for verifying your account. Your account registration is now completely, so you may start enjoying the features.<br/> <strong>Visit your profile</strong>',
     linkText: 'Go to Platform'
 };
 exports.notifyAccountVerified = {

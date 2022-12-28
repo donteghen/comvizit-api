@@ -90,10 +90,10 @@ UserRouter.patch('/api/users/all/:id/verify', (req, res) => __awaiter(void 0, vo
 }));
 // ***************************** Shared Restricted endpoints ***********************************************
 // upload authenticated user's avatar
-UserRouter.patch('/api/users/all/:id/avatarUpload', auth_middleware_1.isLoggedIn, multerUpload_1.default.single('avatar'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+UserRouter.patch('/api/user/avatarUpload', auth_middleware_1.isLoggedIn, multerUpload_1.default.single('avatar'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _c, _d, _e;
     try {
-        const user = yield user_1.User.findById(req.params.id);
+        const user = yield user_1.User.findOne({ email: req.user.email });
         if (!user) {
             throw error_1.NO_USER;
         }
@@ -104,11 +104,11 @@ UserRouter.patch('/api/users/all/:id/avatarUpload', auth_middleware_1.isLoggedIn
         const folderPath = (role) => {
             switch (role) {
                 case 'TENANT':
-                    return 'Users/Tenants/Avatars/';
+                    return 'Avatars/Users/Tenants';
                 case 'LANDLORD':
-                    return 'Users/Landlords/Avatars/';
+                    return 'Avatars/Users/Landlords';
                 case 'ADMIN':
-                    return 'Users/Admins/Avatars/';
+                    return 'Avatars/Users/Admins';
                 default:
                     throw new Error('Invalid user role, avatar upload failed!');
             }
@@ -157,7 +157,7 @@ UserRouter.post('/api/users/signup', (req, res) => __awaiter(void 0, void 0, voi
         const link = `${process.env.CLIENT_URL}/account-verification?userId=${user.id}`;
         const success = yield (0, mailer_1.mailer)(user.email, mailer_templates_1.verifyAccountTemplate.subject, mailer_templates_1.verifyAccountTemplate.heading, mailer_templates_1.verifyAccountTemplate.detail, link, mailer_templates_1.verifyAccountTemplate.linkText);
         // Send a notification email to the admin
-        const _link = `${process.env.CLIENT_URL}`;
+        const _link = `${process.env.CLIENT_URL}/dashboard`;
         const adminEmail = process.env.SENDGRID_VERIFIED_SENDER;
         const _success = yield (0, mailer_1.mailer)(adminEmail, mailer_templates_1.notifyAccountCreated.subject, mailer_templates_1.notifyAccountCreated.heading, mailer_templates_1.notifyAccountCreated.detail, link, mailer_templates_1.notifyAccountCreated.linkText);
         res.send({ ok: true });
@@ -208,10 +208,11 @@ UserRouter.patch('/api/users/all/:id/profile/update', auth_middleware_1.isLogged
         if (Object.keys(updatedProps).length > 0) {
             updatedProps.updated = Date.now();
         }
-        const updatedUser = yield user_1.User.findByIdAndUpdate(req.params.id, { $set: updatedProps }, { runValidators: true });
-        if (!updatedUser) {
+        const userIsUpdated = yield user_1.User.findByIdAndUpdate(req.params.id, { $set: updatedProps }, { runValidators: true });
+        if (!userIsUpdated) {
             throw error_1.USER_UPDATE_OPERATION_FAILED;
         }
+        const updatedUser = yield user_1.User.findById(req.params.id);
         res.send({ ok: true, data: updatedUser });
     }
     catch (error) {
@@ -288,9 +289,17 @@ UserRouter.get('/api/users/admins', auth_middleware_1.isLoggedIn, auth_middlewar
 UserRouter.patch('/api/users/all/:id/approve', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _q, _r;
     try {
+        // check if the session user is an admin, if no then it should fail as only an admin can approve a landlord or tenant account
+        if (req.user.role !== 'ADMIN') {
+            throw error_1.NOT_AUTHORIZED;
+        }
         const user = yield user_1.User.findById(req.params.id);
         if (!user) {
             throw error_1.NO_USER;
+        }
+        // check if the user being approved is an admin, if yes then it should fail as only the superadmin can approve an admin user
+        if (user.role === 'ADMIN') {
+            throw error_1.NOT_AUTHORIZED;
         }
         user.approved = true;
         user.updated = Date.now();

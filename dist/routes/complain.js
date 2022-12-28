@@ -19,6 +19,7 @@ const auth_middleware_1 = require("../middleware/auth-middleware");
 const complain_1 = require("../models/complain");
 const mailer_1 = require("../helper/mailer");
 const mailer_templates_1 = require("../utils/mailer-templates");
+const mongoose_1 = require("mongoose");
 const ComplainRouter = express_1.default.Router();
 exports.ComplainRouter = ComplainRouter;
 // query helper function
@@ -26,23 +27,24 @@ function setFilter(key, value) {
     switch (key) {
         case 'processed':
             return { 'replied': value };
-        case 'email':
-            return { 'email': value };
+        case 'type':
+            return { 'type': value };
+        case 'target':
+            return { 'target': new mongoose_1.Types.ObjectId(value) };
         default:
             return {};
     }
 }
 // ***************************** public enpoints ***********************************************
 // create new complain
-ComplainRouter.post('/api/complains', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+ComplainRouter.post('/api/complains', auth_middleware_1.isLoggedIn, auth_middleware_1.isTenant, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        const { fullname, email, phone, target, subject, message } = req.body;
+        const { type, targetId, subject, message } = req.body;
         const newComplain = new complain_1.Complain({
-            fullname,
-            email,
-            phone,
-            target,
+            plaintiveId: new mongoose_1.Types.ObjectId(req.user.id),
+            type,
+            targetId,
             subject,
             message
         });

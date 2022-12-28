@@ -1,4 +1,3 @@
-import { kStringMaxLength } from 'buffer';
 import { Document, Types } from 'mongoose';
 
 export type ErrorResponse = {
@@ -67,12 +66,11 @@ export type RentUtilities = {
 }
 
 export interface IComplain {
-    target: string,
+    targetId: Types.ObjectId,
+    type: string,
+    plaintiveId: Types.ObjectId,
     subject: string,
     message: string,
-    fullname: string,
-    email: string,
-    phone: string,
     processed: boolean,
     updated: number
 }

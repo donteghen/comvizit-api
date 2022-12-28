@@ -2,10 +2,26 @@ import {Schema, model} from 'mongoose'
 
 import { IComplain } from './interfaces'
 
+/**
+ * Complain schema, represents the document property definition for Fetatured Properties
+ * @constructor Complain
+ * @param {Schema.Types.ObjectId} targetId - The Id of the corresponding Property
+ * @param {string} type - The type of complain, could be 'LANDLORD' or 'PROPERTY'
+ * @param {string} subject - The subject of the complain
+ * @param {string} message - The detailed complain message
+ * @param {boolean} processed - The processed status of the complain
+ * @param {number} updated - A timestamp in millseconds of the last time this doc was updated
+ * @param {Schema.Types.ObjectId} plaintiveId - The Id of the user issuing the complain
+ */
 const complainSchema = new Schema<IComplain>({
-    target: {
-        type: String,
+    targetId: {
+        type: Schema.Types.ObjectId,
         required: true
+    },
+    type: {
+        type: String,
+        required: true,
+        enum: ['PROPERTY', 'LANDLORD']
     },
     subject: {
         type: String,
@@ -13,18 +29,6 @@ const complainSchema = new Schema<IComplain>({
         enum: ['Report a Landlord', 'Report a Property']
     },
     message: {
-        type: String,
-        required: true
-    },
-    fullname: {
-        type: String,
-        required: true
-    },
-    email: {
-        type: String,
-        required: true
-    },
-    phone: {
         type: String,
         required: true
     },
