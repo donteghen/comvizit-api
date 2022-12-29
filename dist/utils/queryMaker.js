@@ -7,6 +7,7 @@ function categoryAggregator(quaterRef) {
         {
             $match: {
                 'quater.ref': quaterRef,
+                'availability': 'Available'
             }
         },
         {
@@ -294,6 +295,11 @@ function categoryAggregator(quaterRef) {
 exports.categoryAggregator = categoryAggregator;
 function townAggregator() {
     return [
+        {
+            $match: {
+                'availability': 'Available'
+            }
+        },
         {
             $facet: {
                 "Douala": [

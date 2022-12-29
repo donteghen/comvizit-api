@@ -2,6 +2,7 @@
 import {createClient} from 'redis'
 import { FeaturedProperties } from '../models/featured-properties'
 const redisClient = createClient({legacyMode: true })
+redisClient.connect().catch(console.error);
 const CronJob = require('cron-cluster')(redisClient).CronJob
 
 

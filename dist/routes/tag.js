@@ -17,6 +17,7 @@ const express_1 = __importDefault(require("express"));
 const auth_middleware_1 = require("../middleware/auth-middleware");
 const tag_1 = require("../models/tag");
 const error_1 = require("../constants/error");
+const mongoose_1 = require("mongoose");
 const TagRouter = express_1.default.Router();
 exports.TagRouter = TagRouter;
 /**
@@ -33,27 +34,36 @@ function setFilter(key, value) {
             return { 'title': value };
         case 'status':
             return { 'status': value };
+        case 'code':
+            return { 'code': value };
         case 'refId':
-            return { 'refId': value };
+            return { 'refId': new mongoose_1.Types.ObjectId(value) };
         default:
             return {};
     }
 }
 // ***************************** public enpoints ***********************************************
 // create new tag
-TagRouter.post('/api/tags/add', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+TagRouter.post('/api/tags/add', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
         const { type, title, code, status, refId, cratedDate } = req.body;
         const existAlready = yield tag_1.Tag.findOne({ $and: [{ refId }, { code }] });
         if (existAlready) {
-            throw (0, error_1.TAG_ALREADY_EXISTS)(existAlready.code, existAlready.type, existAlready.refId.toString());
+            if (existAlready.status === 'Active') {
+                throw (0, error_1.TAG_ALREADY_EXISTS)(existAlready.code, existAlready.type, existAlready.refId.toString());
+            }
+            existAlready.status = 'Active';
+            yield existAlready.save();
+            res.send({ ok: true, data: existAlready });
+            return;
         }
         const newTag = new tag_1.Tag({
+            code,
             type,
             title,
             status,
-            refId,
+            refId: new mongoose_1.Types.ObjectId(refId),
             cratedDate: Number(cratedDate)
         });
         const tag = yield newTag.save();

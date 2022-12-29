@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express'
 import { isAdmin, isLoggedIn } from '../middleware/auth-middleware';
 import { Tag } from "../models/tag";
 import {DELETE_OPERATION_FAILED, INVALID_REQUEST, NOT_FOUND, SAVE_OPERATION_FAILED, TAG_ALREADY_EXISTS} from '../constants/error'
+import {Types} from 'mongoose';
 
 const TagRouter = express.Router()
 
@@ -19,8 +20,10 @@ function setFilter(key:string, value:any): any {
             return {'title': value}
         case 'status':
             return {'status': value}
+        case 'code':
+            return {'code': value}
         case 'refId':
-            return {'refId': value}
+            return {'refId': new Types.ObjectId(value)}
         default:
             return {}
     }
@@ -29,18 +32,26 @@ function setFilter(key:string, value:any): any {
 // ***************************** public enpoints ***********************************************
 
 // create new tag
-TagRouter.post('/api/tags/add', async (req: Request, res: Response) => {
+TagRouter.post('/api/tags/add', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
         const {type, title, code, status, refId, cratedDate} = req.body
         const existAlready = await Tag.findOne({$and: [{refId}, {code}]})
         if (existAlready) {
-            throw TAG_ALREADY_EXISTS(existAlready.code, existAlready.type, existAlready.refId.toString())
+            if (existAlready.status === 'Active') {
+                throw TAG_ALREADY_EXISTS(existAlready.code, existAlready.type, existAlready.refId.toString())
+            }
+            existAlready.status = 'Active'
+            await existAlready.save()
+            res.send({ok: true, data: existAlready})
+            return
         }
+
         const newTag = new Tag({
+            code,
             type,
             title,
             status,
-            refId,
+            refId: new Types.ObjectId(refId),
             cratedDate : Number(cratedDate)
         })
         const tag = await newTag.save()

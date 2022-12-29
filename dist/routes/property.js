@@ -22,6 +22,7 @@ const error_1 = require("../constants/error");
 const mailer_templates_1 = require("../utils/mailer-templates");
 const mailer_1 = require("../helper/mailer");
 const user_1 = require("../models/user");
+const tag_1 = require("../models/tag");
 const PropertyRouter = express_1.default.Router();
 exports.PropertyRouter = PropertyRouter;
 const pageSize = 24; // number of documents returned per request for the get all properties route
@@ -147,8 +148,23 @@ PropertyRouter.get('/api/properties', auth_middleware_1.isLoggedIn, auth_middlew
                 }
             });
         }
-        console.log(filter);
-        const properties = yield property_1.Property.find(filter).populate('ownerId').exec();
+        // console.log(filter, )
+        const properties = yield property_1.Property.aggregate([
+            {
+                $match: filter
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "ownerId",
+                    foreignField: "_id",
+                    as: "owner"
+                }
+            },
+            {
+                $unwind: "$owner"
+            }
+        ]);
         res.send({ ok: true, data: properties });
     }
     catch (error) {
@@ -215,7 +231,7 @@ PropertyRouter.get('/api/count-properties-per-town', (req, res) => __awaiter(voi
 PropertyRouter.get('/api/properties/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _f;
     try {
-        const property = yield property_1.Property.findById(req.params.id).populate('ownerId').exec();
+        const property = yield property_1.Property.findById(req.params.id);
         if (!property) {
             throw error_1.NOT_FOUND;
         }
@@ -247,7 +263,7 @@ PropertyRouter.get('/api/property/:propertyId/related-properties/:quaterref', (r
 PropertyRouter.post('/api/properties', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _h;
     try {
-        const newProperty = new property_1.Property(Object.assign({}, req.body));
+        const newProperty = new property_1.Property(Object.assign(Object.assign({}, req.body), { ownerId: new mongoose_1.Types.ObjectId(req.body.ownerId) }));
         const property = yield newProperty.save();
         res.status(201).send({ ok: true, data: property });
     }
@@ -279,10 +295,11 @@ PropertyRouter.patch('/api/properties/:id/availability/update', auth_middleware_
             propertyOwner = req.user;
         }
         if (req.user.role === 'ADMIN') {
-            propertyOwner = yield user_1.User.findById(req.user.id);
+            propertyOwner = yield user_1.User.findById(property.ownerId);
         }
         // update property availability
         property.availability = req.body.availability;
+        property.updated = Date.now();
         const updatedProperty = yield property.save();
         if (!updatedProperty) {
             throw error_1.SAVE_OPERATION_FAILED;
@@ -353,13 +370,15 @@ PropertyRouter.patch('/api/properties/:id/update-media', auth_middleware_1.isLog
     }
 }));
 // delete property
-PropertyRouter.delete('/api/properties/:id', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+PropertyRouter.delete('/api/properties/:id/delete', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _m;
     try {
         const deletedproperty = yield property_1.Property.findByIdAndDelete(req.params.id);
         if (!deletedproperty) {
             throw error_1.DELETE_OPERATION_FAILED;
         }
+        // delete all corresponding tags
+        yield tag_1.Tag.deleteMany({ refId: deletedproperty._id });
         res.status(201).send({ ok: true });
     }
     catch (error) {

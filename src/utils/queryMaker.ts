@@ -5,6 +5,7 @@ export function categoryAggregator (quaterRef: string): PipelineStage | any {
             {
               $match: {
                 'quater.ref': quaterRef,
+                'availability': 'Available'
               }
             },
 
@@ -328,6 +329,11 @@ export function categoryAggregator (quaterRef: string): PipelineStage | any {
 
 export function townAggregator () : PipelineStage | any  {
   return [
+    {
+      $match: {
+        'availability': 'Available'
+      }
+    },
     {
       $facet:
       {

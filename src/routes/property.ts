@@ -4,11 +4,12 @@ import express, { Request, Response } from 'express'
 import { Types } from "mongoose";
 import { categoryAggregator, townAggregator } from "../utils/queryMaker";
 import { isAdmin, isLoggedIn } from "../middleware/auth-middleware";
-import {DELETE_OPERATION_FAILED, NOT_AUTHORIZED, NOT_FOUND, NOT_PROPERTY_OWNER, SAVE_OPERATION_FAILED} from '../constants/error'
+import {DELETE_OPERATION_FAILED, NOT_AUTHORIZED, NOT_FOUND, NOT_PROPERTY_OWNER, SAVE_OPERATION_FAILED, TAG_ALREADY_EXISTS} from '../constants/error'
 import {notifyPropertyAvailability} from '../utils/mailer-templates'
 import { mailer } from "../helper/mailer";
 import { IUser } from "../models/interfaces";
 import { User } from "../models/user";
+import { Tag } from "../models/tag";
 
 const PropertyRouter = express.Router()
 
@@ -121,8 +122,6 @@ PropertyRouter.get('/api/properties-in-quater/:quaterref', async (req: Request, 
 
         ])
 
-
-
         const resultCount = await Property.countDocuments(mainfilter)
         const totalPages = Math.ceil(resultCount / pageSize)
 
@@ -131,6 +130,7 @@ PropertyRouter.get('/api/properties-in-quater/:quaterref', async (req: Request, 
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
+
 // get all properties
 PropertyRouter.get('/api/properties', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
@@ -143,8 +143,23 @@ PropertyRouter.get('/api/properties', isLoggedIn, isAdmin, async (req: Request, 
                 }
             })
         }
-        console.log(filter, )
-        const properties = await Property.find(filter).populate('ownerId').exec()
+        // console.log(filter, )
+        const properties = await Property.aggregate([
+            {
+                $match: filter
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "ownerId",
+                    foreignField: "_id",
+                    as: "owner"
+                }
+            },
+            {
+                $unwind: "$owner"
+            }
+        ])
 
         res.send({ok: true, data: properties})
     } catch (error) {
@@ -211,7 +226,7 @@ PropertyRouter.get('/api/count-properties-per-town', async (req: Request, res: R
 // get single properties by id
 PropertyRouter.get('/api/properties/:id', async (req: Request, res: Response) => {
     try {
-        const property = await Property.findById(req.params.id).populate('ownerId').exec()
+        const property = await Property.findById(req.params.id)
         if (!property) {
             throw NOT_FOUND
         }
@@ -244,7 +259,8 @@ PropertyRouter.get('/api/property/:propertyId/related-properties/:quaterref', as
 PropertyRouter.post('/api/properties', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
         const newProperty = new Property({
-            ...req.body
+            ...req.body,
+            ownerId: new Types.ObjectId(req.body.ownerId)
         })
         const property = await newProperty.save()
         res.status(201).send({ok: true, data: property})
@@ -277,10 +293,11 @@ PropertyRouter.patch('/api/properties/:id/availability/update', isLoggedIn, asyn
             propertyOwner = req.user
         }
         if (req.user.role === 'ADMIN') {
-            propertyOwner = await User.findById(req.user.id)
+            propertyOwner = await User.findById(property.ownerId)
         }
         // update property availability
         property.availability = req.body.availability
+        property.updated = Date.now()
         const updatedProperty = await property.save()
         if (!updatedProperty) {
             throw SAVE_OPERATION_FAILED
@@ -354,14 +371,19 @@ PropertyRouter.patch('/api/properties/:id/update-media',  isLoggedIn, isAdmin,  
     }
 })
 
+
+
+
+
 // delete property
-PropertyRouter.delete('/api/properties/:id', isLoggedIn, async (req: Request, res: Response) => {
+PropertyRouter.delete('/api/properties/:id/delete', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
         const deletedproperty = await Property.findByIdAndDelete(req.params.id)
         if (!deletedproperty) {
             throw DELETE_OPERATION_FAILED
         }
-
+        // delete all corresponding tags
+        await Tag.deleteMany({refId: deletedproperty._id})
         res.status(201).send({ok: true})
     } catch (error) {
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})

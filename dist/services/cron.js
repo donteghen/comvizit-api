@@ -13,6 +13,7 @@ exports.updatePropertyFeaturingCron = void 0;
 const redis_1 = require("redis");
 const featured_properties_1 = require("../models/featured-properties");
 const redisClient = (0, redis_1.createClient)({ legacyMode: true });
+redisClient.connect().catch(console.error);
 const CronJob = require('cron-cluster')(redisClient).CronJob;
 function updatePropertyFeaturingCron() {
     const job = new CronJob('0 6 * * *', function () {
