@@ -20,18 +20,18 @@ const bcryptjs_1 = require("bcryptjs");
 const passportConfig = () => {
     passport_1.default.use(new passport_local_1.Strategy({ usernameField: "email", passwordField: "password" }, (email, password, done) => __awaiter(void 0, void 0, void 0, function* () {
         const user = yield user_1.User.findOne({ email });
-        if (typeof user.approved !== 'boolean' || !user.approved) {
-            return done(new Error('User permissions pending!'), null);
-        }
-        if (typeof user.isVerified !== 'boolean' || !user.isVerified) {
-            return done(new Error('User account is not yet verified!'), null);
-        }
         if (!user) {
             return done(null, false, { message: "Invalid credentials.\n" });
         }
         if (!(0, bcryptjs_1.compareSync)(password, user.password)) {
             // console.log('Wrong password!')
             return done(null, false, { message: "Invalid credentials.\n" });
+        }
+        if (typeof user.approved !== 'boolean' || !user.approved) {
+            return done(new Error('User permissions pending!'), null);
+        }
+        if (typeof user.isVerified !== 'boolean' || !user.isVerified) {
+            return done(new Error('User account is not yet verified!'), null);
         }
         return done(null, user);
     })));

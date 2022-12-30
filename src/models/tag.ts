@@ -36,6 +36,11 @@ const tagSchema = new Schema<ITag>({
         type: Schema.Types.ObjectId,
         required: true
     },
+    updated: {
+        type: Number,
+        required: true,
+        default: Date.now()
+    },
     createdDate: {
         type: Number,
         required: true,

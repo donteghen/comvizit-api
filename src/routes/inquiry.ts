@@ -107,7 +107,7 @@ InquiryRouter.patch('/api/inquiries/:id/reply', isLoggedIn, isAdmin, async (req:
 })
 
 // delete inquiries
-InquiryRouter.delete('/api/inquiries/:id', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
+InquiryRouter.delete('/api/inquiries/:id/delete', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
         const inquiry = await Inquiry.findByIdAndDelete(req.params.id)
         if (!inquiry) {

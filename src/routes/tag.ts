@@ -34,7 +34,7 @@ function setFilter(key:string, value:any): any {
 // create new tag
 TagRouter.post('/api/tags/add', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
-        const {type, title, code, status, refId, cratedDate} = req.body
+        const {type, title, code, status, refId} = req.body
         const existAlready = await Tag.findOne({$and: [{refId}, {code}]})
         if (existAlready) {
             if (existAlready.status === 'Active') {
@@ -51,8 +51,7 @@ TagRouter.post('/api/tags/add', isLoggedIn, isAdmin, async (req: Request, res: R
             type,
             title,
             status,
-            refId: new Types.ObjectId(refId),
-            cratedDate : Number(cratedDate)
+            refId: new Types.ObjectId(refId)
         })
         const tag = await newTag.save()
         if (!tag) {
@@ -114,6 +113,7 @@ TagRouter.patch('/api/tags/:id/update', isLoggedIn, isAdmin, async (req: Request
                 throw NOT_FOUND
             }
             tag.status = req.body.status
+            tag.updated = Date.now()
             const updatedTag = await tag.save()
             if (!updatedTag) {
                 throw SAVE_OPERATION_FAILED

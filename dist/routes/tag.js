@@ -47,7 +47,7 @@ function setFilter(key, value) {
 TagRouter.post('/api/tags/add', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        const { type, title, code, status, refId, cratedDate } = req.body;
+        const { type, title, code, status, refId } = req.body;
         const existAlready = yield tag_1.Tag.findOne({ $and: [{ refId }, { code }] });
         if (existAlready) {
             if (existAlready.status === 'Active') {
@@ -63,8 +63,7 @@ TagRouter.post('/api/tags/add', auth_middleware_1.isLoggedIn, auth_middleware_1.
             type,
             title,
             status,
-            refId: new mongoose_1.Types.ObjectId(refId),
-            cratedDate: Number(cratedDate)
+            refId: new mongoose_1.Types.ObjectId(refId)
         });
         const tag = yield newTag.save();
         if (!tag) {
@@ -125,6 +124,7 @@ TagRouter.patch('/api/tags/:id/update', auth_middleware_1.isLoggedIn, auth_middl
                 throw error_1.NOT_FOUND;
             }
             tag.status = req.body.status;
+            tag.updated = Date.now();
             const updatedTag = yield tag.save();
             if (!updatedTag) {
                 throw error_1.SAVE_OPERATION_FAILED;

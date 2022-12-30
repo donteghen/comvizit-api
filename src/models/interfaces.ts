@@ -148,5 +148,6 @@ export interface ITag extends Document {
     code: string,
     status: string,
     refId: Types.ObjectId,
-    createdDate: number
+    createdDate: number,
+    updated: number
 }

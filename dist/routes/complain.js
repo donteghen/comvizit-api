@@ -25,12 +25,23 @@ exports.ComplainRouter = ComplainRouter;
 // query helper function
 function setFilter(key, value) {
     switch (key) {
+        case '_id':
+            return { '_id': value };
         case 'processed':
-            return { 'replied': value };
+            let v;
+            if (typeof value === 'string') {
+                v = value === 'true' ? true : false;
+            }
+            else {
+                v = value;
+            }
+            return { 'processed': v };
         case 'type':
             return { 'type': value };
-        case 'target':
-            return { 'target': new mongoose_1.Types.ObjectId(value) };
+        case 'plaintiveId':
+            return { 'plaintiveId': new mongoose_1.Types.ObjectId(value) };
+        case 'targetId':
+            return { 'targetId': new mongoose_1.Types.ObjectId(value) };
         default:
             return {};
     }
@@ -121,8 +132,12 @@ ComplainRouter.patch('/api/complains/:id/process', auth_middleware_1.isLoggedIn,
 // delete a complain by id
 ComplainRouter.delete('/api/complains/:id/delete', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const complain = yield complain_1.Complain.findByIdAndDelete(req.params.id);
+        const complain = yield complain_1.Complain.findById(req.params.id);
         if (!complain) {
+            throw error_1.NOT_FOUND;
+        }
+        const deleteResult = yield complain_1.Complain.deleteOne({ _id: complain._id });
+        if (deleteResult.deletedCount !== 1) {
             throw error_1.DELETE_OPERATION_FAILED;
         }
         res.send({ ok: true });

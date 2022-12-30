@@ -2,6 +2,15 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Contact = void 0;
 const mongoose_1 = require("mongoose");
+/**
+ * Contact-me schema, represents the document property definition for contact-me message
+ * @constructor Contact
+ * @param {string} fullname - The fullname of the person to be contacted by comvizit support
+ * @param {string} email - The email of the person to be contacted by comvizit support
+ * @param {string} phone - The telephone number of the person to be contacted by comvizit support
+ * @param {boolean} replied - Replied status of the contact-me document (true / false)
+ * @param {number} updated - A timestamp in millseconds of the last time this doc was updated
+ */
 const contactSchema = new mongoose_1.Schema({
     fullname: {
         type: String,

@@ -36,6 +36,11 @@ const tagSchema = new mongoose_1.Schema({
         type: mongoose_1.Schema.Types.ObjectId,
         required: true
     },
+    updated: {
+        type: Number,
+        required: true,
+        default: Date.now()
+    },
     createdDate: {
         type: Number,
         required: true,

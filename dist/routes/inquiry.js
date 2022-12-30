@@ -116,7 +116,7 @@ InquiryRouter.patch('/api/inquiries/:id/reply', auth_middleware_1.isLoggedIn, au
     }
 }));
 // delete inquiries
-InquiryRouter.delete('/api/inquiries/:id', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+InquiryRouter.delete('/api/inquiries/:id/delete', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _e;
     try {
         const inquiry = yield inquiry_1.Inquiry.findByIdAndDelete(req.params.id);

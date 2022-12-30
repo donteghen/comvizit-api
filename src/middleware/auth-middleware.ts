@@ -3,43 +3,44 @@ import {Strategy as LocalStrategy} from 'passport-local'
 import passport from "passport";
 import { User } from "../models/user";
 import {compareSync} from 'bcryptjs'
+import { AUTH_FAILED } from "../constants/error";
 
 const passportConfig = () => {
-    passport.use(
-      new LocalStrategy(
-        { usernameField: "email", passwordField: "password" },
-        async (email, password, done) => {
-          const user = await User.findOne({ email });
-          if (typeof user.approved !== 'boolean' || !user.approved) {
-            return done(new Error('User permissions pending!'), null)
-          }
-          if (typeof user.isVerified !== 'boolean' || !user.isVerified) {
-            return done(new Error('User account is not yet verified!'), null)
-          }
-          if (!user) {
-            return done(null, false, { message: "Invalid credentials.\n" });
-          }
-          if (!compareSync(password, user.password)) {
-            // console.log('Wrong password!')
-            return done(null, false, { message: "Invalid credentials.\n" });
-          }
-          return done(null, user);
+      passport.use(
+        new LocalStrategy(
+          { usernameField: "email", passwordField: "password" },
+          async (email, password, done) => {
+            const user = await User.findOne({ email });
+            if (!user) {
+              return done(null, false, { message: "Invalid credentials.\n" });
+            }
+            if (!compareSync(password, user.password)) {
+              // console.log('Wrong password!')
+              return done(null, false, { message: "Invalid credentials.\n" });
+            }
+            if (typeof user.approved !== 'boolean' || !user.approved) {
+              return done(new Error('User permissions pending!'), null)
+            }
+            if (typeof user.isVerified !== 'boolean' || !user.isVerified) {
+              return done(new Error('User account is not yet verified!'), null)
+            }
+            return done(null, user);
 
+          }
+        )
+      );
+
+      passport.serializeUser((user, done) => {
+        done(null, user.id);
+      });
+
+      passport.deserializeUser(async (id, done) => {
+        const user = await User.findById(id);
+        if (!user) {
+          done(new Error('deserialize failed!'), false);
         }
-      )
-    );
-
-    passport.serializeUser((user, done) => {
-      done(null, user.id);
-    });
-
-    passport.deserializeUser(async (id, done) => {
-      const user = await User.findById(id);
-      if (!user) {
-        done(new Error('deserialize failed!'), false);
-      }
-      done(null, user);
-    });
+        done(null, user);
+      });
 };
 
 // helper function that checks if user is authenticated

@@ -26,6 +26,8 @@ function setFilter(key, value) {
     switch (key) {
         case 'replied':
             return { 'replied': value };
+        case 'fullname':
+            return { fullname: { "$regex": value, $options: 'i' } };
         case 'email':
             return { 'email': value };
         default:
@@ -93,7 +95,7 @@ ContactRouter.get('/api/contacts/:id', auth_middleware_1.isLoggedIn, auth_middle
     }
 }));
 // make contact as replied
-ContactRouter.patch('/api/contacts/:id/reply', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+ContactRouter.patch('/api/contacts/:id/reply', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _d;
     try {
         const contact = yield contact_1.Contact.findById(req.params.id);
@@ -114,12 +116,16 @@ ContactRouter.patch('/api/contacts/:id/reply', auth_middleware_1.isLoggedIn, (re
     }
 }));
 // delete contact
-ContactRouter.delete('/api/contacts/:id', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+ContactRouter.delete('/api/contacts/:id/delete', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _e;
     try {
-        const contact = yield contact_1.Contact.findByIdAndDelete(req.params.id);
+        const contact = yield contact_1.Contact.findById(req.params.id);
         if (!contact) {
             throw error_1.NOT_FOUND;
+        }
+        const deleteResult = yield contact_1.Contact.deleteOne({ _id: contact._id });
+        if (deleteResult.deletedCount !== 1) {
+            throw error_1.DELETE_OPERATION_FAILED;
         }
         res.send({ ok: true });
     }

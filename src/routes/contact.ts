@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express'
-import { NOT_FOUND } from '../constants/error';
+import { DELETE_OPERATION_FAILED, NOT_FOUND } from '../constants/error';
 import { isAdmin, isLoggedIn } from '../middleware/auth-middleware';
 import { Contact } from "../models/contact";
 import { mailer } from '../helper/mailer';
@@ -12,6 +12,8 @@ function setFilter(key:string, value:any): any {
     switch (key) {
         case 'replied':
             return {'replied': value}
+        case 'fullname':
+            return {fullname: { "$regex": value, $options: 'i'}}
         case 'email':
             return {'email': value}
         default:
@@ -81,7 +83,7 @@ ContactRouter.get('/api/contacts/:id', isLoggedIn, isAdmin, async (req: Request,
 })
 
 // make contact as replied
-ContactRouter.patch('/api/contacts/:id/reply', isLoggedIn, async (req: Request, res: Response) => {
+ContactRouter.patch('/api/contacts/:id/reply', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
         const contact = await Contact.findById(req.params.id)
         if (!contact) {
@@ -102,11 +104,15 @@ ContactRouter.patch('/api/contacts/:id/reply', isLoggedIn, async (req: Request, 
 })
 
 // delete contact
-ContactRouter.delete('/api/contacts/:id', isLoggedIn, async (req: Request, res: Response) => {
+ContactRouter.delete('/api/contacts/:id/delete', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
-        const contact = await Contact.findByIdAndDelete(req.params.id)
+        const contact = await Contact.findById(req.params.id)
         if (!contact) {
             throw NOT_FOUND
+        }
+        const deleteResult = await Contact.deleteOne({_id: contact._id})
+        if (deleteResult.deletedCount !== 1) {
+            throw DELETE_OPERATION_FAILED
         }
         res.send({ok: true})
     } catch (error) {

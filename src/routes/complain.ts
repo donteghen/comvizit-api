@@ -12,12 +12,23 @@ const ComplainRouter = express.Router()
 // query helper function
 function setFilter(key:string, value:any): any {
     switch (key) {
+        case '_id':
+            return {'_id': value}
         case 'processed':
-            return {'replied': value}
+            let v: any
+            if (typeof value === 'string') {
+                v = value === 'true' ? true : false
+            }
+            else {
+                v = value
+            }
+            return {'processed': v}
         case 'type':
             return {'type': value}
-        case 'target':
-            return {'target': new Types.ObjectId(value)}
+        case 'plaintiveId':
+            return {'plaintiveId': new Types.ObjectId(value)}
+        case 'targetId':
+            return {'targetId': new Types.ObjectId(value)}
         default:
             return {}
     }
@@ -112,8 +123,12 @@ ComplainRouter.patch('/api/complains/:id/process', isLoggedIn, isAdmin, async (r
 // delete a complain by id
 ComplainRouter.delete('/api/complains/:id/delete', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
-        const complain = await Complain.findByIdAndDelete(req.params.id)
+        const complain = await Complain.findById(req.params.id)
         if (!complain) {
+            throw NOT_FOUND
+        }
+        const deleteResult = await Complain.deleteOne({_id: complain._id})
+        if (deleteResult.deletedCount !== 1) {
             throw DELETE_OPERATION_FAILED
         }
         res.send({ok: true})

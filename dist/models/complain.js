@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Complain = void 0;
 const mongoose_1 = require("mongoose");
 /**
- * Complain schema, represents the document property definition for Fetatured Properties
+ * Complain schema, represents the document property definition for a complain
  * @constructor Complain
  * @param {Schema.Types.ObjectId} targetId - The Id of the corresponding Property
  * @param {string} type - The type of complain, could be 'LANDLORD' or 'PROPERTY'
@@ -15,6 +15,10 @@ const mongoose_1 = require("mongoose");
  */
 const complainSchema = new mongoose_1.Schema({
     targetId: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        required: true
+    },
+    plaintiveId: {
         type: mongoose_1.Schema.Types.ObjectId,
         required: true
     },

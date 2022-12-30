@@ -3,7 +3,7 @@ import {Schema, model} from 'mongoose'
 import { IComplain } from './interfaces'
 
 /**
- * Complain schema, represents the document property definition for Fetatured Properties
+ * Complain schema, represents the document property definition for a complain
  * @constructor Complain
  * @param {Schema.Types.ObjectId} targetId - The Id of the corresponding Property
  * @param {string} type - The type of complain, could be 'LANDLORD' or 'PROPERTY'
@@ -15,6 +15,10 @@ import { IComplain } from './interfaces'
  */
 const complainSchema = new Schema<IComplain>({
     targetId: {
+        type: Schema.Types.ObjectId,
+        required: true
+    },
+    plaintiveId: {
         type: Schema.Types.ObjectId,
         required: true
     },
