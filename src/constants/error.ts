@@ -146,3 +146,31 @@ export const PROPERTY_IS_ALREADY_FEATURED: ErrorResponse = {
     message: 'This property is already featured',
     messageFr: 'french this property is already featured'
 }
+
+export const INVALID_PROPERTY_ID_FOR_FEATURING: ErrorResponse = {
+    name: 'NOT INVALID_PROPERTY_ID_FOR_FEATURING',
+    code: 1017,
+    message: 'The provided property id doesn\'t match any existing Property.',
+    messageFr: 'french The provided property id doesn\'t match any existing Property'
+}
+
+export const PROPERTY_UNAVAILABLE_FOR_FEATURING: ErrorResponse = {
+    name: 'NOT PROPERTY_UNAVAILABLE_FOR_FEATURING',
+    code: 1017,
+    message: 'The provided property isn\'t available for featuring.',
+    messageFr: 'french The provided property isn\'t available for featuring.'
+}
+
+export const INVALID_RESET_TOKEN: ErrorResponse = {
+    name: 'NOT INVALID_RESET_TOKEN',
+    code: 1018,
+    message: 'The reset token provided is invalid',
+    messageFr: 'french The reset token provided is invalid'
+}
+
+export const RESET_TOKEN_DEACTIVED: ErrorResponse = {
+    name: 'NOT RESET_TOKEN_DEACTIVED',
+    code: 1019,
+    message: 'The reset token provided is no longer active',
+    messageFr: 'french The reset token provided is no longer active'
+}

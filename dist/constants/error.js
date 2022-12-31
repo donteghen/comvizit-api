@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PROPERTY_IS_ALREADY_FEATURED = exports.INVALID_REQUEST = exports.TAG_ALREADY_EXISTS = exports.NOT_PROPERTY_OWNER = exports.EMAIL_ALREADY_EXITS = exports.AUTH_FAILED = exports.PASSWORD_INCORRECT = exports.LOGIN_FAILED = exports.DELETE_OPERATION_FAILED = exports.USER_UPDATE_OPERATION_FAILED = exports.SAVE_OPERATION_FAILED = exports.NEW_PASSWORD_IS_INVALID = exports.OLD_PASSWORD_IS_INCORRECT = exports.NO_ADMIN = exports.NO_LANDLORD = exports.NO_TENANT = exports.NO_USER = exports.NOT_AUTHORIZED = exports.NOT_FOUND = exports.NOT_SPECIFIED = void 0;
+exports.RESET_TOKEN_DEACTIVED = exports.INVALID_RESET_TOKEN = exports.PROPERTY_UNAVAILABLE_FOR_FEATURING = exports.INVALID_PROPERTY_ID_FOR_FEATURING = exports.PROPERTY_IS_ALREADY_FEATURED = exports.INVALID_REQUEST = exports.TAG_ALREADY_EXISTS = exports.NOT_PROPERTY_OWNER = exports.EMAIL_ALREADY_EXITS = exports.AUTH_FAILED = exports.PASSWORD_INCORRECT = exports.LOGIN_FAILED = exports.DELETE_OPERATION_FAILED = exports.USER_UPDATE_OPERATION_FAILED = exports.SAVE_OPERATION_FAILED = exports.NEW_PASSWORD_IS_INVALID = exports.OLD_PASSWORD_IS_INCORRECT = exports.NO_ADMIN = exports.NO_LANDLORD = exports.NO_TENANT = exports.NO_USER = exports.NOT_AUTHORIZED = exports.NOT_FOUND = exports.NOT_SPECIFIED = void 0;
 exports.NOT_SPECIFIED = {
     name: 'NOT SPECIFIED',
     code: 1000,
@@ -123,5 +123,29 @@ exports.PROPERTY_IS_ALREADY_FEATURED = {
     code: 1016,
     message: 'This property is already featured',
     messageFr: 'french this property is already featured'
+};
+exports.INVALID_PROPERTY_ID_FOR_FEATURING = {
+    name: 'NOT INVALID_PROPERTY_ID_FOR_FEATURING',
+    code: 1017,
+    message: 'The provided property id doesn\'t match any existing Property.',
+    messageFr: 'french The provided property id doesn\'t match any existing Property'
+};
+exports.PROPERTY_UNAVAILABLE_FOR_FEATURING = {
+    name: 'NOT PROPERTY_UNAVAILABLE_FOR_FEATURING',
+    code: 1017,
+    message: 'The provided property isn\'t available for featuring.',
+    messageFr: 'french The provided property isn\'t available for featuring.'
+};
+exports.INVALID_RESET_TOKEN = {
+    name: 'NOT INVALID_RESET_TOKEN',
+    code: 1018,
+    message: 'The reset token provided is invalid',
+    messageFr: 'french The reset token provided is invalid'
+};
+exports.RESET_TOKEN_DEACTIVED = {
+    name: 'NOT RESET_TOKEN_DEACTIVED',
+    code: 1019,
+    message: 'The reset token provided is no longer active',
+    messageFr: 'french The reset token provided is no longer active'
 };
 //# sourceMappingURL=error.js.map

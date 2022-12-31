@@ -17,6 +17,7 @@ const express_1 = __importDefault(require("express"));
 const error_1 = require("../constants/error");
 const auth_middleware_1 = require("../middleware/auth-middleware");
 const featured_properties_1 = require("../models/featured-properties");
+const property_1 = require("../models/property");
 const FeaturedRouter = express_1.default.Router();
 exports.FeaturedRouter = FeaturedRouter;
 /**
@@ -41,16 +42,46 @@ function setFilter(key, value) {
 FeaturedRouter.get('/api/featured/properties', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        let filter = {};
+        let matchFilter = {};
+        const pipeline = [{ $sort: { createAt: -1 } }];
+        let subpipeline = [
+            {
+                $lookup: {
+                    from: "properties",
+                    localField: "propertyId",
+                    foreignField: "_id",
+                    as: "property"
+                }
+            },
+            {
+                $unwind: {
+                    path: "$property"
+                }
+            },
+        ];
         const queries = Object.keys(req.query);
         if (queries.length > 0) {
             queries.forEach(key => {
+                if (key === 'quaterref' && req.query[key] !== undefined && req.query[key] !== null) {
+                    subpipeline.push({
+                        $match: {
+                            "property.quater.ref": req.query[key]
+                        }
+                    });
+                }
                 if (req.query[key]) {
-                    filter = Object.assign(filter, setFilter(key, req.query[key]));
+                    matchFilter = Object.assign(matchFilter, setFilter(key, req.query[key]));
                 }
             });
         }
-        const featuredProperties = yield featured_properties_1.FeaturedProperties.find(filter);
+        if (Object.keys(matchFilter).length > 0) {
+            pipeline.push({ $match: matchFilter });
+        }
+        if (subpipeline) {
+            pipeline.push(...subpipeline);
+        }
+        // console.log(pipeline)
+        const featuredProperties = yield featured_properties_1.FeaturedProperties.aggregate(pipeline);
         res.send({ ok: true, data: featuredProperties });
     }
     catch (error) {
@@ -77,6 +108,13 @@ FeaturedRouter.post('/api/featured/properties/create', auth_middleware_1.isLogge
     var _c;
     try {
         const { propertyId, duration } = req.body;
+        const relatedProperty = yield property_1.Property.findById(propertyId);
+        if (!relatedProperty) {
+            throw error_1.INVALID_PROPERTY_ID_FOR_FEATURING;
+        }
+        if (relatedProperty.availability === 'Taken' || relatedProperty.availability === 'Inactive') {
+            throw error_1.PROPERTY_UNAVAILABLE_FOR_FEATURING;
+        }
         const AlreadyFeatured = yield featured_properties_1.FeaturedProperties.findOne({ propertyId });
         if (AlreadyFeatured) {
             throw error_1.PROPERTY_IS_ALREADY_FEATURED;

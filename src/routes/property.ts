@@ -21,6 +21,8 @@ function setFilter(key:string, value:any): any {
     switch (key) {
         case 'ownerId':
             return {'ownerId': new Types.ObjectId(value)}
+        case 'availability':
+            return {'availability': value}
         case 'bedroomCount':
             return {'bedroom': value.toString()}
         case 'propertyType':
@@ -143,7 +145,7 @@ PropertyRouter.get('/api/properties', isLoggedIn, isAdmin, async (req: Request, 
                 }
             })
         }
-        // console.log(filter, )
+        // console.log(req.query, filter)
         const properties = await Property.aggregate([
             {
                 $match: filter

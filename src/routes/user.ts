@@ -8,7 +8,11 @@ import cloudinary from '../config/cloudinary'
 import { MulterError } from 'multer'
 import { mailer } from '../helper/mailer'
 import {welcomeTemplate, notifyAccountCreated, verifyAccountTemplate, notifyAccountApproved, notifyAccountVerified, } from '../utils/mailer-templates'
-import { DELETE_OPERATION_FAILED, NOT_AUTHORIZED, NOT_FOUND, NO_USER, SAVE_OPERATION_FAILED , USER_UPDATE_OPERATION_FAILED} from '../constants/error'
+import { DELETE_OPERATION_FAILED, INVALID_REQUEST, INVALID_RESET_TOKEN, NEW_PASSWORD_IS_INVALID, NOT_AUTHORIZED, NOT_FOUND, NO_USER, OLD_PASSWORD_IS_INCORRECT, RESET_TOKEN_DEACTIVED, SAVE_OPERATION_FAILED , USER_UPDATE_OPERATION_FAILED} from '../constants/error'
+import {compare} from 'bcryptjs'
+import isStrongPassword from 'validator/lib/isStrongPassword'
+import { Token } from '../models/token'
+import {uuid, isUuid} from 'uuidv4'
 
 
 const UserRouter = express.Router()
@@ -82,7 +86,102 @@ UserRouter.patch('/api/users/all/:id/verify', async (req: Request, res: Response
     }
 })
 
+
+
+
+// reset password endpoint
+UserRouter.post('/api/user/reset-password',  async (req: Request, res: Response) => {
+    try {
+        const user = await User.findOne({email:req.body.email})
+    if (!user) {
+        throw NO_USER
+    }
+    const generatedToken = new Token({
+        owner: user._id,
+        secret: uuid(),
+        createdAt: Date.now()
+    })
+    const newToken = await generatedToken.save()
+    // notify the user via mail for them to complete the process before the token becomes invalid
+    const link = `${process.env.CLIENT_URL}/confirm-reset-password?user=${user.email}&token=${newToken.secret}`
+    const success = mailer(user.email, 'User Password Reset', 'You have requested to reset your password', 'A unique link to reset your password has been generated for you. To reset your password, click the following link and follow the instructions. <strong>This operation has an active life cycle 30 minutes!</strong>', link, 'click to continue', )
+
+    res.send({ok:true})
+    } catch (error) {
+        console.log(error)
+        res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
+    }
+
+})
+
+UserRouter.post('/api/user/confirm-reset-password', async (req: Request, res: Response) => {
+    try {
+        const userEmail = req.query.user
+        const token = req.query.token
+        const {password} = req.body
+
+
+        if (!isUuid(token.toString())) {
+            throw INVALID_RESET_TOKEN
+        }
+        const user = await User.findOne({email: userEmail})
+        if (!user) {
+            throw NO_USER
+        }
+
+        const resetToken = await Token.findOne({$and: [
+            {owner: user._id},
+             {secret: token}
+        ]})
+
+        if (!resetToken) {
+            throw INVALID_REQUEST
+        }
+
+        if (Date.now() - resetToken.generatedAt > Number(process.env.PASSWORD_RESET_CYCLE_DURATION)){
+            throw RESET_TOKEN_DEACTIVED
+        }
+        if (!password || !isStrongPassword(password, {minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1})) {
+            throw NEW_PASSWORD_IS_INVALID
+        }
+        user.password = password.toString()
+        await user.save()
+        await Token.deleteMany({owner:user._id})
+        res.send({ok:true})
+    } catch (error) {
+        // console.log(error)
+        res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
+    }
+})
+
 // ***************************** Shared Restricted endpoints ***********************************************
+
+// Change user password
+UserRouter.post('/api/user/profile/change-password', isLoggedIn, async (req: Request, res: Response) => {
+    try {
+        const user = await User.findById(req.user)
+        if (!user) {
+            let error = new Error()
+            error = NO_USER
+            throw error
+        }
+        const {newPassword, oldPassword} = req.body
+        const isMatched = await compare(oldPassword, user.password);
+
+        if (!isMatched){
+            throw OLD_PASSWORD_IS_INCORRECT
+        }
+        if (!isStrongPassword(newPassword, {minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1})) {
+            throw NEW_PASSWORD_IS_INVALID
+        }
+        user.password = newPassword
+        const updatedUser = await user.save()
+        res.send({ok:true, data: updatedUser})
+    } catch (error) {
+        // console.log(error)
+        res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
+    }
+})
 
 // upload authenticated user's avatar
 UserRouter.patch('/api/user/avatarUpload', isLoggedIn,  multerUpload.single('avatar'), async (req: Request, res: Response) => {

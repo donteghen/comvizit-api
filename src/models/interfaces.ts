@@ -151,3 +151,9 @@ export interface ITag extends Document {
     createdDate: number,
     updated: number
 }
+
+export interface IToken extends Document {
+    owner: Types.ObjectId,
+    secret: string,
+    generatedAt: number
+}

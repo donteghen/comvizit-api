@@ -17,6 +17,24 @@ const mongoose_1 = require("mongoose");
 const bcryptjs_1 = require("bcryptjs");
 const isEmail_1 = __importDefault(require("validator/lib/isEmail"));
 const isStrongPassword_1 = __importDefault(require("validator/lib/isStrongPassword"));
+/**
+ * User schema, represents the document property definition for a User
+ * @constructor User
+ * @param {string} fullname - User's full name
+ * @param {string} email - User's email
+ * @param {string} password - TUser's password
+ * @param {string} phone - User's telephone number
+ * @param {boolean} approved - User account approved state (approved by admin)
+ * @param {boolean} isVerified - User account(email) verification state (verified by user)
+ * @param {number} updated - A timestamp in millseconds of the last time this doc was updated
+ * @param {string} address.town - User's town
+ * @param {string} address.quater - User's quater
+ * @param {string} address.street - User's street
+ * @param {string} avatar - User's avatar
+ * @param {string} avatarDeleteId - User's avatar deletion Id
+ * @param {string} role - User's role
+ * @param {string} lang - User's spoken language(s)
+ */
 const userSchema = new mongoose_1.Schema({
     fullname: {
         type: String,

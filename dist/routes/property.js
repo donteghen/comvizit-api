@@ -31,6 +31,8 @@ function setFilter(key, value) {
     switch (key) {
         case 'ownerId':
             return { 'ownerId': new mongoose_1.Types.ObjectId(value) };
+        case 'availability':
+            return { 'availability': value };
         case 'bedroomCount':
             return { 'bedroom': value.toString() };
         case 'propertyType':
@@ -148,7 +150,7 @@ PropertyRouter.get('/api/properties', auth_middleware_1.isLoggedIn, auth_middlew
                 }
             });
         }
-        // console.log(filter, )
+        // console.log(req.query, filter)
         const properties = yield property_1.Property.aggregate([
             {
                 $match: filter
