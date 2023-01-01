@@ -16,7 +16,7 @@ const tagSchema = new mongoose_1.Schema({
     type: {
         type: String,
         required: true,
-        enum: ['Property', 'User', 'FeaturedProperty', 'Contact', 'Inquiry', 'Complain']
+        enum: ['Property', 'User']
     },
     title: {
         type: String,

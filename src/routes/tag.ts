@@ -34,7 +34,8 @@ function setFilter(key:string, value:any): any {
 // create new tag
 TagRouter.post('/api/tags/add', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
-        const {type, title, code, status, refId} = req.body
+        const {type, title, refId} = req.body
+        const code = title ? title.toString().toLowerCase().replaceAll(" ", "_") : ''
         const existAlready = await Tag.findOne({$and: [{refId}, {code}]})
         if (existAlready) {
             if (existAlready.status === 'Active') {
@@ -50,7 +51,6 @@ TagRouter.post('/api/tags/add', isLoggedIn, isAdmin, async (req: Request, res: R
             code,
             type,
             title,
-            status,
             refId: new Types.ObjectId(refId)
         })
         const tag = await newTag.save()

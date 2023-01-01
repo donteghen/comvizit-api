@@ -47,7 +47,8 @@ function setFilter(key, value) {
 TagRouter.post('/api/tags/add', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        const { type, title, code, status, refId } = req.body;
+        const { type, title, refId } = req.body;
+        const code = title ? title.toString().toLowerCase().replaceAll(" ", "_") : '';
         const existAlready = yield tag_1.Tag.findOne({ $and: [{ refId }, { code }] });
         if (existAlready) {
             if (existAlready.status === 'Active') {
@@ -62,7 +63,6 @@ TagRouter.post('/api/tags/add', auth_middleware_1.isLoggedIn, auth_middleware_1.
             code,
             type,
             title,
-            status,
             refId: new mongoose_1.Types.ObjectId(refId)
         });
         const tag = yield newTag.save();

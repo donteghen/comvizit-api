@@ -13,6 +13,7 @@ import {compare} from 'bcryptjs'
 import isStrongPassword from 'validator/lib/isStrongPassword'
 import { Token } from '../models/token'
 import {uuid, isUuid} from 'uuidv4'
+import { Property } from '../models/property'
 
 
 const UserRouter = express.Router()
@@ -36,7 +37,7 @@ function setFilter(key:string, value:any): any {
 // ***************************** public enpoints ***********************************************
 
 // get landlord's profile of a landlord(for property owner card on client) by id and role === 'LANDLORD'
-UserRouter.get('/api/users/landlords/:id', async (req: Request, res: Response) => {
+UserRouter.get('/api/users/landlords/:id/card', async (req: Request, res: Response) => {
     try {
         const query = {
             $and: [
@@ -46,9 +47,10 @@ UserRouter.get('/api/users/landlords/:id', async (req: Request, res: Response) =
         }
         const landlord = await User.findOne(query)
         if (!landlord) {
-            throw NOT_FOUND
+            throw NO_USER
         }
-        res.send({ok: true, data: landlord})
+        const propertyCount = await Property.count({ownerId: landlord._id})
+        res.send({ok: true, data: {landlord, propertyCount}})
     } catch (error) {
         res.status(400).send({ok: false, error: error.message, code: error.code??1000})
     }
@@ -114,6 +116,7 @@ UserRouter.post('/api/user/reset-password',  async (req: Request, res: Response)
 
 })
 
+// confirm password reset
 UserRouter.post('/api/user/confirm-reset-password', async (req: Request, res: Response) => {
     try {
         const userEmail = req.query.user
@@ -151,6 +154,37 @@ UserRouter.post('/api/user/confirm-reset-password', async (req: Request, res: Re
     } catch (error) {
         // console.log(error)
         res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
+    }
+})
+
+// user signup route
+UserRouter.post('/api/users/signup', async (req: Request, res: Response) => {
+    try {
+        const { email, password, fullname, lang, role, address, phone} = req.body;
+        const newUser = new User({
+            fullname, email, password, lang, role, address, phone
+        })
+
+        const user = await newUser.save()
+
+        // Send an account verification email to new user
+        const link = `${process.env.CLIENT_URL}/account-verification?userId=${user.id}`
+        const success = await mailer(user.email, verifyAccountTemplate.subject, verifyAccountTemplate.heading,
+            verifyAccountTemplate.detail, link, verifyAccountTemplate.linkText )
+
+        // Send a notification email to the admin
+        const _link = `${process.env.CLIENT_URL}/dashboard`
+        const adminEmail = process.env.SENDGRID_VERIFIED_SENDER
+        const _success = await mailer(adminEmail, notifyAccountCreated.subject, notifyAccountCreated.heading,
+                notifyAccountCreated.detail, link, notifyAccountCreated.linkText )
+
+        res.send({ok:true})
+    } catch (error) {
+        if (error.name === 'ValidationError') {
+            res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
+            return
+        }
+        res.status(400).send({ok:false, error: error.message, code:error.code??1000})
     }
 })
 
@@ -234,7 +268,30 @@ UserRouter.patch('/api/user/avatarUpload', isLoggedIn,  multerUpload.single('ava
     }
 })
 
-
+// update user profile
+UserRouter.patch('/api/users/all/:id/profile/update', isLoggedIn,  async (req: Request, res: Response) => {
+    try {
+        const updatedProps: any = {}
+        Object.keys(req.body).forEach(key => {
+            updatedProps[key] = req.body[key]
+        })
+        if (Object.keys(updatedProps).length > 0) {
+            updatedProps.updated = Date.now()
+        }
+        const userIsUpdated = await User.findByIdAndUpdate(req.params.id, {$set: updatedProps}, {runValidators:true})
+        if (!userIsUpdated) {
+            throw USER_UPDATE_OPERATION_FAILED
+        }
+        const updatedUser = await User.findById(req.params.id)
+        res.send({ok: true, data: updatedUser})
+    } catch (error) {
+        if (error.name === 'ValidationError') {
+            res.status(400).send({ok: false, error:`Validation Error : ${error.message}`, code:error.code??1000})
+            return
+        }
+        res.status(400).send({ok:false, error: error.message, code:error.code??1000})
+    }
+})
 
 // fetch current user session, if any
 UserRouter.get('/api/user', isLoggedIn, async (req: Request, res: Response) => {
@@ -246,36 +303,7 @@ try {
 }
 })
 
-// user signup route
-UserRouter.post('/api/users/signup', async (req: Request, res: Response) => {
-    try {
-        const { email, password, fullname, lang, role, address, phone} = req.body;
-        const newUser = new User({
-            fullname, email, password, lang, role, address, phone
-        })
 
-        const user = await newUser.save()
-
-        // Send an account verification email to new user
-        const link = `${process.env.CLIENT_URL}/account-verification?userId=${user.id}`
-        const success = await mailer(user.email, verifyAccountTemplate.subject, verifyAccountTemplate.heading,
-            verifyAccountTemplate.detail, link, verifyAccountTemplate.linkText )
-
-        // Send a notification email to the admin
-        const _link = `${process.env.CLIENT_URL}/dashboard`
-        const adminEmail = process.env.SENDGRID_VERIFIED_SENDER
-        const _success = await mailer(adminEmail, notifyAccountCreated.subject, notifyAccountCreated.heading,
-                notifyAccountCreated.detail, link, notifyAccountCreated.linkText )
-
-        res.send({ok:true})
-    } catch (error) {
-        if (error.name === 'ValidationError') {
-            res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
-            return
-        }
-        res.status(400).send({ok:false, error: error.message, code:error.code??1000})
-    }
-})
 
 // user login route
 UserRouter.post('/api/users/login', passport.authenticate("local", {}), async (req: Request, res: Response) => {
@@ -305,30 +333,7 @@ UserRouter.get('/api/users/logout', isLoggedIn, async (req: Request, res: Respon
 
 /*************************** Tenant Restricted router endpoints **************************************** */
 
-// update user profile
-UserRouter.patch('/api/users/all/:id/profile/update', isLoggedIn,  async (req: Request, res: Response) => {
-    try {
-        const updatedProps: any = {}
-        Object.keys(req.body).forEach(key => {
-            updatedProps[key] = req.body[key]
-        })
-        if (Object.keys(updatedProps).length > 0) {
-            updatedProps.updated = Date.now()
-        }
-        const userIsUpdated = await User.findByIdAndUpdate(req.params.id, {$set: updatedProps}, {runValidators:true})
-        if (!userIsUpdated) {
-            throw USER_UPDATE_OPERATION_FAILED
-        }
-        const updatedUser = await User.findById(req.params.id)
-        res.send({ok: true, data: updatedUser})
-    } catch (error) {
-        if (error.name === 'ValidationError') {
-            res.status(400).send({ok: false, error:`Validation Error : ${error.message}`, code:error.code??1000})
-            return
-        }
-        res.status(400).send({ok:false, error: error.message, code:error.code??1000})
-    }
-})
+
 
 
 /*************************** Landlord Restricted router endpoints **************************************** */
@@ -395,6 +400,17 @@ UserRouter.get('/api/users/admins', isLoggedIn, isAdmin, async (req: Request, re
     }
 })
 
+// get all users (isrespective of their role)
+UserRouter.get('/api/users/all', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
+    try {
+
+        const users = await User.find()
+        res.send({ok:true, data: users})
+    } catch (error) {
+        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+    }
+})
+
 // approve user's account
 UserRouter.patch('/api/users/all/:id/approve', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
@@ -435,6 +451,8 @@ UserRouter.patch('/api/users/all/:id/approve', isLoggedIn, isAdmin, async (req: 
         res.status(400).send({ok:false, error: error.message, code:error.code??1000})
     }
 })
+
+
 
 // delete user account
 UserRouter.delete('/api/user/all/:id', isLoggedIn, isAdmin, async (req: Request, res: Response) => {

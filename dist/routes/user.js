@@ -28,6 +28,7 @@ const bcryptjs_1 = require("bcryptjs");
 const isStrongPassword_1 = __importDefault(require("validator/lib/isStrongPassword"));
 const token_1 = require("../models/token");
 const uuidv4_1 = require("uuidv4");
+const property_1 = require("../models/property");
 const UserRouter = express_1.default.Router();
 exports.UserRouter = UserRouter;
 function setFilter(key, value) {
@@ -46,7 +47,7 @@ function setFilter(key, value) {
 }
 // ***************************** public enpoints ***********************************************
 // get landlord's profile of a landlord(for property owner card on client) by id and role === 'LANDLORD'
-UserRouter.get('/api/users/landlords/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+UserRouter.get('/api/users/landlords/:id/card', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
         const query = {
@@ -57,9 +58,10 @@ UserRouter.get('/api/users/landlords/:id', (req, res) => __awaiter(void 0, void 
         };
         const landlord = yield user_1.User.findOne(query);
         if (!landlord) {
-            throw error_1.NOT_FOUND;
+            throw error_1.NO_USER;
         }
-        res.send({ ok: true, data: landlord });
+        const propertyCount = yield property_1.Property.count({ ownerId: landlord._id });
+        res.send({ ok: true, data: { landlord, propertyCount } });
     }
     catch (error) {
         res.status(400).send({ ok: false, error: error.message, code: (_a = error.code) !== null && _a !== void 0 ? _a : 1000 });
@@ -116,6 +118,7 @@ UserRouter.post('/api/user/reset-password', (req, res) => __awaiter(void 0, void
         res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_c = error.code) !== null && _c !== void 0 ? _c : 1000 });
     }
 }));
+// confirm password reset
 UserRouter.post('/api/user/confirm-reset-password', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _d;
     try {
@@ -152,10 +155,36 @@ UserRouter.post('/api/user/confirm-reset-password', (req, res) => __awaiter(void
         res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_d = error.code) !== null && _d !== void 0 ? _d : 1000 });
     }
 }));
+// user signup route
+UserRouter.post('/api/users/signup', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _e;
+    try {
+        const { email, password, fullname, lang, role, address, phone } = req.body;
+        const newUser = new user_1.User({
+            fullname, email, password, lang, role, address, phone
+        });
+        const user = yield newUser.save();
+        // Send an account verification email to new user
+        const link = `${process.env.CLIENT_URL}/account-verification?userId=${user.id}`;
+        const success = yield (0, mailer_1.mailer)(user.email, mailer_templates_1.verifyAccountTemplate.subject, mailer_templates_1.verifyAccountTemplate.heading, mailer_templates_1.verifyAccountTemplate.detail, link, mailer_templates_1.verifyAccountTemplate.linkText);
+        // Send a notification email to the admin
+        const _link = `${process.env.CLIENT_URL}/dashboard`;
+        const adminEmail = process.env.SENDGRID_VERIFIED_SENDER;
+        const _success = yield (0, mailer_1.mailer)(adminEmail, mailer_templates_1.notifyAccountCreated.subject, mailer_templates_1.notifyAccountCreated.heading, mailer_templates_1.notifyAccountCreated.detail, link, mailer_templates_1.notifyAccountCreated.linkText);
+        res.send({ ok: true });
+    }
+    catch (error) {
+        if (error.name === 'ValidationError') {
+            res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
+            return;
+        }
+        res.status(400).send({ ok: false, error: error.message, code: (_e = error.code) !== null && _e !== void 0 ? _e : 1000 });
+    }
+}));
 // ***************************** Shared Restricted endpoints ***********************************************
 // Change user password
 UserRouter.post('/api/user/profile/change-password', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _e;
+    var _f;
     try {
         const user = yield user_1.User.findById(req.user);
         if (!user) {
@@ -177,12 +206,12 @@ UserRouter.post('/api/user/profile/change-password', auth_middleware_1.isLoggedI
     }
     catch (error) {
         // console.log(error)
-        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_e = error.code) !== null && _e !== void 0 ? _e : 1000 });
+        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_f = error.code) !== null && _f !== void 0 ? _f : 1000 });
     }
 }));
 // upload authenticated user's avatar
 UserRouter.patch('/api/user/avatarUpload', auth_middleware_1.isLoggedIn, multerUpload_1.default.single('avatar'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _f, _g, _h;
+    var _g, _h, _j;
     try {
         const user = yield user_1.User.findOne({ email: req.user.email });
         if (!user) {
@@ -215,82 +244,18 @@ UserRouter.patch('/api/user/avatarUpload', auth_middleware_1.isLoggedIn, multerU
     }
     catch (error) {
         if (error instanceof multer_1.MulterError) {
-            res.status(400).send({ ok: false, error: `Multer Upload Error : ${error.message}`, code: (_f = error.code) !== null && _f !== void 0 ? _f : 1000 });
+            res.status(400).send({ ok: false, error: `Multer Upload Error : ${error.message}`, code: (_g = error.code) !== null && _g !== void 0 ? _g : 1000 });
         }
         if (error.name === 'ValidationError') {
-            res.status(400).send({ ok: false, error: `Validation Error : ${error.message}`, code: (_g = error.code) !== null && _g !== void 0 ? _g : 1000 });
+            res.status(400).send({ ok: false, error: `Validation Error : ${error.message}`, code: (_h = error.code) !== null && _h !== void 0 ? _h : 1000 });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_h = error.code) !== null && _h !== void 0 ? _h : 1000 });
-    }
-}));
-// fetch current user session, if any
-UserRouter.get('/api/user', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _j;
-    try {
-        res.send({ ok: true, data: req.user });
-    }
-    catch (error) {
-        // console.log(error)
         res.status(400).send({ ok: false, error: error.message, code: (_j = error.code) !== null && _j !== void 0 ? _j : 1000 });
     }
 }));
-// user signup route
-UserRouter.post('/api/users/signup', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _k;
-    try {
-        const { email, password, fullname, lang, role, address, phone } = req.body;
-        const newUser = new user_1.User({
-            fullname, email, password, lang, role, address, phone
-        });
-        const user = yield newUser.save();
-        // Send an account verification email to new user
-        const link = `${process.env.CLIENT_URL}/account-verification?userId=${user.id}`;
-        const success = yield (0, mailer_1.mailer)(user.email, mailer_templates_1.verifyAccountTemplate.subject, mailer_templates_1.verifyAccountTemplate.heading, mailer_templates_1.verifyAccountTemplate.detail, link, mailer_templates_1.verifyAccountTemplate.linkText);
-        // Send a notification email to the admin
-        const _link = `${process.env.CLIENT_URL}/dashboard`;
-        const adminEmail = process.env.SENDGRID_VERIFIED_SENDER;
-        const _success = yield (0, mailer_1.mailer)(adminEmail, mailer_templates_1.notifyAccountCreated.subject, mailer_templates_1.notifyAccountCreated.heading, mailer_templates_1.notifyAccountCreated.detail, link, mailer_templates_1.notifyAccountCreated.linkText);
-        res.send({ ok: true });
-    }
-    catch (error) {
-        if (error.name === 'ValidationError') {
-            res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
-            return;
-        }
-        res.status(400).send({ ok: false, error: error.message, code: (_k = error.code) !== null && _k !== void 0 ? _k : 1000 });
-    }
-}));
-// user login route
-UserRouter.post('/api/users/login', passport_1.default.authenticate("local", {}), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _l;
-    try {
-        res.send({ ok: true, data: req.user });
-    }
-    catch (error) {
-        console.log(error);
-        res.status(400).send({ ok: false, error: error.message, code: (_l = error.code) !== null && _l !== void 0 ? _l : 1000 });
-    }
-}));
-// user logout route
-UserRouter.get('/api/users/logout', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _m;
-    try {
-        req.session.destroy((err) => {
-            if (err) {
-                throw err;
-            }
-            res.send({ ok: true });
-        });
-    }
-    catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_m = error.code) !== null && _m !== void 0 ? _m : 1000 });
-    }
-}));
-/*************************** Tenant Restricted router endpoints **************************************** */
 // update user profile
 UserRouter.patch('/api/users/all/:id/profile/update', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _o, _p;
+    var _k, _l;
     try {
         const updatedProps = {};
         Object.keys(req.body).forEach(key => {
@@ -308,12 +273,50 @@ UserRouter.patch('/api/users/all/:id/profile/update', auth_middleware_1.isLogged
     }
     catch (error) {
         if (error.name === 'ValidationError') {
-            res.status(400).send({ ok: false, error: `Validation Error : ${error.message}`, code: (_o = error.code) !== null && _o !== void 0 ? _o : 1000 });
+            res.status(400).send({ ok: false, error: `Validation Error : ${error.message}`, code: (_k = error.code) !== null && _k !== void 0 ? _k : 1000 });
             return;
         }
+        res.status(400).send({ ok: false, error: error.message, code: (_l = error.code) !== null && _l !== void 0 ? _l : 1000 });
+    }
+}));
+// fetch current user session, if any
+UserRouter.get('/api/user', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _m;
+    try {
+        res.send({ ok: true, data: req.user });
+    }
+    catch (error) {
+        // console.log(error)
+        res.status(400).send({ ok: false, error: error.message, code: (_m = error.code) !== null && _m !== void 0 ? _m : 1000 });
+    }
+}));
+// user login route
+UserRouter.post('/api/users/login', passport_1.default.authenticate("local", {}), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _o;
+    try {
+        res.send({ ok: true, data: req.user });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(400).send({ ok: false, error: error.message, code: (_o = error.code) !== null && _o !== void 0 ? _o : 1000 });
+    }
+}));
+// user logout route
+UserRouter.get('/api/users/logout', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _p;
+    try {
+        req.session.destroy((err) => {
+            if (err) {
+                throw err;
+            }
+            res.send({ ok: true });
+        });
+    }
+    catch (error) {
         res.status(400).send({ ok: false, error: error.message, code: (_p = error.code) !== null && _p !== void 0 ? _p : 1000 });
     }
 }));
+/*************************** Tenant Restricted router endpoints **************************************** */
 /*************************** Landlord Restricted router endpoints **************************************** */
 /*************************** Admin Restricted router endpoints **************************************** */
 // get all tenants
@@ -376,9 +379,20 @@ UserRouter.get('/api/users/admins', auth_middleware_1.isLoggedIn, auth_middlewar
         res.status(400).send({ ok: false, error: error.message, code: (_s = error.code) !== null && _s !== void 0 ? _s : 1000 });
     }
 }));
+// get all users (isrespective of their role)
+UserRouter.get('/api/users/all', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _t;
+    try {
+        const users = yield user_1.User.find();
+        res.send({ ok: true, data: users });
+    }
+    catch (error) {
+        res.status(400).send({ ok: false, error: error.message, code: (_t = error.code) !== null && _t !== void 0 ? _t : 1000 });
+    }
+}));
 // approve user's account
 UserRouter.patch('/api/users/all/:id/approve', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _t, _u;
+    var _u, _v;
     try {
         // check if the session user is an admin, if no then it should fail as only an admin can approve a landlord or tenant account
         if (req.user.role !== 'ADMIN') {
@@ -405,15 +419,15 @@ UserRouter.patch('/api/users/all/:id/approve', auth_middleware_1.isLoggedIn, aut
             res.status(400).send({ ok: false, error: `Multer Upload Error : ${error.message},  code:error.code??1000` });
         }
         if (error.name === 'ValidationError') {
-            res.status(400).send({ ok: false, error: `Validation Error : ${error.message}`, code: (_t = error.code) !== null && _t !== void 0 ? _t : 1000 });
+            res.status(400).send({ ok: false, error: `Validation Error : ${error.message}`, code: (_u = error.code) !== null && _u !== void 0 ? _u : 1000 });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_u = error.code) !== null && _u !== void 0 ? _u : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_v = error.code) !== null && _v !== void 0 ? _v : 1000 });
     }
 }));
 // delete user account
 UserRouter.delete('/api/user/all/:id', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _v;
+    var _w;
     try {
         // make sure that admin can only delete either <user.role === tenant | user.role === landlord>
         // An admin user can be deleted only by the super admin
@@ -428,7 +442,7 @@ UserRouter.delete('/api/user/all/:id', auth_middleware_1.isLoggedIn, auth_middle
         res.send({ ok: true });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_v = error.code) !== null && _v !== void 0 ? _v : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_w = error.code) !== null && _w !== void 0 ? _w : 1000 });
     }
 }));
 //# sourceMappingURL=user.js.map
