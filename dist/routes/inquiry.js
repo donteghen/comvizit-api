@@ -28,6 +28,8 @@ function setFilter(key, value) {
             return { 'replied': value };
         case 'email':
             return { 'email': value };
+        case 'fullname':
+            return { 'fullname': { "$regex": value, $options: 'i' } };
         default:
             return {};
     }

@@ -53,6 +53,10 @@ function setFilter(key, value) {
             return { 'features': { $in: [value] } };
         case 'town':
             return { 'town': { "$regex": value, $options: 'i' } };
+        case 'district':
+            return { 'district.name': { "$regex": value, $options: 'i' } };
+        case 'quater':
+            return { 'quater.name': { "$regex": value, $options: 'i' } };
         case 'districtref':
             return { 'district.ref': value };
         case 'quaterref':

@@ -15,6 +15,8 @@ function setFilter(key:string, value:any): any {
             return {'replied': value}
         case 'email':
             return {'email': value}
+        case 'fullname':
+            return {'fullname': { "$regex": value, $options: 'i'}}
         default:
             return {}
     }
