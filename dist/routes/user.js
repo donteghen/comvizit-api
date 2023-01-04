@@ -383,7 +383,17 @@ UserRouter.get('/api/users/admins', auth_middleware_1.isLoggedIn, auth_middlewar
 UserRouter.get('/api/users/all', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _t;
     try {
-        const users = yield user_1.User.find();
+        let filter = {};
+        const queries = Object.keys(req.query);
+        if (queries.length > 0) {
+            queries.forEach(key => {
+                if (req.query[key]) {
+                    filter = Object.assign(filter, setFilter(key, req.query[key]));
+                }
+            });
+        }
+        console.log(filter);
+        const users = yield user_1.User.find(filter);
         res.send({ ok: true, data: users });
     }
     catch (error) {

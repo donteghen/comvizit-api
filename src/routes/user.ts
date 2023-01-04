@@ -403,8 +403,17 @@ UserRouter.get('/api/users/admins', isLoggedIn, isAdmin, async (req: Request, re
 // get all users (isrespective of their role)
 UserRouter.get('/api/users/all', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
-
-        const users = await User.find()
+        let filter: any = {}
+        const queries = Object.keys(req.query)
+        if (queries.length > 0) {
+            queries.forEach(key => {
+                if (req.query[key]) {
+                    filter = Object.assign(filter, setFilter(key, req.query[key]))
+                }
+            })
+        }
+        console.log(filter)
+        const users = await User.find(filter)
         res.send({ok:true, data: users})
     } catch (error) {
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})

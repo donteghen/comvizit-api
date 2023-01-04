@@ -17,6 +17,7 @@ const express_1 = __importDefault(require("express"));
 const error_1 = require("../constants/error");
 const auth_middleware_1 = require("../middleware/auth-middleware");
 const featured_properties_1 = require("../models/featured-properties");
+const mongoose_1 = require("mongoose");
 const property_1 = require("../models/property");
 const FeaturedRouter = express_1.default.Router();
 exports.FeaturedRouter = FeaturedRouter;
@@ -30,7 +31,7 @@ exports.FeaturedRouter = FeaturedRouter;
 function setFilter(key, value) {
     switch (key) {
         case 'propertyId':
-            return { 'propertyId': value };
+            return { 'propertyId': new mongoose_1.Types.ObjectId(value) };
         case 'status':
             return { 'status': value };
         default:

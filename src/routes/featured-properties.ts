@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express'
 import { DELETE_OPERATION_FAILED, INVALID_PROPERTY_ID_FOR_FEATURING, INVALID_REQUEST, NOT_FOUND, PROPERTY_IS_ALREADY_FEATURED, PROPERTY_UNAVAILABLE_FOR_FEATURING } from '../constants/error';
 import { isAdmin, isLoggedIn } from '../middleware/auth-middleware';
 import { FeaturedProperties } from "../models/featured-properties";
-import {PipelineStage} from 'mongoose'
+import {PipelineStage, Types} from 'mongoose'
 import { Property } from '../models/property';
 const FeaturedRouter = express.Router()
 
@@ -16,7 +16,7 @@ const FeaturedRouter = express.Router()
 function setFilter(key:string, value:any): any {
     switch (key) {
         case 'propertyId':
-            return {'propertyId': value}
+            return {'propertyId': new Types.ObjectId(value)}
         case 'status':
             return {'status': value}
         default:
