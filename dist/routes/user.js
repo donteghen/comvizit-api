@@ -435,9 +435,44 @@ UserRouter.patch('/api/users/all/:id/approve', auth_middleware_1.isLoggedIn, aut
         res.status(400).send({ ok: false, error: error.message, code: (_v = error.code) !== null && _v !== void 0 ? _v : 1000 });
     }
 }));
+// Disapprove user's account
+UserRouter.patch('/api/users/all/:id/disapprove', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _w, _x;
+    try {
+        // check if the session user is an admin, if no then it should fail as only an admin can disapprove a landlord or tenant account
+        if (req.user.role !== 'ADMIN') {
+            throw error_1.NOT_AUTHORIZED;
+        }
+        const user = yield user_1.User.findById(req.params.id);
+        if (!user) {
+            throw error_1.NO_USER;
+        }
+        // check if the user being disapproved is an admin, if yes then it should fail as only the superadmin can approve an admin user
+        if (user.role === 'ADMIN') {
+            throw error_1.NOT_AUTHORIZED;
+        }
+        user.approved = false;
+        user.updated = Date.now();
+        const updatedUser = yield user.save();
+        // Send an account disapproved email to user
+        const link = `${process.env.CLIENT_URL}/inquiry`;
+        const success = yield (0, mailer_1.mailer)(user.email, mailer_templates_1.notifyAccountDisapproved.subject, mailer_templates_1.notifyAccountDisapproved.heading, mailer_templates_1.notifyAccountDisapproved.detail, link, mailer_templates_1.notifyAccountDisapproved.linkText);
+        res.send({ ok: true, data: updatedUser });
+    }
+    catch (error) {
+        if (error instanceof multer_1.MulterError) {
+            res.status(400).send({ ok: false, error: `Multer Upload Error : ${error.message},  code:error.code??1000` });
+        }
+        if (error.name === 'ValidationError') {
+            res.status(400).send({ ok: false, error: `Validation Error : ${error.message}`, code: (_w = error.code) !== null && _w !== void 0 ? _w : 1000 });
+            return;
+        }
+        res.status(400).send({ ok: false, error: error.message, code: (_x = error.code) !== null && _x !== void 0 ? _x : 1000 });
+    }
+}));
 // delete user account
 UserRouter.delete('/api/user/all/:id', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _w;
+    var _y;
     try {
         // make sure that admin can only delete either <user.role === tenant | user.role === landlord>
         // An admin user can be deleted only by the super admin
@@ -452,7 +487,7 @@ UserRouter.delete('/api/user/all/:id', auth_middleware_1.isLoggedIn, auth_middle
         res.send({ ok: true });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_w = error.code) !== null && _w !== void 0 ? _w : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_y = error.code) !== null && _y !== void 0 ? _y : 1000 });
     }
 }));
 //# sourceMappingURL=user.js.map

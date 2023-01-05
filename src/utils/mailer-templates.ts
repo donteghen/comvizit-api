@@ -32,6 +32,13 @@ export const notifyAccountApproved = {
     heading: 'Account Approval Status Update',
     detail:'Congratulations! Your account has been approved.<br><strong>You now have access all provided features.</strong>',
     linkText: 'Visit your profile'
+}
+
+export const notifyAccountDisapproved = {
+    subject: 'Account Dispproval Update',
+    heading: 'Account Dispproval',
+    detail:'Warning! Your account has been temporarily disapproved.<br><strong>Please contact supprot to follow up with the issue.</strong>',
+    linkText: 'Visit your profile'
     }
 
 ////////////////////////// ------Property Related ------/////////////////////////////////

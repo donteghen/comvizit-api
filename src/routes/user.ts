@@ -7,7 +7,7 @@ import multerUpload from '../config/multerUpload'
 import cloudinary from '../config/cloudinary'
 import { MulterError } from 'multer'
 import { mailer } from '../helper/mailer'
-import {welcomeTemplate, notifyAccountCreated, verifyAccountTemplate, notifyAccountApproved, notifyAccountVerified, } from '../utils/mailer-templates'
+import {welcomeTemplate, notifyAccountCreated, verifyAccountTemplate, notifyAccountApproved, notifyAccountVerified, notifyAccountDisapproved} from '../utils/mailer-templates'
 import { DELETE_OPERATION_FAILED, INVALID_REQUEST, INVALID_RESET_TOKEN, NEW_PASSWORD_IS_INVALID, NOT_AUTHORIZED, NOT_FOUND, NO_USER, OLD_PASSWORD_IS_INCORRECT, RESET_TOKEN_DEACTIVED, SAVE_OPERATION_FAILED , USER_UPDATE_OPERATION_FAILED} from '../constants/error'
 import {compare} from 'bcryptjs'
 import isStrongPassword from 'validator/lib/isStrongPassword'
@@ -462,6 +462,46 @@ UserRouter.patch('/api/users/all/:id/approve', isLoggedIn, isAdmin, async (req: 
 })
 
 
+// Disapprove user's account
+UserRouter.patch('/api/users/all/:id/disapprove', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
+    try {
+        // check if the session user is an admin, if no then it should fail as only an admin can disapprove a landlord or tenant account
+        if (req.user.role !== 'ADMIN') {
+            throw NOT_AUTHORIZED
+        }
+        const user = await User.findById(req.params.id)
+        if (!user) {
+            throw NO_USER
+        }
+        // check if the user being disapproved is an admin, if yes then it should fail as only the superadmin can approve an admin user
+        if (user.role === 'ADMIN') {
+            throw NOT_AUTHORIZED
+        }
+
+        user.approved = false
+        user.updated = Date.now()
+
+        const updatedUser = await user.save()
+
+        // Send an account disapproved email to user
+        const link = `${process.env.CLIENT_URL}/inquiry`
+        const success = await mailer(user.email, notifyAccountDisapproved.subject, notifyAccountDisapproved.heading,
+        notifyAccountDisapproved.detail, link, notifyAccountDisapproved.linkText )
+
+        res.send({ok:true, data: updatedUser})
+    } catch (error) {
+
+        if (error instanceof MulterError) {
+            res.status(400).send({ok: false, error:`Multer Upload Error : ${error.message},  code:error.code??1000`})
+        }
+        if (error.name === 'ValidationError') {
+            res.status(400).send({ok: false, error:`Validation Error : ${error.message}`,  code:error.code??1000})
+            return
+        }
+
+        res.status(400).send({ok:false, error: error.message, code:error.code??1000})
+    }
+})
 
 // delete user account
 UserRouter.delete('/api/user/all/:id', isLoggedIn, isAdmin, async (req: Request, res: Response) => {

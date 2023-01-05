@@ -1,7 +1,7 @@
 "use strict";
 ////////////////////////// ------User Related ------/////////////////////////////////
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.notifyNewContactMe = exports.notifyNewInquiry = exports.notifyNewComplained = exports.notifyPropertyAvailability = exports.notifyPropertyDeleted = exports.notifyAccountApproved = exports.notifyAccountVerified = exports.welcomeTemplate = exports.notifyAccountCreated = exports.verifyAccountTemplate = void 0;
+exports.notifyNewContactMe = exports.notifyNewInquiry = exports.notifyNewComplained = exports.notifyPropertyAvailability = exports.notifyPropertyDeleted = exports.notifyAccountDisapproved = exports.notifyAccountApproved = exports.notifyAccountVerified = exports.welcomeTemplate = exports.notifyAccountCreated = exports.verifyAccountTemplate = void 0;
 exports.verifyAccountTemplate = {
     subject: 'Account verification',
     heading: 'Account Verification',
@@ -30,6 +30,12 @@ exports.notifyAccountApproved = {
     subject: 'Account Approval Status Update',
     heading: 'Account Approval Status Update',
     detail: 'Congratulations! Your account has been approved.<br><strong>You now have access all provided features.</strong>',
+    linkText: 'Visit your profile'
+};
+exports.notifyAccountDisapproved = {
+    subject: 'Account Dispproval Update',
+    heading: 'Account Dispproval',
+    detail: 'Warning! Your account has been temporarily disapproved.<br><strong>Please contact supprot to follow up with the issue.</strong>',
     linkText: 'Visit your profile'
 };
 ////////////////////////// ------Property Related ------/////////////////////////////////
