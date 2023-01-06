@@ -49,7 +49,7 @@ InquiryRouter.post('/api/inquiries', (req, res) => __awaiter(void 0, void 0, voi
         });
         const inquiry = yield newInquiry.save();
         // Send a notification email to the admin
-        const _link = `${process.env.CLIENT_URL}/dashboard`;
+        const _link = `${process.env.CLIENT_URL}/admin/dashboard`;
         const _success = yield (0, mailer_1.mailer)(process.env.SENDGRID_VERIFIED_SENDER, mailer_templates_1.notifyNewInquiry.subject, mailer_templates_1.notifyNewInquiry.heading, mailer_templates_1.notifyNewInquiry.detail, _link, mailer_templates_1.notifyNewInquiry.linkText);
         res.send({ ok: true, data: inquiry });
     }

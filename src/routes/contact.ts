@@ -34,7 +34,7 @@ ContactRouter.post('/api/contacts', async (req: Request, res: Response) => {
         })
         const contact = await newContact.save()
         // Send a notification email to the admin
-        const _link = `${process.env.CLIENT_URL}/dashboard`
+        const _link = `${process.env.CLIENT_URL}/admin/dashboard`
         const _success = await mailer(process.env.SENDGRID_VERIFIED_SENDER, notifyNewContactMe.subject, notifyNewContactMe.heading,
         notifyNewContactMe.detail, _link, notifyNewContactMe.linkText )
 

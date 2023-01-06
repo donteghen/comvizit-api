@@ -47,7 +47,7 @@ ContactRouter.post('/api/contacts', (req, res) => __awaiter(void 0, void 0, void
         });
         const contact = yield newContact.save();
         // Send a notification email to the admin
-        const _link = `${process.env.CLIENT_URL}/dashboard`;
+        const _link = `${process.env.CLIENT_URL}/admin/dashboard`;
         const _success = yield (0, mailer_1.mailer)(process.env.SENDGRID_VERIFIED_SENDER, mailer_templates_1.notifyNewContactMe.subject, mailer_templates_1.notifyNewContactMe.heading, mailer_templates_1.notifyNewContactMe.detail, _link, mailer_templates_1.notifyNewContactMe.linkText);
         res.send({ ok: true, data: contact });
     }

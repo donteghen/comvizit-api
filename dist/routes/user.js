@@ -85,7 +85,7 @@ UserRouter.patch('/api/users/all/:id/verify', (req, res) => __awaiter(void 0, vo
         const link = `${process.env.CLIENT_URL}/profile`;
         const success = yield (0, mailer_1.mailer)(updatedUser.email, mailer_templates_1.welcomeTemplate.subject, mailer_templates_1.welcomeTemplate.heading, mailer_templates_1.welcomeTemplate.detail, link, mailer_templates_1.welcomeTemplate.linkText);
         // Send a notification email to the admin
-        const _link = `${process.env.CLIENT_URL}/dashboard`;
+        const _link = `${process.env.CLIENT_URL}/admin/dashboard`;
         const senderEmail = process.env.SENDGRID_VERIFIED_SENDER;
         const _success = yield (0, mailer_1.mailer)(senderEmail, mailer_templates_1.notifyAccountVerified.subject, mailer_templates_1.notifyAccountVerified.heading, mailer_templates_1.notifyAccountVerified.detail, _link, mailer_templates_1.notifyAccountVerified.linkText);
         res.send({ ok: true });
@@ -168,7 +168,7 @@ UserRouter.post('/api/users/signup', (req, res) => __awaiter(void 0, void 0, voi
         const link = `${process.env.CLIENT_URL}/account-verification?userId=${user.id}`;
         const success = yield (0, mailer_1.mailer)(user.email, mailer_templates_1.verifyAccountTemplate.subject, mailer_templates_1.verifyAccountTemplate.heading, mailer_templates_1.verifyAccountTemplate.detail, link, mailer_templates_1.verifyAccountTemplate.linkText);
         // Send a notification email to the admin
-        const _link = `${process.env.CLIENT_URL}/dashboard`;
+        const _link = `${process.env.CLIENT_URL}/admin/dashboard`;
         const adminEmail = process.env.SENDGRID_VERIFIED_SENDER;
         const _success = yield (0, mailer_1.mailer)(adminEmail, mailer_templates_1.notifyAccountCreated.subject, mailer_templates_1.notifyAccountCreated.heading, mailer_templates_1.notifyAccountCreated.detail, link, mailer_templates_1.notifyAccountCreated.linkText);
         res.send({ ok: true });

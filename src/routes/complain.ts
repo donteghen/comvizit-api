@@ -50,7 +50,7 @@ ComplainRouter.post('/api/complains', isLoggedIn, isTenant, async (req: Request,
         const complain = await newComplain.save()
 
         // Send a notification email to the admin
-        const _link = `${process.env.CLIENT_URL}/dashboard`
+        const _link = `${process.env.CLIENT_URL}/admin/dashboard`
         const _success = await mailer(process.env.SENDGRID_VERIFIED_SENDER, notifyNewComplained.subject, notifyNewComplained.heading,
             notifyNewComplained.detail, _link, notifyNewComplained.linkText )
 

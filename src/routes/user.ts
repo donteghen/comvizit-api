@@ -77,7 +77,7 @@ UserRouter.patch('/api/users/all/:id/verify', async (req: Request, res: Response
             welcomeTemplate.detail, link, welcomeTemplate.linkText )
 
         // Send a notification email to the admin
-        const _link = `${process.env.CLIENT_URL}/dashboard`
+        const _link = `${process.env.CLIENT_URL}/admin/dashboard`
         const senderEmail = process.env.SENDGRID_VERIFIED_SENDER
         const _success = await mailer(senderEmail, notifyAccountVerified.subject, notifyAccountVerified.heading,
              notifyAccountVerified.detail, _link, notifyAccountVerified.linkText )
@@ -173,7 +173,7 @@ UserRouter.post('/api/users/signup', async (req: Request, res: Response) => {
             verifyAccountTemplate.detail, link, verifyAccountTemplate.linkText )
 
         // Send a notification email to the admin
-        const _link = `${process.env.CLIENT_URL}/dashboard`
+        const _link = `${process.env.CLIENT_URL}/admin/dashboard`
         const adminEmail = process.env.SENDGRID_VERIFIED_SENDER
         const _success = await mailer(adminEmail, notifyAccountCreated.subject, notifyAccountCreated.heading,
                 notifyAccountCreated.detail, link, notifyAccountCreated.linkText )

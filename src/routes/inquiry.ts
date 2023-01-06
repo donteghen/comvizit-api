@@ -38,7 +38,7 @@ InquiryRouter.post('/api/inquiries', async (req: Request, res: Response) => {
         const inquiry = await newInquiry.save()
 
         // Send a notification email to the admin
-        const _link = `${process.env.CLIENT_URL}/dashboard`
+        const _link = `${process.env.CLIENT_URL}/admin/dashboard`
         const _success = await mailer(process.env.SENDGRID_VERIFIED_SENDER, notifyNewInquiry.subject, notifyNewInquiry.heading,
         notifyNewInquiry.detail, _link, notifyNewInquiry.linkText )
 

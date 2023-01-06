@@ -61,7 +61,7 @@ ComplainRouter.post('/api/complains', auth_middleware_1.isLoggedIn, auth_middlew
         });
         const complain = yield newComplain.save();
         // Send a notification email to the admin
-        const _link = `${process.env.CLIENT_URL}/dashboard`;
+        const _link = `${process.env.CLIENT_URL}/admin/dashboard`;
         const _success = yield (0, mailer_1.mailer)(process.env.SENDGRID_VERIFIED_SENDER, mailer_templates_1.notifyNewComplained.subject, mailer_templates_1.notifyNewComplained.heading, mailer_templates_1.notifyNewComplained.detail, _link, mailer_templates_1.notifyNewComplained.linkText);
         res.send({ ok: true, data: complain });
     }
