@@ -72,7 +72,7 @@ export const notifyPropertyAvailability = (userName: string, propertyId: string,
     return {
         subject: 'Property Availability Status',
         heading: 'Your Property Availability Status Update',
-        detail:`Dear ${userName}<br/><br/> Your property with ID:<strong>${propertyId}</strong> has been marked as ${availabilityStatus}<br><strong>Visit your dashboard to confirm, thanks!</strong>`,
+        detail:`Dear ${userName}<br/><br/> The property with ID:<strong>${propertyId}</strong> has been marked as ${availabilityStatus}<br><strong>Visit your account to confirm, thanks!</strong>`,
         linkText: 'Visit Dashboard'
     }
 }

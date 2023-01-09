@@ -3,7 +3,7 @@ import express, { Request, Response } from 'express'
 
 import { Types } from "mongoose";
 import { categoryAggregator, townAggregator } from "../utils/queryMaker";
-import { isAdmin, isLoggedIn } from "../middleware/auth-middleware";
+import { isAdmin, isLandlord, isLoggedIn } from "../middleware/auth-middleware";
 import {DELETE_OPERATION_FAILED, NOT_AUTHORIZED, NOT_FOUND, NOT_PROPERTY_OWNER, SAVE_OPERATION_FAILED, TAG_ALREADY_EXISTS} from '../constants/error'
 import {notifyPropertyAvailability} from '../utils/mailer-templates'
 import { mailer } from "../helper/mailer";
@@ -173,6 +173,43 @@ PropertyRouter.get('/api/properties', isLoggedIn, isAdmin, async (req: Request, 
     }
 })
 
+// get all landlords properties
+PropertyRouter.get('/api/landlord-properties', isLoggedIn, isLandlord, async (req: Request, res: Response) => {
+
+    try {
+
+        let filter: any = {ownerId: new Types.ObjectId(req.user.id)}
+        const queries = Object.keys(req.query)
+        if (queries.length > 0) {
+            queries.forEach(key => {
+                if (req.query[key]) {
+                    filter = Object.assign(filter, setFilter(key, req.query[key]))
+                }
+            })
+        }
+        const properties = await Property.aggregate([
+            {
+                $match: filter
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "ownerId",
+                    foreignField: "_id",
+                    as: "owner"
+                }
+            },
+            {
+                $unwind: "$owner"
+            }
+        ])
+        res.send({ok: true, data: properties})
+    } catch (error) {
+        console.log(error)
+        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+    }
+})
+
 // search using quaterref index for property's quater.ref and return various category counts
 PropertyRouter.get('/api/search-property-categories/:quaterRef', async (req: Request, res: Response) => {
     try {
@@ -187,6 +224,7 @@ PropertyRouter.get('/api/search-property-categories/:quaterRef', async (req: Req
 
 // search with autocomplete index for quater and return matching quater name & ref
 PropertyRouter.get('/api/search-quaters/:quaterRef', async (req: Request, res: Response) => {
+
     try {
         const quaters = await Property.aggregate([
 
@@ -206,7 +244,7 @@ PropertyRouter.get('/api/search-quaters/:quaterRef', async (req: Request, res: R
             },
             {
                 $project:{
-                        "quater": 1,
+                    "quater": 1,
                 }
             },
             {$group: {_id : '$quater'}},
@@ -293,7 +331,7 @@ PropertyRouter.patch('/api/properties/:id/availability/update', isLoggedIn, asyn
             throw NOT_FOUND
         }
         if (req.user.role === 'LANDLORD') {
-            if (property.ownerId.toString() === req.user.id) {
+            if (property.ownerId.toString() !== req.user.id) {
                 throw NOT_PROPERTY_OWNER
             }
             propertyOwner = req.user
@@ -310,7 +348,7 @@ PropertyRouter.patch('/api/properties/:id/availability/update', isLoggedIn, asyn
         }
         // notify the property owner
         const {subject, heading, detail, linkText} = notifyPropertyAvailability(req.user.email, property._id.toString(), req.body.availability)
-        const link = `${process.env.CLIENT_URL}/dashboard`
+        const link = `${process.env.CLIENT_URL}/${propertyOwner.role === 'ADMIN' ? 'dashboard' : 'profile'}`
         const success = await mailer(propertyOwner.email, subject, heading, detail, link, linkText )
 
         res.status(200).send({ok: true})
