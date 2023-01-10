@@ -28,10 +28,10 @@ const passportConfig = () => {
             return done(null, false, { message: "Invalid credentials.\n" });
         }
         if (typeof user.approved !== 'boolean' || !user.approved) {
-            return done(new Error('User permissions pending!'), null);
+            return done(null, false, { message: "User permissions pending!" });
         }
         if (typeof user.isVerified !== 'boolean' || !user.isVerified) {
-            return done(new Error('User account is not yet verified!'), null);
+            return done(null, false, { message: "User account is not yet verified!" });
         }
         return done(null, user);
     })));

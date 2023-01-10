@@ -174,3 +174,10 @@ export const RESET_TOKEN_DEACTIVED: ErrorResponse = {
     message: 'The reset token provided is no longer active',
     messageFr: 'french The reset token provided is no longer active'
 }
+
+export const ACCOUNST_IS_ALREADY_VERIFIED: ErrorResponse = {
+    name: 'NOT ACCOUNST_IS_ALREADY_VERIFIED',
+    code: 1020,
+    message: 'Your account has already been verified',
+    messageFr: 'french Your account has already been verified'
+}

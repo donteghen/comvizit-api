@@ -29,7 +29,7 @@ exports.notifyAccountVerified = {
 exports.notifyAccountApproved = {
     subject: 'Account Approval Status Update',
     heading: 'Account Approval Status Update',
-    detail: 'Congratulations! Your account has been approved.<br><strong>You now have access all provided features.</strong>',
+    detail: 'Congratulations! Your account has been approved.<br><strong>You may login now and access all our provided features.</strong>',
     linkText: 'Visit your profile'
 };
 exports.notifyAccountDisapproved = {
@@ -65,7 +65,7 @@ exports.notifyPropertyDeleted = notifyPropertyDeleted;
 const notifyPropertyAvailability = (userName, propertyId, availabilityStatus) => {
     return {
         subject: 'Property Availability Status',
-        heading: 'Your Property Availability Status Update',
+        heading: 'Property Availability Status Update',
         detail: `Dear ${userName}<br/><br/> The property with ID:<strong>${propertyId}</strong> has been marked as ${availabilityStatus}<br><strong>Visit your account to confirm, thanks!</strong>`,
         linkText: 'Visit Dashboard'
     };

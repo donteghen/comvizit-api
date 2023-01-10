@@ -8,7 +8,7 @@ import cloudinary from '../config/cloudinary'
 import { MulterError } from 'multer'
 import { mailer } from '../helper/mailer'
 import {welcomeTemplate, notifyAccountCreated, verifyAccountTemplate, notifyAccountApproved, notifyAccountVerified, notifyAccountDisapproved} from '../utils/mailer-templates'
-import { DELETE_OPERATION_FAILED, INVALID_REQUEST, INVALID_RESET_TOKEN, NEW_PASSWORD_IS_INVALID, NOT_AUTHORIZED, NOT_FOUND, NO_USER, OLD_PASSWORD_IS_INCORRECT, RESET_TOKEN_DEACTIVED, SAVE_OPERATION_FAILED , USER_UPDATE_OPERATION_FAILED} from '../constants/error'
+import { ACCOUNST_IS_ALREADY_VERIFIED, DELETE_OPERATION_FAILED, INVALID_REQUEST, INVALID_RESET_TOKEN, NEW_PASSWORD_IS_INVALID, NOT_AUTHORIZED, NOT_FOUND, NO_USER, OLD_PASSWORD_IS_INCORRECT, RESET_TOKEN_DEACTIVED, SAVE_OPERATION_FAILED , USER_UPDATE_OPERATION_FAILED} from '../constants/error'
 import {compare} from 'bcryptjs'
 import isStrongPassword from 'validator/lib/isStrongPassword'
 import { Token } from '../models/token'
@@ -63,7 +63,9 @@ UserRouter.patch('/api/users/all/:id/verify', async (req: Request, res: Response
         if (!user) {
             throw NO_USER
         }
-
+        if (user.isVerified) {
+            throw ACCOUNST_IS_ALREADY_VERIFIED
+        }
         user.isVerified = true
         user.updated = Date.now()
 
@@ -94,6 +96,7 @@ UserRouter.patch('/api/users/all/:id/verify', async (req: Request, res: Response
 // reset password endpoint
 UserRouter.post('/api/user/reset-password',  async (req: Request, res: Response) => {
     try {
+        console.log(req.body)
         const user = await User.findOne({email:req.body.email})
     if (!user) {
         throw NO_USER
@@ -180,6 +183,7 @@ UserRouter.post('/api/users/signup', async (req: Request, res: Response) => {
 
         res.send({ok:true})
     } catch (error) {
+        console.log(error)
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
@@ -306,13 +310,10 @@ try {
 
 
 // user login route
-UserRouter.post('/api/users/login', passport.authenticate("local", {}), async (req: Request, res: Response) => {
+UserRouter.post('/api/users/login', passport.authenticate("local", {failureMessage: true }), async (req: Request, res: Response) => {
     try {
-
         res.send({ok: true, data: req.user})
-
     } catch (error) {
-        console.log(error)
         res.status(400).send({ok:false, error: error.message, code:error.code??1000})
     }
 })

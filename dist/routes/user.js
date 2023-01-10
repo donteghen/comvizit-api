@@ -75,6 +75,9 @@ UserRouter.patch('/api/users/all/:id/verify', (req, res) => __awaiter(void 0, vo
         if (!user) {
             throw error_1.NO_USER;
         }
+        if (user.isVerified) {
+            throw error_1.ACCOUNST_IS_ALREADY_VERIFIED;
+        }
         user.isVerified = true;
         user.updated = Date.now();
         const updatedUser = yield user.save();
@@ -98,6 +101,7 @@ UserRouter.patch('/api/users/all/:id/verify', (req, res) => __awaiter(void 0, vo
 UserRouter.post('/api/user/reset-password', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _c;
     try {
+        console.log(req.body);
         const user = yield user_1.User.findOne({ email: req.body.email });
         if (!user) {
             throw error_1.NO_USER;
@@ -174,6 +178,7 @@ UserRouter.post('/api/users/signup', (req, res) => __awaiter(void 0, void 0, voi
         res.send({ ok: true });
     }
     catch (error) {
+        console.log(error);
         if (error.name === 'ValidationError') {
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
@@ -291,13 +296,12 @@ UserRouter.get('/api/user', auth_middleware_1.isLoggedIn, (req, res) => __awaite
     }
 }));
 // user login route
-UserRouter.post('/api/users/login', passport_1.default.authenticate("local", {}), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+UserRouter.post('/api/users/login', passport_1.default.authenticate("local", { failureMessage: true }), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _o;
     try {
         res.send({ ok: true, data: req.user });
     }
     catch (error) {
-        console.log(error);
         res.status(400).send({ ok: false, error: error.message, code: (_o = error.code) !== null && _o !== void 0 ? _o : 1000 });
     }
 }));
