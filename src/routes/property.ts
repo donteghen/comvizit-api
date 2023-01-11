@@ -256,6 +256,49 @@ PropertyRouter.get('/api/search-quaters/:quaterRef', async (req: Request, res: R
     }
 })
 
+// get properties in a town
+PropertyRouter.get('/api/town-properties/:town', async (req: Request, res: Response) => {
+    try {
+        let filter: any = {availability:'Available'}
+        let sorting:any = {createdAt: -1}
+        let pageNum: number = 1
+        const queries = Object.keys(req.query)
+        if (queries.length > 0) {
+            queries.forEach(key => {
+                if (req.query[key]) {
+                    if (key === 'page') {
+                        pageNum = Number.parseInt(req.query[key] as string, 10)
+                    }
+                    filter = Object.assign(filter, setFilter(key, req.query[key]))
+                }
+            })
+        }
+        const mainfilter = {$and: [{town: req.params.town}, filter]}
+        // console.log(mainfilter)
+        const properties = await Property.aggregate([
+            {
+                $match: mainfilter
+            },
+            {
+                $sort: sorting
+            },
+            {
+                $skip: (pageNum - 1) * pageSize
+            },
+            {
+                $limit: pageSize
+            }
+
+        ])
+
+        const resultCount = await Property.countDocuments(mainfilter)
+        const totalPages = Math.ceil(resultCount / pageSize)
+
+        res.send({ok: true, data: {properties, currPage: pageNum, totalPages, resultCount}})
+    } catch (error) {
+        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+    }
+})
 
 // get property count for popular towns
 PropertyRouter.get('/api/count-properties-per-town', async (req: Request, res: Response) => {

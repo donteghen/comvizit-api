@@ -342,7 +342,7 @@ export function townAggregator () : PipelineStage | any  {
             $match: {town: 'Douala'},
           },
           {
-            $count: "douala_count"
+            $count: "count",
           }
           ],
 
@@ -351,7 +351,7 @@ export function townAggregator () : PipelineStage | any  {
             $match: {town: 'Yaounde'},
           },
           {
-            $count: "yaounde_count"
+            $count: "count",
           }
           ],
 
@@ -360,7 +360,7 @@ export function townAggregator () : PipelineStage | any  {
             $match: {town: 'Buea'},
           },
           {
-            $count: "buea_count"
+            $count: "count"
           }
           ],
 
@@ -369,7 +369,7 @@ export function townAggregator () : PipelineStage | any  {
             $match: {town: 'bafoussam'},
           },
           {
-            $count: "bafoussam_count"
+            $count: "count"
           }
           ],
 
@@ -378,7 +378,7 @@ export function townAggregator () : PipelineStage | any  {
             $match: {town: 'Bamenda'},
           },
           {
-            $count: "bamenda_count"
+            $count: "count"
           }
           ],
 
@@ -387,7 +387,7 @@ export function townAggregator () : PipelineStage | any  {
             $match: {town: 'Limbe'},
           },
           {
-            $count: "limbe_count"
+            $count: "count"
           }
           ],
 
@@ -396,7 +396,7 @@ export function townAggregator () : PipelineStage | any  {
             $match: {town: 'Kribi'},
           },
           {
-            $count: "kribi_count"
+            $count: "count"
           }
           ]
       }

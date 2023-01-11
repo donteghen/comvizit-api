@@ -307,7 +307,7 @@ function townAggregator() {
                         $match: { town: 'Douala' },
                     },
                     {
-                        $count: "douala_count"
+                        $count: "count",
                     }
                 ],
                 "Yaounde": [
@@ -315,7 +315,7 @@ function townAggregator() {
                         $match: { town: 'Yaounde' },
                     },
                     {
-                        $count: "yaounde_count"
+                        $count: "count",
                     }
                 ],
                 "Buea": [
@@ -323,7 +323,7 @@ function townAggregator() {
                         $match: { town: 'Buea' },
                     },
                     {
-                        $count: "buea_count"
+                        $count: "count"
                     }
                 ],
                 "Bafoussam": [
@@ -331,7 +331,7 @@ function townAggregator() {
                         $match: { town: 'bafoussam' },
                     },
                     {
-                        $count: "bafoussam_count"
+                        $count: "count"
                     }
                 ],
                 "Bamenda": [
@@ -339,7 +339,7 @@ function townAggregator() {
                         $match: { town: 'Bamenda' },
                     },
                     {
-                        $count: "bamenda_count"
+                        $count: "count"
                     }
                 ],
                 "Limbe": [
@@ -347,7 +347,7 @@ function townAggregator() {
                         $match: { town: 'Limbe' },
                     },
                     {
-                        $count: "limbe_count"
+                        $count: "count"
                     }
                 ],
                 "Kribi": [
@@ -355,7 +355,7 @@ function townAggregator() {
                         $match: { town: 'Kribi' },
                     },
                     {
-                        $count: "kribi_count"
+                        $count: "count"
                     }
                 ]
             }
