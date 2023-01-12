@@ -273,7 +273,7 @@ PropertyRouter.get('/api/town-properties/:town', async (req: Request, res: Respo
                 }
             })
         }
-        const mainfilter = {$and: [{town: req.params.town}, filter]}
+        const mainfilter = {$and: [{town: { "$regex": req.params.town, $options: 'i'}}, filter]}
         // console.log(mainfilter)
         const properties = await Property.aggregate([
             {
@@ -295,6 +295,84 @@ PropertyRouter.get('/api/town-properties/:town', async (req: Request, res: Respo
         const totalPages = Math.ceil(resultCount / pageSize)
 
         res.send({ok: true, data: {properties, currPage: pageNum, totalPages, resultCount}})
+    } catch (error) {
+        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+    }
+})
+
+// get properties in a district
+PropertyRouter.get('/api/district-properties/:districtref', async (req: Request, res: Response) => {
+    try {
+        let filter: any = {availability:'Available'}
+        let sorting:any = {createdAt: -1}
+        let pageNum: number = 1
+        const queries = Object.keys(req.query)
+        if (queries.length > 0) {
+            queries.forEach(key => {
+                if (req.query[key]) {
+                    if (key === 'page') {
+                        pageNum = Number.parseInt(req.query[key] as string, 10)
+                    }
+                    filter = Object.assign(filter, setFilter(key, req.query[key]))
+                }
+            })
+        }
+        const mainfilter = {$and: [{'district.ref': req.params.districtref}, filter]}
+        // console.log(mainfilter)
+        const properties = await Property.aggregate([
+            {
+                $match: mainfilter
+            },
+            {
+                $sort: sorting
+            },
+            {
+                $skip: (pageNum - 1) * pageSize
+            },
+            {
+                $limit: pageSize
+            }
+
+        ])
+
+        const resultCount = await Property.countDocuments(mainfilter)
+        const totalPages = Math.ceil(resultCount / pageSize)
+
+        res.send({ok: true, data: {properties, currPage: pageNum, totalPages, resultCount}})
+    } catch (error) {
+        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+    }
+})
+
+// get properties groups by town and their count
+PropertyRouter.get('/api/properties-group-by-town', async (req: Request, res: Response) => {
+    try {
+        const groupsByTown = await Property.aggregate([
+            {
+                $group: {
+                    _id: '$town',
+                    count: {$count: {}}
+                }
+            }
+        ])
+        res.send({ok: true, data: groupsByTown})
+    } catch (error) {
+        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+    }
+})
+
+// get properties groups by district ref and their count
+PropertyRouter.get('/api/properties-group-by-district', async (req: Request, res: Response) => {
+    try {
+        const groupsByDistrictRef = await Property.aggregate([
+            {
+                $group: {
+                    _id: '$district.ref',
+                    count: {$count: {}}
+                }
+            }
+        ])
+        res.send({ok: true, data: groupsByDistrictRef})
     } catch (error) {
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
