@@ -360,11 +360,16 @@ PropertyRouter.get('/api/properties-group-by-town', (req, res) => __awaiter(void
         res.status(400).send({ ok: false, error: error.message, code: (_h = error.code) !== null && _h !== void 0 ? _h : 1000 });
     }
 }));
-// get properties groups by district ref and their count
-PropertyRouter.get('/api/properties-group-by-district', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+// get properties in a town and  groups by district ref and their count
+PropertyRouter.get('/api/properties-group-by-district/:town', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _j;
     try {
         const groupsByDistrictRef = yield property_1.Property.aggregate([
+            {
+                $match: {
+                    town: req.params.town
+                }
+            },
             {
                 $group: {
                     _id: '$district.ref',
