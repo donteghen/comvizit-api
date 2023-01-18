@@ -396,7 +396,7 @@ PropertyRouter.get('/api/count-properties-per-town', async (req: Request, res: R
 // get single properties by id
 PropertyRouter.get('/api/properties/:id', async (req: Request, res: Response) => {
     try {
-        const property = await Property.findById(req.params.id)
+        const property = await Property.findById(req.params.id).populate('ownerId')
         if (!property) {
             throw NOT_FOUND
         }

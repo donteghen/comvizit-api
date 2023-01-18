@@ -398,7 +398,7 @@ PropertyRouter.get('/api/count-properties-per-town', (req, res) => __awaiter(voi
 PropertyRouter.get('/api/properties/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _l;
     try {
-        const property = yield property_1.Property.findById(req.params.id);
+        const property = yield property_1.Property.findById(req.params.id).populate('ownerId');
         if (!property) {
             throw error_1.NOT_FOUND;
         }

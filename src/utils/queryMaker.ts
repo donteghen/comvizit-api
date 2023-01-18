@@ -366,7 +366,7 @@ export function townAggregator () : PipelineStage | any  {
 
           "Bafoussam": [
           {
-            $match: {town: 'bafoussam'},
+            $match: {town: 'Bafoussam'},
           },
           {
             $count: "count"

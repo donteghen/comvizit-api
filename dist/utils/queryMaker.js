@@ -328,7 +328,7 @@ function townAggregator() {
                 ],
                 "Bafoussam": [
                     {
-                        $match: { town: 'bafoussam' },
+                        $match: { town: 'Bafoussam' },
                     },
                     {
                         $count: "count"

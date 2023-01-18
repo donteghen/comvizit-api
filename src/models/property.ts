@@ -44,7 +44,7 @@ const propertySchema = new Schema<IProperty>({
     ownerId: {
         type: Schema.Types.ObjectId,
         required: true,
-        ref: 'Owners'
+        ref: 'Users'
     },
     price: {
         type: Number,
