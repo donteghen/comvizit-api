@@ -1,7 +1,7 @@
 import { Property } from "../models/property";
 import express, { Request, Response } from 'express'
 
-import { Types } from "mongoose";
+import { Types, PipelineStage } from "mongoose";
 import { categoryAggregator, townAggregator } from "../utils/queryMaker";
 import { isAdmin, isLandlord, isLoggedIn } from "../middleware/auth-middleware";
 import {DELETE_OPERATION_FAILED, NOT_AUTHORIZED, NOT_FOUND, NOT_PROPERTY_OWNER, SAVE_OPERATION_FAILED, TAG_ALREADY_EXISTS} from '../constants/error'
@@ -361,22 +361,27 @@ PropertyRouter.get('/api/properties-group-by-town', async (req: Request, res: Re
     }
 })
 
-// get properties in a town and  groups by district ref and their count
-PropertyRouter.get('/api/properties-group-by-district/:town', async (req: Request, res: Response) => {
+/**
+ * get properties in a town and  groups by district ref and their count
+ */
+PropertyRouter.get('/api/properties-group-by-district', async (req: Request, res: Response) => {
     try {
-        const groupsByDistrictRef = await Property.aggregate([
-            {
-                $match: {
-                    town: req.params.town
-                }
-            },
+        const pipeline: PipelineStage[] = [
             {
                 $group: {
                     _id: '$district.ref',
                     count: {$count: {}}
                 }
             }
-        ])
+        ]
+        if (req.query.town) {
+            pipeline.unshift({
+                $match: {
+                    town: req.query.town?.toString()
+                }
+            })
+        }
+        const groupsByDistrictRef = await Property.aggregate(pipeline)
         res.send({ok: true, data: groupsByDistrictRef})
     } catch (error) {
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
@@ -406,7 +411,7 @@ PropertyRouter.get('/api/properties/:id', async (req: Request, res: Response) =>
     }
 })
 
-// get properties in same quater
+// get properties in same quater (Related prperties in same quater)
 PropertyRouter.get('/api/property/:propertyId/related-properties/:quaterref', async (req: Request, res: Response) => {
     try {
         const relatedProperties = await Property.find({
