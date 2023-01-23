@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ACCOUNST_IS_ALREADY_VERIFIED = exports.RESET_TOKEN_DEACTIVED = exports.INVALID_RESET_TOKEN = exports.PROPERTY_UNAVAILABLE_FOR_FEATURING = exports.INVALID_PROPERTY_ID_FOR_FEATURING = exports.PROPERTY_IS_ALREADY_FEATURED = exports.INVALID_REQUEST = exports.TAG_ALREADY_EXISTS = exports.NOT_PROPERTY_OWNER = exports.EMAIL_ALREADY_EXITS = exports.AUTH_FAILED = exports.PASSWORD_INCORRECT = exports.LOGIN_FAILED = exports.DELETE_OPERATION_FAILED = exports.USER_UPDATE_OPERATION_FAILED = exports.SAVE_OPERATION_FAILED = exports.NEW_PASSWORD_IS_INVALID = exports.OLD_PASSWORD_IS_INCORRECT = exports.NO_ADMIN = exports.NO_LANDLORD = exports.NO_TENANT = exports.NO_USER = exports.NOT_AUTHORIZED = exports.NOT_FOUND = exports.NOT_SPECIFIED = void 0;
+exports.REVIEW_ALREADY_EXIST = exports.ACCOUNST_IS_ALREADY_VERIFIED = exports.RESET_TOKEN_DEACTIVED = exports.INVALID_RESET_TOKEN = exports.PROPERTY_UNAVAILABLE_FOR_FEATURING = exports.INVALID_PROPERTY_ID_FOR_FEATURING = exports.PROPERTY_IS_ALREADY_FEATURED = exports.INVALID_REQUEST = exports.TAG_ALREADY_EXISTS = exports.NOT_PROPERTY_OWNER = exports.EMAIL_ALREADY_EXITS = exports.AUTH_FAILED = exports.PASSWORD_INCORRECT = exports.LOGIN_FAILED = exports.DELETE_OPERATION_FAILED = exports.USER_UPDATE_OPERATION_FAILED = exports.SAVE_OPERATION_FAILED = exports.NEW_PASSWORD_IS_INVALID = exports.OLD_PASSWORD_IS_INCORRECT = exports.NO_ADMIN = exports.NO_LANDLORD = exports.NO_TENANT = exports.NO_USER = exports.NOT_AUTHORIZED = exports.NOT_FOUND = exports.NOT_SPECIFIED = void 0;
 exports.NOT_SPECIFIED = {
     name: 'NOT SPECIFIED',
     code: 1000,
@@ -98,14 +98,14 @@ exports.EMAIL_ALREADY_EXITS = {
     messageFr: 'french eamil already exists'
 };
 exports.NOT_PROPERTY_OWNER = {
-    name: 'NOT PROPERTY OWNER',
+    name: 'NOT_PROPERTY OWNER',
     code: 1013,
     message: 'This property does not belong to the current landlord',
     messageFr: 'french property not belong to current owner'
 };
 const TAG_ALREADY_EXISTS = (code, type, refId) => {
     return {
-        name: 'NOT PROPERTY TAG_ALREADY_EXISTS',
+        name: 'TAG_ALREADY_EXISTS',
         code: 1014,
         message: `The tag code:${code} has already been added for ${type} with Id: ${refId}`,
         messageFr: 'french property not belong to current owner'
@@ -113,45 +113,51 @@ const TAG_ALREADY_EXISTS = (code, type, refId) => {
 };
 exports.TAG_ALREADY_EXISTS = TAG_ALREADY_EXISTS;
 exports.INVALID_REQUEST = {
-    name: 'NOT INVALID_REQUEST',
+    name: 'INVALID_REQUEST',
     code: 1015,
     message: 'The request is invalid',
     messageFr: 'french request is invalid'
 };
 exports.PROPERTY_IS_ALREADY_FEATURED = {
-    name: 'NOT PROPERTY_IS_ALREADY_FEATURED',
+    name: 'PROPERTY_IS_ALREADY_FEATURED',
     code: 1016,
     message: 'This property is already featured',
     messageFr: 'french this property is already featured'
 };
 exports.INVALID_PROPERTY_ID_FOR_FEATURING = {
-    name: 'NOT INVALID_PROPERTY_ID_FOR_FEATURING',
+    name: 'INVALID_PROPERTY_ID_FOR_FEATURING',
     code: 1017,
     message: 'The provided property id doesn\'t match any existing Property.',
     messageFr: 'french The provided property id doesn\'t match any existing Property'
 };
 exports.PROPERTY_UNAVAILABLE_FOR_FEATURING = {
-    name: 'NOT PROPERTY_UNAVAILABLE_FOR_FEATURING',
+    name: 'PROPERTY_UNAVAILABLE_FOR_FEATURING',
     code: 1017,
     message: 'The provided property isn\'t available for featuring.',
     messageFr: 'french The provided property isn\'t available for featuring.'
 };
 exports.INVALID_RESET_TOKEN = {
-    name: 'NOT INVALID_RESET_TOKEN',
+    name: 'INVALID_RESET_TOKEN',
     code: 1018,
     message: 'The reset token provided is invalid',
     messageFr: 'french The reset token provided is invalid'
 };
 exports.RESET_TOKEN_DEACTIVED = {
-    name: 'NOT RESET_TOKEN_DEACTIVED',
+    name: 'RESET_TOKEN_DEACTIVED',
     code: 1019,
     message: 'The reset token provided is no longer active',
     messageFr: 'french The reset token provided is no longer active'
 };
 exports.ACCOUNST_IS_ALREADY_VERIFIED = {
-    name: 'NOT ACCOUNST_IS_ALREADY_VERIFIED',
+    name: 'ACCOUNST_IS_ALREADY_VERIFIED',
     code: 1020,
     message: 'Your account has already been verified',
     messageFr: 'french Your account has already been verified'
+};
+exports.REVIEW_ALREADY_EXIST = {
+    name: 'REVIEW_ALREADY_EXIST',
+    code: 1020,
+    message: 'You can only review once',
+    messageFr: 'french You can only review once'
 };
 //# sourceMappingURL=error.js.map

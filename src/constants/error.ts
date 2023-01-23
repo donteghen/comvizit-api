@@ -118,7 +118,7 @@ export const EMAIL_ALREADY_EXITS: ErrorResponse = {
 }
 
 export const NOT_PROPERTY_OWNER: ErrorResponse = {
-    name: 'NOT PROPERTY OWNER',
+    name: 'NOT_PROPERTY OWNER',
     code: 1013,
     message: 'This property does not belong to the current landlord',
     messageFr: 'french property not belong to current owner'
@@ -126,7 +126,7 @@ export const NOT_PROPERTY_OWNER: ErrorResponse = {
 
 export const TAG_ALREADY_EXISTS = (code: string, type: string, refId: string) : ErrorResponse => {
     return {
-        name: 'NOT PROPERTY TAG_ALREADY_EXISTS',
+        name: 'TAG_ALREADY_EXISTS',
         code: 1014,
         message: `The tag code:${code} has already been added for ${type} with Id: ${refId}`,
         messageFr: 'french property not belong to current owner'
@@ -134,50 +134,57 @@ export const TAG_ALREADY_EXISTS = (code: string, type: string, refId: string) : 
 }
 
 export const INVALID_REQUEST: ErrorResponse = {
-    name: 'NOT INVALID_REQUEST',
+    name: 'INVALID_REQUEST',
     code: 1015,
     message: 'The request is invalid',
     messageFr: 'french request is invalid'
 }
 
 export const PROPERTY_IS_ALREADY_FEATURED: ErrorResponse = {
-    name: 'NOT PROPERTY_IS_ALREADY_FEATURED',
+    name: 'PROPERTY_IS_ALREADY_FEATURED',
     code: 1016,
     message: 'This property is already featured',
     messageFr: 'french this property is already featured'
 }
 
 export const INVALID_PROPERTY_ID_FOR_FEATURING: ErrorResponse = {
-    name: 'NOT INVALID_PROPERTY_ID_FOR_FEATURING',
+    name: 'INVALID_PROPERTY_ID_FOR_FEATURING',
     code: 1017,
     message: 'The provided property id doesn\'t match any existing Property.',
     messageFr: 'french The provided property id doesn\'t match any existing Property'
 }
 
 export const PROPERTY_UNAVAILABLE_FOR_FEATURING: ErrorResponse = {
-    name: 'NOT PROPERTY_UNAVAILABLE_FOR_FEATURING',
+    name: 'PROPERTY_UNAVAILABLE_FOR_FEATURING',
     code: 1017,
     message: 'The provided property isn\'t available for featuring.',
     messageFr: 'french The provided property isn\'t available for featuring.'
 }
 
 export const INVALID_RESET_TOKEN: ErrorResponse = {
-    name: 'NOT INVALID_RESET_TOKEN',
+    name: 'INVALID_RESET_TOKEN',
     code: 1018,
     message: 'The reset token provided is invalid',
     messageFr: 'french The reset token provided is invalid'
 }
 
 export const RESET_TOKEN_DEACTIVED: ErrorResponse = {
-    name: 'NOT RESET_TOKEN_DEACTIVED',
+    name: 'RESET_TOKEN_DEACTIVED',
     code: 1019,
     message: 'The reset token provided is no longer active',
     messageFr: 'french The reset token provided is no longer active'
 }
 
 export const ACCOUNST_IS_ALREADY_VERIFIED: ErrorResponse = {
-    name: 'NOT ACCOUNST_IS_ALREADY_VERIFIED',
+    name: 'ACCOUNST_IS_ALREADY_VERIFIED',
     code: 1020,
     message: 'Your account has already been verified',
     messageFr: 'french Your account has already been verified'
+}
+
+export const REVIEW_ALREADY_EXIST: ErrorResponse = {
+    name: 'REVIEW_ALREADY_EXIST',
+    code: 1020,
+    message: 'You can only review once',
+    messageFr: 'french You can only review once'
 }

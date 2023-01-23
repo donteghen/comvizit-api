@@ -30,6 +30,7 @@ const contact_1 = require("./routes/contact");
 const complain_1 = require("./routes/complain");
 const user_1 = require("./routes/user");
 const tag_1 = require("./routes/tag");
+const review_1 = require("./routes/review");
 const featured_properties_1 = require("./routes/featured-properties");
 const cron_1 = __importDefault(require("./services/cron"));
 // global settings
@@ -72,6 +73,7 @@ app.use(inquiry_1.InquiryRouter);
 app.use(user_1.UserRouter);
 app.use(featured_properties_1.FeaturedRouter);
 app.use(tag_1.TagRouter);
+app.use(review_1.ReviewRouter);
 // start all cron jobs
 (0, cron_1.default)();
 //  Routes

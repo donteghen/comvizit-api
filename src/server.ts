@@ -17,6 +17,7 @@ import { ContactRouter } from './routes/contact'
 import {ComplainRouter} from './routes/complain'
 import {UserRouter} from './routes/user'
 import {TagRouter} from './routes/tag'
+import {ReviewRouter} from './routes/review'
 import {FeaturedRouter} from './routes/featured-properties'
 import main from './services/cron'
 
@@ -64,6 +65,7 @@ app.use(InquiryRouter)
 app.use(UserRouter)
 app.use(FeaturedRouter)
 app.use(TagRouter)
+app.use(ReviewRouter)
 
 // start all cron jobs
 main()

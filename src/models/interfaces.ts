@@ -157,3 +157,12 @@ export interface IToken extends Document {
     secret: string,
     generatedAt: number
 }
+
+export interface IReview extends Document {
+    type: string,
+    author: Types.ObjectId,
+    rating: number,
+    comment: string,
+    status: string,
+    refId: string
+}
