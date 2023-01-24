@@ -22,6 +22,8 @@ function setFilter(key:string, value:any): any {
             return {'status': value}
         case 'author':
             return {'author': value}
+        case 'authorType':
+            return {'authorType': value}
         case 'refId':
             return {'refId': value}
         default:
@@ -36,13 +38,13 @@ ReviewRouter.post('/api/reviews/create', isLoggedIn, async (req: Request, res: R
     try {
         const {type, rating, comment, refId, status} = req.body
         const author = new Types.ObjectId(req.user.id)
-
+        const authorType = req.user.role
         const existAlready = await Review.findOne({$and: [{type}, {author}, {refId}]})
         if (existAlready) {
             throw REVIEW_ALREADY_EXIST
         }
         const newReview = new Review({
-            type, rating, comment, status, author, refId
+            type, rating, comment, status, author, refId, authorType
         })
         const review = await newReview.save()
         if (!review) {
@@ -71,7 +73,7 @@ ReviewRouter.get('/api/reviews', async (req: Request, res: Response) => {
                 }
             })
         }
-        const reviews = await Review.find(filter).sort({createdAt: -1})
+        const reviews = await Review.find(filter).sort({createdAt: -1}).populate('author', ['fullname', 'avatar', 'address.town'] ).exec()
         res.send({ok: true, data: reviews})
     } catch (error) {
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
@@ -81,7 +83,7 @@ ReviewRouter.get('/api/reviews', async (req: Request, res: Response) => {
 // get a single review by id
 ReviewRouter.get('/api/reviews/:id',  async (req: Request, res: Response) => {
     try {
-        const review = await Review.findById(req.params.id)
+        const review = await Review.findById(req.params.id).populate('author', ['fullname', 'avatar', 'address.town'] ).exec()
         if (!review) {
             throw NOT_FOUND
         }

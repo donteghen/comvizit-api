@@ -161,6 +161,7 @@ export interface IToken extends Document {
 export interface IReview extends Document {
     type: string,
     author: Types.ObjectId,
+    authorType: string,
     rating: number,
     comment: string,
     status: string,

@@ -36,6 +36,8 @@ function setFilter(key, value) {
             return { 'status': value };
         case 'author':
             return { 'author': value };
+        case 'authorType':
+            return { 'authorType': value };
         case 'refId':
             return { 'refId': value };
         default:
@@ -49,12 +51,13 @@ ReviewRouter.post('/api/reviews/create', auth_middleware_1.isLoggedIn, (req, res
     try {
         const { type, rating, comment, refId, status } = req.body;
         const author = new mongoose_1.Types.ObjectId(req.user.id);
+        const authorType = req.user.role;
         const existAlready = yield review_1.Review.findOne({ $and: [{ type }, { author }, { refId }] });
         if (existAlready) {
             throw error_1.REVIEW_ALREADY_EXIST;
         }
         const newReview = new review_1.Review({
-            type, rating, comment, status, author, refId
+            type, rating, comment, status, author, refId, authorType
         });
         const review = yield newReview.save();
         if (!review) {
@@ -83,7 +86,7 @@ ReviewRouter.get('/api/reviews', (req, res) => __awaiter(void 0, void 0, void 0,
                 }
             });
         }
-        const reviews = yield review_1.Review.find(filter).sort({ createdAt: -1 });
+        const reviews = yield review_1.Review.find(filter).sort({ createdAt: -1 }).populate('author', ['fullname', 'avatar', 'address.town']).exec();
         res.send({ ok: true, data: reviews });
     }
     catch (error) {
@@ -94,7 +97,7 @@ ReviewRouter.get('/api/reviews', (req, res) => __awaiter(void 0, void 0, void 0,
 ReviewRouter.get('/api/reviews/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _c;
     try {
-        const review = yield review_1.Review.findById(req.params.id);
+        const review = yield review_1.Review.findById(req.params.id).populate('author', ['fullname', 'avatar', 'address.town']).exec();
         if (!review) {
             throw error_1.NOT_FOUND;
         }
