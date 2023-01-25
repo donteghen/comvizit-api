@@ -184,7 +184,13 @@ export const ACCOUNST_IS_ALREADY_VERIFIED: ErrorResponse = {
 
 export const REVIEW_ALREADY_EXIST: ErrorResponse = {
     name: 'REVIEW_ALREADY_EXIST',
-    code: 1020,
+    code: 1021,
     message: 'You can only review once',
     messageFr: 'french You can only review once'
+}
+export const ADDED_ALREADY_TO_FAV_LIST: ErrorResponse = {
+    name: 'ADDED_ALREADY_TO_FAV_LIST',
+    code: 1022,
+    message: 'This property ahs alredy been added to your favorite list',
+    messageFr: 'French this property ahs alredy been added to your favorite list'
 }

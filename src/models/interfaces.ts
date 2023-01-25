@@ -132,7 +132,8 @@ export interface IUser extends Document {
     avatarDeleteId?: string,
     approved: boolean,
     isVerified: boolean,
-    role: string
+    role: string,
+    favorites?: string[]
 }
 
 export interface IFeaturedProperties extends Document {

@@ -3,11 +3,11 @@ import express, { Request, Response } from 'express'
 
 import { Types, PipelineStage } from "mongoose";
 import { categoryAggregator, townAggregator } from "../utils/queryMaker";
-import { isAdmin, isLandlord, isLoggedIn } from "../middleware/auth-middleware";
-import {DELETE_OPERATION_FAILED, NOT_AUTHORIZED, NOT_FOUND, NOT_PROPERTY_OWNER, SAVE_OPERATION_FAILED, TAG_ALREADY_EXISTS} from '../constants/error'
+import { isAdmin, isLandlord, isLoggedIn, isTenant } from "../middleware/auth-middleware";
+import {ADDED_ALREADY_TO_FAV_LIST, DELETE_OPERATION_FAILED, NOT_AUTHORIZED, NOT_FOUND, NOT_PROPERTY_OWNER, SAVE_OPERATION_FAILED, TAG_ALREADY_EXISTS} from '../constants/error'
 import {notifyPropertyAvailability} from '../utils/mailer-templates'
 import { mailer } from "../helper/mailer";
-import { IUser } from "../models/interfaces";
+import { IProperty, IUser } from "../models/interfaces";
 import { User } from "../models/user";
 import { Tag } from "../models/tag";
 
@@ -421,6 +421,66 @@ PropertyRouter.get('/api/property/:propertyId/related-properties/:quaterref', as
             ]})
             .limit(4)
         res.send({ok:true, data: relatedProperties})
+    } catch (error) {
+        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+    }
+})
+
+// ***************************** Tenant Only endpoints ***********************************************
+
+// get a tenant's favorite property list
+PropertyRouter.get('/api/fav-property-list', isLoggedIn, isTenant, async (req: Request, res: Response) => {
+    try {
+        let properties: (IProperty | any)[] | undefined = []
+        const favIdList = req.user.favorites
+        if (favIdList && favIdList.length > 0){
+            properties = await Property.aggregate([
+                {
+                    $match: {
+                        availability: 'Available',
+                        _id: {$in: favIdList.map(id => new Types.ObjectId(id))}
+                    }
+                }
+            ])
+        }
+        res.send({ok:true, data: properties})
+    } catch (error) {
+        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+    }
+})
+
+// Add a property to tenant's favorite property list
+PropertyRouter.patch('/api/fav-property-list/add-favorite', isLoggedIn, isTenant, async (req: Request, res: Response) => {
+    try {
+        let userFavList = req.user.favorites
+        const propertyId: string = req.body.id
+        const user = await User.findById(req.user.id)
+        if (propertyId) {
+            if (userFavList?.length > 0 && userFavList.includes(propertyId)) {
+                throw ADDED_ALREADY_TO_FAV_LIST
+            }
+            userFavList = userFavList.concat(propertyId)
+        }
+        user.favorites = userFavList
+        const updatedUser = await user.save()
+        res.send({ok:true, data: updatedUser})
+    } catch (error) {
+        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+    }
+})
+
+// Remove a property from tenant's favorite property list
+PropertyRouter.patch('/api/fav-property-list/remove-favorite', isLoggedIn, isTenant, async (req: Request, res: Response) => {
+    try {
+        let userFavList = req.user.favorites
+        const propertyId = req.body.id
+        const user = await User.findById(req.user.id)
+        if (propertyId && userFavList?.length > 0) {
+            userFavList = userFavList.filter(id => id !== propertyId)
+        }
+        user.favorites = userFavList
+        const updatedUser = await user.save()
+        res.send({ok:true, data: updatedUser})
     } catch (error) {
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }

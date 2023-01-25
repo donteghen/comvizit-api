@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.REVIEW_ALREADY_EXIST = exports.ACCOUNST_IS_ALREADY_VERIFIED = exports.RESET_TOKEN_DEACTIVED = exports.INVALID_RESET_TOKEN = exports.PROPERTY_UNAVAILABLE_FOR_FEATURING = exports.INVALID_PROPERTY_ID_FOR_FEATURING = exports.PROPERTY_IS_ALREADY_FEATURED = exports.INVALID_REQUEST = exports.TAG_ALREADY_EXISTS = exports.NOT_PROPERTY_OWNER = exports.EMAIL_ALREADY_EXITS = exports.AUTH_FAILED = exports.PASSWORD_INCORRECT = exports.LOGIN_FAILED = exports.DELETE_OPERATION_FAILED = exports.USER_UPDATE_OPERATION_FAILED = exports.SAVE_OPERATION_FAILED = exports.NEW_PASSWORD_IS_INVALID = exports.OLD_PASSWORD_IS_INCORRECT = exports.NO_ADMIN = exports.NO_LANDLORD = exports.NO_TENANT = exports.NO_USER = exports.NOT_AUTHORIZED = exports.NOT_FOUND = exports.NOT_SPECIFIED = void 0;
+exports.ADDED_ALREADY_TO_FAV_LIST = exports.REVIEW_ALREADY_EXIST = exports.ACCOUNST_IS_ALREADY_VERIFIED = exports.RESET_TOKEN_DEACTIVED = exports.INVALID_RESET_TOKEN = exports.PROPERTY_UNAVAILABLE_FOR_FEATURING = exports.INVALID_PROPERTY_ID_FOR_FEATURING = exports.PROPERTY_IS_ALREADY_FEATURED = exports.INVALID_REQUEST = exports.TAG_ALREADY_EXISTS = exports.NOT_PROPERTY_OWNER = exports.EMAIL_ALREADY_EXITS = exports.AUTH_FAILED = exports.PASSWORD_INCORRECT = exports.LOGIN_FAILED = exports.DELETE_OPERATION_FAILED = exports.USER_UPDATE_OPERATION_FAILED = exports.SAVE_OPERATION_FAILED = exports.NEW_PASSWORD_IS_INVALID = exports.OLD_PASSWORD_IS_INCORRECT = exports.NO_ADMIN = exports.NO_LANDLORD = exports.NO_TENANT = exports.NO_USER = exports.NOT_AUTHORIZED = exports.NOT_FOUND = exports.NOT_SPECIFIED = void 0;
 exports.NOT_SPECIFIED = {
     name: 'NOT SPECIFIED',
     code: 1000,
@@ -156,8 +156,14 @@ exports.ACCOUNST_IS_ALREADY_VERIFIED = {
 };
 exports.REVIEW_ALREADY_EXIST = {
     name: 'REVIEW_ALREADY_EXIST',
-    code: 1020,
+    code: 1021,
     message: 'You can only review once',
     messageFr: 'french You can only review once'
+};
+exports.ADDED_ALREADY_TO_FAV_LIST = {
+    name: 'ADDED_ALREADY_TO_FAV_LIST',
+    code: 1022,
+    message: 'This property ahs alredy been added to your favorite list',
+    messageFr: 'French this property ahs alredy been added to your favorite list'
 };
 //# sourceMappingURL=error.js.map

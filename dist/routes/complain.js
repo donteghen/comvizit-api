@@ -75,7 +75,7 @@ ComplainRouter.post('/api/complains', auth_middleware_1.isLoggedIn, auth_middlew
 }));
 // ***************************** admin restricted endpoints ***********************************************
 // get all complains (with or without query string)
-ComplainRouter.get('/api/complains', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+ComplainRouter.get('/api/complains', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _b;
     try {
         let filter = {};

@@ -67,7 +67,7 @@ ComplainRouter.post('/api/complains', isLoggedIn, isTenant, async (req: Request,
 // ***************************** admin restricted endpoints ***********************************************
 
 // get all complains (with or without query string)
-ComplainRouter.get('/api/complains', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
+ComplainRouter.get('/api/complains', isLoggedIn, async (req: Request, res: Response) => {
     try {
         let filter: any = {}
         const queries = Object.keys(req.query)

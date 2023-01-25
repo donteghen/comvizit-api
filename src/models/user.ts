@@ -23,6 +23,7 @@ import { NextFunction } from 'express'
  * @param {string} avatarDeleteId - User's avatar deletion Id
  * @param {string} role - User's role
  * @param {string} lang - User's spoken language(s)
+ * @param {string} favorites - User's (Tenant) favorite properties list
  */
 const userSchema = new Schema<IUser>({
     fullname: {
@@ -102,6 +103,9 @@ const userSchema = new Schema<IUser>({
         type: Boolean,
         required: true,
         default: false
+    },
+    favorites: {
+        type: [String],
     }
 }, {
     virtuals: true,

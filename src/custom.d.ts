@@ -16,6 +16,7 @@ declare namespace Express {
         avatarDeleteId?: string,
         approved?: boolean,
         isVerified?: boolean,
-        role?: string
+        role?: string,
+        favorites?:Array<string>
     }
 } 

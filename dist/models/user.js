@@ -34,6 +34,7 @@ const isStrongPassword_1 = __importDefault(require("validator/lib/isStrongPasswo
  * @param {string} avatarDeleteId - User's avatar deletion Id
  * @param {string} role - User's role
  * @param {string} lang - User's spoken language(s)
+ * @param {string} favorites - User's (Tenant) favorite properties list
  */
 const userSchema = new mongoose_1.Schema({
     fullname: {
@@ -113,6 +114,9 @@ const userSchema = new mongoose_1.Schema({
         type: Boolean,
         required: true,
         default: false
+    },
+    favorites: {
+        type: [String],
     }
 }, {
     virtuals: true,
