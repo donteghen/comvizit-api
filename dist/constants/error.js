@@ -9,13 +9,13 @@ exports.NOT_SPECIFIED = {
 };
 exports.NOT_FOUND = {
     name: 'NOT_FOUND',
-    code: 401,
+    code: 404,
     message: 'Not found! The requested resource is available',
     messageFr: 'french not found'
 };
 exports.NOT_AUTHORIZED = {
     name: 'NOT_AUTHORIZED',
-    code: 501,
+    code: 401,
     message: 'Request is not authorized!',
     messageFr: 'french request is not authorized'
 };

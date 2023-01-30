@@ -95,6 +95,7 @@ export interface IInquiry extends Document {
 
 export interface IProperty extends Document {
     ownerId: Types.ObjectId,
+    age: number,
     price: number,
     propertyType: string,
     updated: number,

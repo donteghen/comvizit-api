@@ -31,6 +31,8 @@ function setFilter(key, value) {
     switch (key) {
         case 'ownerId':
             return { 'ownerId': new mongoose_1.Types.ObjectId(value) };
+        case 'age':
+            return { 'age': { $lte: Number(value) } };
         case 'availability':
             return { 'availability': value };
         case 'bedroomCount':
@@ -118,7 +120,7 @@ PropertyRouter.get('/api/properties-in-quater/:quaterref', (req, res) => __await
             });
         }
         const mainfilter = { $and: [{ 'quater.ref': req.params.quaterref }, filter] };
-        // console.log(mainfilter)
+        // console.log(filter['age'])
         const properties = yield property_1.Property.aggregate([
             {
                 $match: mainfilter
@@ -457,18 +459,17 @@ PropertyRouter.get('/api/fav-property-list', auth_middleware_1.isLoggedIn, auth_
 PropertyRouter.patch('/api/fav-property-list/add-favorite', auth_middleware_1.isLoggedIn, auth_middleware_1.isTenant, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _q;
     try {
-        let userFavList = req.user.favorites;
         const propertyId = req.body.id;
         const user = yield user_1.User.findById(req.user.id);
+        let userFavList = user.favorites;
         if (propertyId) {
-            if ((userFavList === null || userFavList === void 0 ? void 0 : userFavList.length) > 0 && userFavList.includes(propertyId)) {
-                throw error_1.ADDED_ALREADY_TO_FAV_LIST;
+            if (!userFavList.includes(propertyId)) {
+                userFavList = userFavList.concat(propertyId);
+                user.favorites = userFavList;
+                yield user.save();
             }
-            userFavList = userFavList.concat(propertyId);
         }
-        user.favorites = userFavList;
-        const updatedUser = yield user.save();
-        res.send({ ok: true, data: updatedUser });
+        res.send({ ok: true });
     }
     catch (error) {
         res.status(400).send({ ok: false, error: error.message, code: (_q = error.code) !== null && _q !== void 0 ? _q : 1000 });
@@ -492,10 +493,25 @@ PropertyRouter.patch('/api/fav-property-list/remove-favorite', auth_middleware_1
         res.status(400).send({ ok: false, error: error.message, code: (_r = error.code) !== null && _r !== void 0 ? _r : 1000 });
     }
 }));
+// Clear tenant's favorite property list
+PropertyRouter.patch('/api/fav-property-list/clear-favorite-list', auth_middleware_1.isLoggedIn, auth_middleware_1.isTenant, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _s;
+    try {
+        let userFavList = req.user.favorites;
+        const propertyId = req.body.id;
+        const user = yield user_1.User.findById(req.user.id);
+        user.favorites = [];
+        const updatedUser = yield user.save();
+        res.send({ ok: true, data: updatedUser });
+    }
+    catch (error) {
+        res.status(400).send({ ok: false, error: error.message, code: (_s = error.code) !== null && _s !== void 0 ? _s : 1000 });
+    }
+}));
 // ***************************** Restricted endpoints ***********************************************
 // create new property
 PropertyRouter.post('/api/properties', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _s;
+    var _t;
     try {
         const newProperty = new property_1.Property(Object.assign(Object.assign({}, req.body), { ownerId: new mongoose_1.Types.ObjectId(req.body.ownerId) }));
         const property = yield newProperty.save();
@@ -506,12 +522,12 @@ PropertyRouter.post('/api/properties', auth_middleware_1.isLoggedIn, auth_middle
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_s = error.code) !== null && _s !== void 0 ? _s : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_t = error.code) !== null && _t !== void 0 ? _t : 1000 });
     }
 }));
 // update property availability status
 PropertyRouter.patch('/api/properties/:id/availability/update', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _t;
+    var _u;
     try {
         let propertyOwner;
         // check if user is landlord or admin and property belongs to that user(landlord)
@@ -550,12 +566,12 @@ PropertyRouter.patch('/api/properties/:id/availability/update', auth_middleware_
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_t = error.code) !== null && _t !== void 0 ? _t : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_u = error.code) !== null && _u !== void 0 ? _u : 1000 });
     }
 }));
 // update property
 PropertyRouter.patch('/api/properties/:id/update', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _u;
+    var _v;
     try {
         const update = {};
         Object.keys(req.body).forEach(key => {
@@ -576,12 +592,12 @@ PropertyRouter.patch('/api/properties/:id/update', auth_middleware_1.isLoggedIn,
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_u = error.code) !== null && _u !== void 0 ? _u : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_v = error.code) !== null && _v !== void 0 ? _v : 1000 });
     }
 }));
 // update property media
 PropertyRouter.patch('/api/properties/:id/update-media', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _v;
+    var _w;
     try {
         const { photos, videos, virtualTours } = req.body.media;
         const property = yield property_1.Property.findById(req.params.id);
@@ -600,12 +616,12 @@ PropertyRouter.patch('/api/properties/:id/update-media', auth_middleware_1.isLog
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_v = error.code) !== null && _v !== void 0 ? _v : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_w = error.code) !== null && _w !== void 0 ? _w : 1000 });
     }
 }));
 // delete property
 PropertyRouter.delete('/api/properties/:id/delete', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _w;
+    var _x;
     try {
         const deletedproperty = yield property_1.Property.findByIdAndDelete(req.params.id);
         if (!deletedproperty) {
@@ -616,7 +632,7 @@ PropertyRouter.delete('/api/properties/:id/delete', auth_middleware_1.isLoggedIn
         res.status(201).send({ ok: true });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_w = error.code) !== null && _w !== void 0 ? _w : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_x = error.code) !== null && _x !== void 0 ? _x : 1000 });
     }
 }));
 //# sourceMappingURL=property.js.map

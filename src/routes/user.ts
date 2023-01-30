@@ -302,7 +302,7 @@ UserRouter.get('/api/user', isLoggedIn, async (req: Request, res: Response) => {
 try {
     res.send({ok: true, data: req.user})
 } catch (error) {
-    // console.log(error)
+    console.log(error)
     res.status(400).send({ok:false, error: error.message, code:error.code??1000})
 }
 })

@@ -291,7 +291,7 @@ UserRouter.get('/api/user', auth_middleware_1.isLoggedIn, (req, res) => __awaite
         res.send({ ok: true, data: req.user });
     }
     catch (error) {
-        // console.log(error)
+        console.log(error);
         res.status(400).send({ ok: false, error: error.message, code: (_m = error.code) !== null && _m !== void 0 ? _m : 1000 });
     }
 }));

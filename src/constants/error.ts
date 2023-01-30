@@ -10,14 +10,14 @@ export const NOT_SPECIFIED: ErrorResponse = {
 
 export const NOT_FOUND: ErrorResponse = {
     name:'NOT_FOUND',
-    code: 401,
+    code: 404,
     message: 'Not found! The requested resource is available',
     messageFr: 'french not found'
 }
 
 export const NOT_AUTHORIZED: ErrorResponse = {
     name:'NOT_AUTHORIZED',
-    code: 501,
+    code: 401,
     message: 'Request is not authorized!',
     messageFr: 'french request is not authorized'
 }

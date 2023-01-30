@@ -46,6 +46,10 @@ const propertySchema = new Schema<IProperty>({
         required: true,
         ref: 'Users'
     },
+    age: {
+        type: Number,
+        req: true
+    },
     price: {
         type: Number,
         req: true

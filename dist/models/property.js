@@ -45,6 +45,10 @@ const propertySchema = new mongoose_1.Schema({
         required: true,
         ref: 'Users'
     },
+    age: {
+        type: Number,
+        req: true
+    },
     price: {
         type: Number,
         req: true

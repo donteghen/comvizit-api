@@ -21,6 +21,8 @@ function setFilter(key:string, value:any): any {
     switch (key) {
         case 'ownerId':
             return {'ownerId': new Types.ObjectId(value)}
+        case 'age':
+            return {'age': {$lte: Number(value)}}
         case 'availability':
             return {'availability': value}
         case 'bedroomCount':
@@ -111,7 +113,7 @@ PropertyRouter.get('/api/properties-in-quater/:quaterref', async (req: Request, 
             })
         }
         const mainfilter = {$and: [{'quater.ref':req.params.quaterref}, filter]}
-        // console.log(mainfilter)
+        // console.log(filter['age'])
         const properties = await Property.aggregate([
             {
                 $match: mainfilter
@@ -452,18 +454,17 @@ PropertyRouter.get('/api/fav-property-list', isLoggedIn, isTenant, async (req: R
 // Add a property to tenant's favorite property list
 PropertyRouter.patch('/api/fav-property-list/add-favorite', isLoggedIn, isTenant, async (req: Request, res: Response) => {
     try {
-        let userFavList = req.user.favorites
         const propertyId: string = req.body.id
         const user = await User.findById(req.user.id)
+        let userFavList = user.favorites
         if (propertyId) {
-            if (userFavList?.length > 0 && userFavList.includes(propertyId)) {
-                throw ADDED_ALREADY_TO_FAV_LIST
+            if (!userFavList.includes(propertyId)) {
+                userFavList = userFavList.concat(propertyId)
+                user.favorites = userFavList
+                await user.save()
             }
-            userFavList = userFavList.concat(propertyId)
         }
-        user.favorites = userFavList
-        const updatedUser = await user.save()
-        res.send({ok:true, data: updatedUser})
+        res.send({ok:true})
     } catch (error) {
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
@@ -479,6 +480,21 @@ PropertyRouter.patch('/api/fav-property-list/remove-favorite', isLoggedIn, isTen
             userFavList = userFavList.filter(id => id !== propertyId)
         }
         user.favorites = userFavList
+        const updatedUser = await user.save()
+        res.send({ok:true, data: updatedUser})
+    } catch (error) {
+        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+    }
+})
+
+// Clear tenant's favorite property list
+PropertyRouter.patch('/api/fav-property-list/clear-favorite-list', isLoggedIn, isTenant, async (req: Request, res: Response) => {
+    try {
+        let userFavList = req.user.favorites
+        const propertyId = req.body.id
+        const user = await User.findById(req.user.id)
+
+        user.favorites = []
         const updatedUser = await user.save()
         res.send({ok:true, data: updatedUser})
     } catch (error) {

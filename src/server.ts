@@ -20,6 +20,7 @@ import {TagRouter} from './routes/tag'
 import {ReviewRouter} from './routes/review'
 import {FeaturedRouter} from './routes/featured-properties'
 import main from './services/cron'
+import { Property } from './models/property'
 
 // global settings
 dotenv.config()
@@ -45,7 +46,7 @@ app.use(
    cookie: {
      secure: false,  // if true only transmit cookie over https
      httpOnly: false, // if true prevent client side JS from reading the cookie
-     maxAge: 1000 * 60 * 60 , // session max age in milliseconds
+     // maxAge: 1000 * 60 * 60 , // session max age in milliseconds
    },
  })
 );
@@ -68,7 +69,7 @@ app.use(TagRouter)
 app.use(ReviewRouter)
 
 // start all cron jobs
-main()
+main();
 
 //  Routes
 app.get('/api/', async (req: Request, res: Response) => {

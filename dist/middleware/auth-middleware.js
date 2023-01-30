@@ -17,6 +17,7 @@ const passport_local_1 = require("passport-local");
 const passport_1 = __importDefault(require("passport"));
 const user_1 = require("../models/user");
 const bcryptjs_1 = require("bcryptjs");
+const error_1 = require("../constants/error");
 const passportConfig = () => {
     passport_1.default.use(new passport_local_1.Strategy({ usernameField: "email", passwordField: "password" }, (email, password, done) => __awaiter(void 0, void 0, void 0, function* () {
         const user = yield user_1.User.findOne({ email });
@@ -51,7 +52,8 @@ exports.passportConfig = passportConfig;
 function isLoggedIn(req, res, next) {
     // console.log(req.sessionID, req.isAuthenticated(), req.user)
     if (!req.isAuthenticated()) {
-        next('Access restricted!');
+        res.send(Object.assign({ ok: false }, error_1.NOT_AUTHORIZED));
+        return;
     }
     next();
 }
@@ -59,7 +61,9 @@ exports.isLoggedIn = isLoggedIn;
 // helper function that checks if an authenticated user is a tenant
 function isTenant(req, res, next) {
     if (req.user.role !== 'TENANT') {
-        next('Access restricted to approved and authenticated tenants only!');
+        res.send(Object.assign({ ok: false }, error_1.NOT_AUTHORIZED));
+        return;
+        // next('Access restricted to approved and authenticated tenants only!')
     }
     next();
 }
@@ -67,7 +71,9 @@ exports.isTenant = isTenant;
 // helper function that checks if an authenticated user is a landlord
 function isLandlord(req, res, next) {
     if (req.user.role !== 'LANDLORD') {
-        next('Access restricted to approved and authenticated landlords only!');
+        res.send(Object.assign({ ok: false }, error_1.NOT_AUTHORIZED));
+        return;
+        //  next('Access restricted to approved and authenticated landlords only!')
     }
     next();
 }
@@ -75,7 +81,9 @@ exports.isLandlord = isLandlord;
 // helper function that checks if an authenticated user is an admin
 function isAdmin(req, res, next) {
     if (req.user.role !== 'ADMIN') {
-        next('Access restricted to admins only!');
+        res.send(Object.assign({ ok: false }, error_1.NOT_AUTHORIZED));
+        return;
+        // next('Access restricted to admins only!')
     }
     next();
 }
