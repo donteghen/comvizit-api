@@ -9,15 +9,13 @@ const CronJob = require('cron-cluster')(redisClient).CronJob
 export function updatePropertyFeaturingCron () {
     const job = new CronJob('0 6 * * *', async function () {
         try {
-            console.log('working on cron*************************************')
+            console.log(new Date(Date.now()),'*** Featured Property Update Cron Job Starting ***')
             const featuredProperties = await FeaturedProperties.find({status: 'Active'})
 
             if (featuredProperties.length > 0) {
                 for(const featProp of featuredProperties) {
-                    console.log(featProp)
                     if ((Date.now() - featProp.startedAt) > featProp.duration) {
-                        console.log('condidate')
-                        featProp.status = 'InActive'
+                        featProp.status = 'Inactive'
                         await featProp.save()
                     }
                 }
