@@ -66,6 +66,7 @@ ComplainRouter.post('/api/complains', auth_middleware_1.isLoggedIn, auth_middlew
         res.send({ ok: true, data: complain });
     }
     catch (error) {
+        console.log(error);
         if (error.name === 'ValidationError') {
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;

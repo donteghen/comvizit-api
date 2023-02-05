@@ -508,7 +508,7 @@ PropertyRouter.patch('/api/fav-property-list/clear-favorite-list', auth_middlewa
         res.status(400).send({ ok: false, error: error.message, code: (_s = error.code) !== null && _s !== void 0 ? _s : 1000 });
     }
 }));
-// ***************************** Restricted endpoints ***********************************************
+// ***************************** admin endpoints ***********************************************
 // create new property
 PropertyRouter.post('/api/properties', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _t;

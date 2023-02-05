@@ -118,7 +118,9 @@ export interface IProperty extends Document {
     distanceFromRoad:number,
     costFromRoad: number,
     availability: string,
-    rentUtilities: RentUtilities
+    rentUtilities: RentUtilities,
+    likes?:string[],
+    rentIntensions?: string[]
 }
 
 export interface IUser extends Document {
@@ -134,7 +136,9 @@ export interface IUser extends Document {
     approved: boolean,
     isVerified: boolean,
     role: string,
-    favorites?: string[]
+    favorites?: string[],
+    likes?:string[],
+    rentIntensions?: string[]
 }
 
 export interface IFeaturedProperties extends Document {
@@ -168,4 +172,20 @@ export interface IReview extends Document {
     comment: string,
     status: string,
     refId: string
+}
+export interface IFavorite extends Document {
+    propertyId: Types.ObjectId,
+    userId: Types.ObjectId
+}
+
+export interface ILike extends Document {
+    propertyId: Types.ObjectId,
+    likerId: Types.ObjectId
+}
+
+export interface IRentIntension extends Document {
+    propertyId: Types.ObjectId,
+    landlordId: Types.ObjectId,
+    potentialTenantId: Types.ObjectId,
+    comment: string
 }

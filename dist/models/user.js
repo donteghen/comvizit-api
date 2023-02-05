@@ -117,6 +117,12 @@ const userSchema = new mongoose_1.Schema({
     },
     favorites: {
         type: [String],
+    },
+    likes: {
+        type: [String]
+    },
+    rentIntensions: {
+        type: [String]
     }
 }, {
     virtuals: true,

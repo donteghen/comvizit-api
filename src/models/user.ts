@@ -106,6 +106,12 @@ const userSchema = new Schema<IUser>({
     },
     favorites: {
         type: [String],
+    },
+    likes: {
+        type: [String]
+    },
+    rentIntensions: {
+        type: [String]
     }
 }, {
     virtuals: true,

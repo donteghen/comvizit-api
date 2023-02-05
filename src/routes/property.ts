@@ -502,7 +502,7 @@ PropertyRouter.patch('/api/fav-property-list/clear-favorite-list', isLoggedIn, i
     }
 })
 
-// ***************************** Restricted endpoints ***********************************************
+// ***************************** admin endpoints ***********************************************
 
 
 

@@ -53,6 +53,7 @@ ReviewRouter.post('/api/reviews/create', isLoggedIn, async (req: Request, res: R
 
         res.send({ok: true, data: review})
     } catch (error) {
+        console.log(error)
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return

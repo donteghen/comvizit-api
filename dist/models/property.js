@@ -216,6 +216,12 @@ const propertySchema = new mongoose_1.Schema({
         type: Number,
         required: true,
         default: Date.now()
+    },
+    likes: {
+        type: [String]
+    },
+    rentIntensions: {
+        type: [String]
     }
 }, {
     virtuals: true,
