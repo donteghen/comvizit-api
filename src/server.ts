@@ -18,9 +18,11 @@ import {ComplainRouter} from './routes/complain'
 import {UserRouter} from './routes/user'
 import {TagRouter} from './routes/tag'
 import {ReviewRouter} from './routes/review'
+import {LikeRouter} from './routes/like'
+import {FavoriteRouter} from './routes/favorite'
 import {FeaturedRouter} from './routes/featured-properties'
 import main from './services/cron'
-import { Property } from './models/property'
+
 
 // global settings
 dotenv.config()
@@ -67,6 +69,8 @@ app.use(UserRouter)
 app.use(FeaturedRouter)
 app.use(TagRouter)
 app.use(ReviewRouter)
+app.use(LikeRouter)
+app.use(FavoriteRouter)
 
 // start all cron jobs
 main();

@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.LikeRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const mongoose_1 = require("mongoose");
 const property_1 = require("../models/property");
@@ -20,25 +21,26 @@ const error_1 = require("../constants/error");
 const auth_middleware_1 = require("../middleware/auth-middleware");
 const like_1 = require("../models/like");
 const LikeRouter = express_1.default.Router();
+exports.LikeRouter = LikeRouter;
 // query helper function
-function setFilter(key, value) {
-    switch (key) {
-        case '_id':
-            return { '_id': value };
-        case 'propertyId':
-            return { 'propertyId': new mongoose_1.Types.ObjectId(value) };
-        case 'likeId':
-            return { 'likeId': new mongoose_1.Types.ObjectId(value) };
-        default:
-            return {};
-    }
-}
-// ***************************** tenant enpoints ***********************************************
+// function setFilter(key:string, value:any): any {
+//     switch (key) {
+//         case '_id':
+//             return {'_id': value}
+//         case 'propertyId':
+//             return {'propertyId': new Types.ObjectId(value)}
+//         case 'likeId':
+//             return {'likeId': new Types.ObjectId(value)}
+//         default:
+//             return {}
+//     }
+// }
+// ***************************** public enpoints ***********************************************
 // get a property's like count
-LikeRouter.post('/api/properties/:id/likes/list', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+LikeRouter.get('/api/properties/:id/likes/count', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        const propertyLikeCount = yield like_1.Like.countDocuments({ propertyId: req.params.id });
+        const propertyLikeCount = yield like_1.Like.countDocuments({ propertyId: new mongoose_1.Types.ObjectId(req.params.id) });
         res.send({ ok: true, data: { count: propertyLikeCount } });
     }
     catch (error) {
@@ -51,13 +53,15 @@ LikeRouter.post('/api/properties/:id/likes/increment', auth_middleware_1.isLogge
     var _b;
     try {
         // check if the tenant has already liked the property
-        const isLikedAlready = like_1.Like.findOne({
-            propertyId: new mongoose_1.Types.ObjectId(req.params.id),
-            likerId: new mongoose_1.Types.ObjectId(req.user.id)
+        const isLikedAlready = yield like_1.Like.findOne({
+            $and: [
+                { propertyId: new mongoose_1.Types.ObjectId(req.params.id) },
+                { likerId: new mongoose_1.Types.ObjectId(req.user.id) }
+            ]
         });
         // if already liked, then don't act any further.
         if (isLikedAlready) {
-            return res.send({ ok: true });
+            return res.send({ ok: true, message: 'you already liked this prop' });
         }
         // else go ahead and create the like
         const newLike = new like_1.Like({
@@ -74,10 +78,14 @@ LikeRouter.post('/api/properties/:id/likes/increment', auth_middleware_1.isLogge
         if (!like) {
             throw error_1.SAVE_OPERATION_FAILED;
         }
-        relatedProperty.likes = relatedProperty.likes.concat(like._id.toString());
-        yield relatedProperty.save();
-        relatedTenant.likes = relatedProperty.likes.concat(like._id.toString());
-        yield relatedTenant.save();
+        if (!relatedProperty.likes.includes(like._id.toString())) {
+            relatedProperty.likes = relatedProperty.likes.concat(like._id.toString());
+            yield relatedProperty.save();
+        }
+        if (!relatedTenant.likes.includes(like._id.toString())) {
+            relatedTenant.likes = relatedTenant.likes.concat(like._id.toString());
+            yield relatedTenant.save();
+        }
         res.send({ ok: true });
     }
     catch (error) {
@@ -90,7 +98,7 @@ LikeRouter.post('/api/properties/:id/likes/increment', auth_middleware_1.isLogge
 }));
 // ***************************** admin enpoints ***********************************************
 // get a property's like count
-LikeRouter.post('/api/likes', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+LikeRouter.get('/api/likes/count', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _c;
     try {
         const likeCount = yield like_1.Like.countDocuments();

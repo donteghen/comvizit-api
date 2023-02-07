@@ -16,7 +16,7 @@ const favoriteSchema = new Schema<IFavorite>({
         required: true
     },
     userId: {
-        user: Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         required: true
     }
 }, {

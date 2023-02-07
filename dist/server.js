@@ -31,6 +31,8 @@ const complain_1 = require("./routes/complain");
 const user_1 = require("./routes/user");
 const tag_1 = require("./routes/tag");
 const review_1 = require("./routes/review");
+const like_1 = require("./routes/like");
+const favorite_1 = require("./routes/favorite");
 const featured_properties_1 = require("./routes/featured-properties");
 const cron_1 = __importDefault(require("./services/cron"));
 // global settings
@@ -74,6 +76,8 @@ app.use(user_1.UserRouter);
 app.use(featured_properties_1.FeaturedRouter);
 app.use(tag_1.TagRouter);
 app.use(review_1.ReviewRouter);
+app.use(like_1.LikeRouter);
+app.use(favorite_1.FavoriteRouter);
 // start all cron jobs
 (0, cron_1.default)();
 //  Routes

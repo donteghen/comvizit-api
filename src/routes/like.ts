@@ -10,25 +10,25 @@ import { Like } from "../models/like";
 const LikeRouter = express.Router()
 
 // query helper function
-function setFilter(key:string, value:any): any {
-    switch (key) {
-        case '_id':
-            return {'_id': value}
-        case 'propertyId':
-            return {'propertyId': new Types.ObjectId(value)}
-        case 'likeId':
-            return {'likeId': new Types.ObjectId(value)}
-        default:
-            return {}
-    }
-}
+// function setFilter(key:string, value:any): any {
+//     switch (key) {
+//         case '_id':
+//             return {'_id': value}
+//         case 'propertyId':
+//             return {'propertyId': new Types.ObjectId(value)}
+//         case 'likeId':
+//             return {'likeId': new Types.ObjectId(value)}
+//         default:
+//             return {}
+//     }
+// }
 
-// ***************************** tenant enpoints ***********************************************
+// ***************************** public enpoints ***********************************************
 
 // get a property's like count
-LikeRouter.post('/api/properties/:id/likes/list', async (req: Request, res: Response) => {
+LikeRouter.get('/api/properties/:id/likes/count', async (req: Request, res: Response) => {
     try {
-        const propertyLikeCount = await Like.countDocuments({propertyId: req.params.id})
+        const propertyLikeCount = await Like.countDocuments({propertyId: new Types.ObjectId(req.params.id)})
         res.send({ok: true, data: {count: propertyLikeCount}})
     } catch (error) {
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
@@ -40,15 +40,15 @@ LikeRouter.post('/api/properties/:id/likes/list', async (req: Request, res: Resp
 LikeRouter.post('/api/properties/:id/likes/increment', isLoggedIn, isTenant, async (req: Request, res: Response) => {
     try {
         // check if the tenant has already liked the property
-        const isLikedAlready = Like.findOne(
-            {
-                propertyId: new Types.ObjectId(req.params.id),
-                likerId: new Types.ObjectId(req.user.id)
-            }
-        )
+        const isLikedAlready = await Like.findOne({
+            $and: [
+                {propertyId: new Types.ObjectId(req.params.id)},
+                {likerId: new Types.ObjectId(req.user.id)}
+            ]
+        })
         // if already liked, then don't act any further.
         if (isLikedAlready) {
-            return res.send({ok: true})
+            return res.send({ok: true, message: 'you already liked this prop'})
         }
         // else go ahead and create the like
         const newLike = new Like({
@@ -66,10 +66,15 @@ LikeRouter.post('/api/properties/:id/likes/increment', isLoggedIn, isTenant, asy
         if (!like) {
             throw SAVE_OPERATION_FAILED
         }
-        relatedProperty.likes = relatedProperty.likes.concat(like._id.toString())
-        await relatedProperty.save()
-        relatedTenant.likes = relatedProperty.likes.concat(like._id.toString())
-        await relatedTenant.save()
+        if (!relatedProperty.likes.includes(like._id.toString())) {
+            relatedProperty.likes = relatedProperty.likes.concat(like._id.toString())
+            await relatedProperty.save()
+        }
+        if (!relatedTenant.likes.includes(like._id.toString())) {
+            relatedTenant.likes = relatedTenant.likes.concat(like._id.toString())
+            await relatedTenant.save()
+        }
+
         res.send({ok: true})
     } catch (error) {
         if (error.name === 'ValidationError') {
@@ -84,7 +89,7 @@ LikeRouter.post('/api/properties/:id/likes/increment', isLoggedIn, isTenant, asy
 // ***************************** admin enpoints ***********************************************
 
 // get a property's like count
-LikeRouter.post('/api/likes', async (req: Request, res: Response) => {
+LikeRouter.get('/api/likes/count', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
         const likeCount = await Like.countDocuments()
         res.send({ok: true, data: {count: likeCount}})
@@ -92,3 +97,5 @@ LikeRouter.post('/api/likes', async (req: Request, res: Response) => {
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
+
+export {LikeRouter}

@@ -430,77 +430,10 @@ PropertyRouter.get('/api/property/:propertyId/related-properties/:quaterref', as
 
 // ***************************** Tenant Only endpoints ***********************************************
 
-// get a tenant's favorite property list
-PropertyRouter.get('/api/fav-property-list', isLoggedIn, isTenant, async (req: Request, res: Response) => {
-    try {
-        let properties: (IProperty | any)[] | undefined = []
-        const favIdList = req.user.favorites
-        if (favIdList && favIdList.length > 0){
-            properties = await Property.aggregate([
-                {
-                    $match: {
-                        availability: 'Available',
-                        _id: {$in: favIdList.map(id => new Types.ObjectId(id))}
-                    }
-                }
-            ])
-        }
-        res.send({ok:true, data: properties})
-    } catch (error) {
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
-    }
-})
 
-// Add a property to tenant's favorite property list
-PropertyRouter.patch('/api/fav-property-list/add-favorite', isLoggedIn, isTenant, async (req: Request, res: Response) => {
-    try {
-        const propertyId: string = req.body.id
-        const user = await User.findById(req.user.id)
-        let userFavList = user.favorites
-        if (propertyId) {
-            if (!userFavList.includes(propertyId)) {
-                userFavList = userFavList.concat(propertyId)
-                user.favorites = userFavList
-                await user.save()
-            }
-        }
-        res.send({ok:true})
-    } catch (error) {
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
-    }
-})
 
-// Remove a property from tenant's favorite property list
-PropertyRouter.patch('/api/fav-property-list/remove-favorite', isLoggedIn, isTenant, async (req: Request, res: Response) => {
-    try {
-        let userFavList = req.user.favorites
-        const propertyId = req.body.id
-        const user = await User.findById(req.user.id)
-        if (propertyId && userFavList?.length > 0) {
-            userFavList = userFavList.filter(id => id !== propertyId)
-        }
-        user.favorites = userFavList
-        const updatedUser = await user.save()
-        res.send({ok:true, data: updatedUser})
-    } catch (error) {
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
-    }
-})
 
-// Clear tenant's favorite property list
-PropertyRouter.patch('/api/fav-property-list/clear-favorite-list', isLoggedIn, isTenant, async (req: Request, res: Response) => {
-    try {
-        let userFavList = req.user.favorites
-        const propertyId = req.body.id
-        const user = await User.findById(req.user.id)
 
-        user.favorites = []
-        const updatedUser = await user.save()
-        res.send({ok:true, data: updatedUser})
-    } catch (error) {
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
-    }
-})
 
 // ***************************** admin endpoints ***********************************************
 

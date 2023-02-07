@@ -14,7 +14,7 @@ const favoriteSchema = new mongoose_1.Schema({
         required: true
     },
     userId: {
-        user: mongoose_1.Schema.Types.ObjectId,
+        type: mongoose_1.Schema.Types.ObjectId,
         required: true
     }
 }, {

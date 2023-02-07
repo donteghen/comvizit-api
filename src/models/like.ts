@@ -15,7 +15,7 @@ const likeSchema = new Schema<ILike>({
         required: true
     },
     likerId: {
-        user: Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         required: true
     }
 }, {
