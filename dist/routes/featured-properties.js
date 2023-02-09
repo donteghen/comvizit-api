@@ -125,6 +125,9 @@ FeaturedRouter.post('/api/featured/properties/create', auth_middleware_1.isLogge
             duration: Number(duration)
         });
         const featuredProperty = yield newFeaturedProperty.save();
+        // update that concerned property's featuring status to true
+        relatedProperty.featuring = true;
+        yield relatedProperty.save();
         res.send({ ok: true, data: featuredProperty });
     }
     catch (error) {
@@ -146,6 +149,9 @@ FeaturedRouter.patch('/api/featured/properties/:propertyId/status/update', auth_
             }
             featuredProperty.status = req.body.status;
             const updateFeaturedProperty = yield featuredProperty.save();
+            // update related property's featuring state
+            const relatedProperty = yield property_1.Property.findById(featuredProperty.propertyId);
+            relatedProperty.featuring = updateFeaturedProperty.status === 'Active' ? true : false;
             res.send({ ok: true, data: updateFeaturedProperty });
         }
         else {
@@ -169,6 +175,9 @@ FeaturedRouter.delete('/api/featured/properties/:propertyId/delete', auth_middle
         if (!featuredProperty) {
             throw error_1.DELETE_OPERATION_FAILED;
         }
+        // update related property's featuring state
+        const relatedProperty = yield property_1.Property.findById(featuredProperty.propertyId);
+        relatedProperty.featuring = false;
         res.send({ ok: true });
     }
     catch (error) {

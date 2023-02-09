@@ -120,7 +120,8 @@ export interface IProperty extends Document {
     availability: string,
     rentUtilities: RentUtilities,
     likes?:string[],
-    rentIntensions?: string[]
+    rentIntensions?: string[],
+    featuring: boolean
 }
 
 export interface IUser extends Document {

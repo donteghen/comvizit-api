@@ -222,6 +222,11 @@ const propertySchema = new mongoose_1.Schema({
     },
     rentIntensions: {
         type: [String]
+    },
+    featuring: {
+        type: Boolean,
+        default: false,
+        required: true
     }
 }, {
     virtuals: true,

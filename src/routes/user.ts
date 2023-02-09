@@ -224,7 +224,7 @@ UserRouter.post('/api/user/profile/change-password', isLoggedIn, async (req: Req
 // upload authenticated user's avatar
 UserRouter.patch('/api/user/avatarUpload', isLoggedIn,  multerUpload.single('avatar'), async (req: Request, res: Response) => {
     try {
-
+        console.log('line 227 of user router', req.file)
         const user = await User.findOne({email: req.user.email})
         if (!user) {
             throw NO_USER

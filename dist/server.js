@@ -55,8 +55,8 @@ app.use((0, express_session_1.default)({
     saveUninitialized: false,
     cookie: {
         secure: false,
-        httpOnly: false, // if true prevent client side JS from reading the cookie
-        // maxAge: 1000 * 60 * 60 , // session max age in milliseconds
+        httpOnly: false,
+        maxAge: 1000 * 60 * 60 * 6, // session max age in milliseconds
     },
 }));
 app.use((0, cors_1.default)({

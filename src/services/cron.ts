@@ -1,5 +1,6 @@
 
 import {createClient} from 'redis'
+import { Property } from '../models/property';
 import { FeaturedProperties } from '../models/featured-properties'
 const redisClient = createClient({legacyMode: true })
 redisClient.connect().catch(console.error);
@@ -27,8 +28,10 @@ export function updatePropertyFeaturingCron () {
     job.start()
   }
 
+
   const main = () => {
     updatePropertyFeaturingCron()
   }
+
 
 export default main

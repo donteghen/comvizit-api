@@ -23,6 +23,7 @@ const mailer_templates_1 = require("../utils/mailer-templates");
 const mailer_1 = require("../helper/mailer");
 const user_1 = require("../models/user");
 const tag_1 = require("../models/tag");
+const featured_properties_1 = require("../models/featured-properties");
 const PropertyRouter = express_1.default.Router();
 exports.PropertyRouter = PropertyRouter;
 const pageSize = 24; // number of documents returned per request for the get all properties route
@@ -554,6 +555,11 @@ PropertyRouter.delete('/api/properties/:id/delete', auth_middleware_1.isLoggedIn
         }
         // delete all corresponding tags
         yield tag_1.Tag.deleteMany({ refId: deletedproperty._id });
+        // delete the related featuring if any
+        const relatedFeaturing = yield featured_properties_1.FeaturedProperties.findById(deletedproperty._id);
+        if (relatedFeaturing) {
+            yield featured_properties_1.FeaturedProperties.findByIdAndDelete(relatedFeaturing._id);
+        }
         res.status(201).send({ ok: true });
     }
     catch (error) {

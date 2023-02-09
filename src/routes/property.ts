@@ -10,6 +10,7 @@ import { mailer } from "../helper/mailer";
 import { IProperty, IUser } from "../models/interfaces";
 import { User } from "../models/user";
 import { Tag } from "../models/tag";
+import { FeaturedProperties } from "../models/featured-properties";
 
 const PropertyRouter = express.Router()
 
@@ -568,6 +569,11 @@ PropertyRouter.delete('/api/properties/:id/delete', isLoggedIn, isAdmin, async (
         }
         // delete all corresponding tags
         await Tag.deleteMany({refId: deletedproperty._id})
+        // delete the related featuring if any
+        const relatedFeaturing = await FeaturedProperties.findById(deletedproperty._id)
+        if (relatedFeaturing) {
+            await FeaturedProperties.findByIdAndDelete(relatedFeaturing._id)
+        }
         res.status(201).send({ok: true})
     } catch (error) {
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})

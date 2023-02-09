@@ -218,6 +218,7 @@ UserRouter.post('/api/user/profile/change-password', auth_middleware_1.isLoggedI
 UserRouter.patch('/api/user/avatarUpload', auth_middleware_1.isLoggedIn, multerUpload_1.default.single('avatar'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _g, _h, _j;
     try {
+        console.log('line 227 of user router', req.file);
         const user = yield user_1.User.findOne({ email: req.user.email });
         if (!user) {
             throw error_1.NO_USER;

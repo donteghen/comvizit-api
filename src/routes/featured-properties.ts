@@ -117,7 +117,9 @@ FeaturedRouter.post('/api/featured/properties/create', isLoggedIn, isAdmin, asyn
             duration : Number(duration)
         })
         const featuredProperty = await newFeaturedProperty.save()
-
+        // update that concerned property's featuring status to true
+        relatedProperty.featuring = true
+        await relatedProperty.save()
         res.send({ok: true, data: featuredProperty})
     } catch (error) {
         if (error.name === 'ValidationError') {
@@ -138,6 +140,9 @@ FeaturedRouter.patch('/api/featured/properties/:propertyId/status/update', isLog
             }
             featuredProperty.status = req.body.status
             const updateFeaturedProperty = await featuredProperty.save()
+            // update related property's featuring state
+            const relatedProperty = await Property.findById(featuredProperty.propertyId)
+            relatedProperty.featuring = updateFeaturedProperty.status === 'Active' ? true : false
             res.send({ok: true, data: updateFeaturedProperty})
         }
         else {
@@ -160,6 +165,9 @@ FeaturedRouter.delete('/api/featured/properties/:propertyId/delete', isLoggedIn,
         if (!featuredProperty) {
             throw DELETE_OPERATION_FAILED
         }
+        // update related property's featuring state
+        const relatedProperty = await Property.findById(featuredProperty.propertyId)
+        relatedProperty.featuring = false
         res.send({ok: true})
     } catch (error) {
         res.status(400).send({ok:false, error:error?.message, code: error.code??1000})

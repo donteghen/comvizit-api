@@ -223,6 +223,11 @@ const propertySchema = new Schema<IProperty>({
     },
     rentIntensions: {
         type: [String]
+    },
+    featuring: {
+        type: Boolean,
+        default: false,
+        required: true
     }
 }, {
     virtuals: true,
