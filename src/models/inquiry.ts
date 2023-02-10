@@ -4,8 +4,8 @@ import { IInquiry } from './interfaces'
 
 
 /**
- * Contact-me schema, represents the document property definition for contact-me message
- * @constructor Contact
+ * Inquiry schema, represents the document property definition for a inquiry
+ * @constructor Inquiry
  * @param {string} fullname - The fullname of the person who made the inquiry
  * @param {string} email - The email of the person who made the inquiry
  * @param {string} phone - The telephone number of the person who made the inquiry

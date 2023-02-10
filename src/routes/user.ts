@@ -14,6 +14,11 @@ import isStrongPassword from 'validator/lib/isStrongPassword'
 import { Token } from '../models/token'
 import {uuid, isUuid} from 'uuidv4'
 import { Property } from '../models/property'
+import { Favorite } from '../models/favorite'
+import { Like } from '../models/like'
+import {Review} from '../models/review'
+import {Complain} from '../models/complain'
+import {Tag} from '../models/tag'
 
 
 const UserRouter = express.Router()
@@ -224,7 +229,6 @@ UserRouter.post('/api/user/profile/change-password', isLoggedIn, async (req: Req
 // upload authenticated user's avatar
 UserRouter.patch('/api/user/avatarUpload', isLoggedIn,  multerUpload.single('avatar'), async (req: Request, res: Response) => {
     try {
-        console.log('line 227 of user router', req.file)
         const user = await User.findOne({email: req.user.email})
         if (!user) {
             throw NO_USER
@@ -517,6 +521,40 @@ UserRouter.delete('/api/user/all/:id', isLoggedIn, isAdmin, async (req: Request,
         if (!deletedUser) {
             throw DELETE_OPERATION_FAILED
         }
+        // if user is landlord, then delete all related properties
+        if (deletedUser.role === 'LANDLORD') {
+            Property.deleteMany({
+                ownerId: deletedUser._id
+            })
+        }
+        // unlink and delete tags
+        await Tag.deleteMany({
+            $and: [
+                {type: 'User'},
+                {refId: deletedUser._id}
+            ]
+        })
+        // unlink and delete complains
+        await Complain.deleteMany({
+            plaintiveId: deletedUser._id
+        })
+        // unlink and delete reviews
+        await Review.deleteMany({
+            author: deletedUser._id
+        })
+        // unlink and delete linked favs
+        await Favorite.deleteMany({
+            _id: {
+                $in: deletedUser.favorites?.map(id => new Types.ObjectId(id))
+            }
+        })
+        // unlink and delete linked likes
+        await Like.deleteMany({
+            _id: {
+                $in: deletedUser.likes?.map(id => new Types.ObjectId(id))
+            }
+        })
+        // rent intension comming up
         res.send({ok: true})
     } catch (error) {
         res.status(400).send({ok: false, error: error.message, code:error.code??1000})

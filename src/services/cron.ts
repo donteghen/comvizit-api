@@ -29,9 +29,9 @@ export function updatePropertyFeaturingCron () {
   }
 
 
-  const main = () => {
+  const cronScheduler = () => {
     updatePropertyFeaturingCron()
   }
 
 
-export default main
+export default cronScheduler

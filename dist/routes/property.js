@@ -24,6 +24,9 @@ const mailer_1 = require("../helper/mailer");
 const user_1 = require("../models/user");
 const tag_1 = require("../models/tag");
 const featured_properties_1 = require("../models/featured-properties");
+const complain_1 = require("../models/complain");
+const review_1 = require("../models/review");
+const like_1 = require("../models/like");
 const PropertyRouter = express_1.default.Router();
 exports.PropertyRouter = PropertyRouter;
 const pageSize = 24; // number of documents returned per request for the get all properties route
@@ -252,7 +255,7 @@ PropertyRouter.get('/api/search-quaters/:quaterRef', (req, res) => __awaiter(voi
                     "quater": 1,
                 }
             },
-            { $group: { _id: '$quater' } },
+            { $group: { _id: '$quater.ref' } },
             { $limit: 10 }
         ]);
         res.send({ ok: true, data: quaters });
@@ -547,7 +550,7 @@ PropertyRouter.patch('/api/properties/:id/update-media', auth_middleware_1.isLog
 }));
 // delete property
 PropertyRouter.delete('/api/properties/:id/delete', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _t;
+    var _t, _u;
     try {
         const deletedproperty = yield property_1.Property.findByIdAndDelete(req.params.id);
         if (!deletedproperty) {
@@ -560,10 +563,32 @@ PropertyRouter.delete('/api/properties/:id/delete', auth_middleware_1.isLoggedIn
         if (relatedFeaturing) {
             yield featured_properties_1.FeaturedProperties.findByIdAndDelete(relatedFeaturing._id);
         }
+        // delete related reviews
+        yield review_1.Review.deleteMany({
+            $and: [
+                { type: 'Property' },
+                { refId: deletedproperty._id.toString() }
+            ]
+        });
+        // delete related complains
+        yield complain_1.Complain.deleteMany({
+            $and: [
+                { type: 'PROPERTY' },
+                { targetId: deletedproperty._id }
+            ]
+        });
+        // delete related likes
+        yield like_1.Like.deleteMany({
+            _id: {
+                $in: (_t = deletedproperty.likes) === null || _t === void 0 ? void 0 : _t.map(id => new mongoose_1.Types.ObjectId(id))
+            }
+        });
+        // delete rentIntensions
+        // coming up
         res.status(201).send({ ok: true });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_t = error.code) !== null && _t !== void 0 ? _t : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_u = error.code) !== null && _u !== void 0 ? _u : 1000 });
     }
 }));
 //# sourceMappingURL=property.js.map

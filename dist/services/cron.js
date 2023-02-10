@@ -38,8 +38,8 @@ function updatePropertyFeaturingCron() {
     job.start();
 }
 exports.updatePropertyFeaturingCron = updatePropertyFeaturingCron;
-const main = () => {
+const cronScheduler = () => {
     updatePropertyFeaturingCron();
 };
-exports.default = main;
+exports.default = cronScheduler;
 //# sourceMappingURL=cron.js.map

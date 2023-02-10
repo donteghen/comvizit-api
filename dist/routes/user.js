@@ -29,6 +29,11 @@ const isStrongPassword_1 = __importDefault(require("validator/lib/isStrongPasswo
 const token_1 = require("../models/token");
 const uuidv4_1 = require("uuidv4");
 const property_1 = require("../models/property");
+const favorite_1 = require("../models/favorite");
+const like_1 = require("../models/like");
+const review_1 = require("../models/review");
+const complain_1 = require("../models/complain");
+const tag_1 = require("../models/tag");
 const UserRouter = express_1.default.Router();
 exports.UserRouter = UserRouter;
 function setFilter(key, value) {
@@ -218,7 +223,6 @@ UserRouter.post('/api/user/profile/change-password', auth_middleware_1.isLoggedI
 UserRouter.patch('/api/user/avatarUpload', auth_middleware_1.isLoggedIn, multerUpload_1.default.single('avatar'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _g, _h, _j;
     try {
-        console.log('line 227 of user router', req.file);
         const user = yield user_1.User.findOne({ email: req.user.email });
         if (!user) {
             throw error_1.NO_USER;
@@ -477,7 +481,7 @@ UserRouter.patch('/api/users/all/:id/disapprove', auth_middleware_1.isLoggedIn, 
 }));
 // delete user account
 UserRouter.delete('/api/user/all/:id', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _y;
+    var _y, _z, _0;
     try {
         // make sure that admin can only delete either <user.role === tenant | user.role === landlord>
         // An admin user can be deleted only by the super admin
@@ -489,10 +493,44 @@ UserRouter.delete('/api/user/all/:id', auth_middleware_1.isLoggedIn, auth_middle
         if (!deletedUser) {
             throw error_1.DELETE_OPERATION_FAILED;
         }
+        // if user is landlord, then delete all related properties
+        if (deletedUser.role === 'LANDLORD') {
+            property_1.Property.deleteMany({
+                ownerId: deletedUser._id
+            });
+        }
+        // unlink and delete tags
+        yield tag_1.Tag.deleteMany({
+            $and: [
+                { type: 'User' },
+                { refId: deletedUser._id }
+            ]
+        });
+        // unlink and delete complains
+        yield complain_1.Complain.deleteMany({
+            plaintiveId: deletedUser._id
+        });
+        // unlink and delete reviews
+        yield review_1.Review.deleteMany({
+            author: deletedUser._id
+        });
+        // unlink and delete linked favs
+        yield favorite_1.Favorite.deleteMany({
+            _id: {
+                $in: (_y = deletedUser.favorites) === null || _y === void 0 ? void 0 : _y.map(id => new mongoose_1.Types.ObjectId(id))
+            }
+        });
+        // unlink and delete linked likes
+        yield like_1.Like.deleteMany({
+            _id: {
+                $in: (_z = deletedUser.likes) === null || _z === void 0 ? void 0 : _z.map(id => new mongoose_1.Types.ObjectId(id))
+            }
+        });
+        // rent intension comming up
         res.send({ ok: true });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_y = error.code) !== null && _y !== void 0 ? _y : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_0 = error.code) !== null && _0 !== void 0 ? _0 : 1000 });
     }
 }));
 //# sourceMappingURL=user.js.map

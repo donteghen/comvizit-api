@@ -21,7 +21,7 @@ import {ReviewRouter} from './routes/review'
 import {LikeRouter} from './routes/like'
 import {FavoriteRouter} from './routes/favorite'
 import {FeaturedRouter} from './routes/featured-properties'
-import main from './services/cron'
+import cronScheduler from './services/cron'
 
 
 // global settings
@@ -73,7 +73,7 @@ app.use(LikeRouter)
 app.use(FavoriteRouter)
 
 // start all cron jobs
-main();
+cronScheduler();
 
 //  Routes
 app.get('/api/', async (req: Request, res: Response) => {

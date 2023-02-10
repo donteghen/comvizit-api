@@ -38,6 +38,9 @@ const mongoose_1 = require("mongoose");
  * @param {boolean} rentUtilities.water - Determines if water bills are included in the rents
  * @param {boolean} rentUtilities.internet - Determines if internet bills are included in the rents
  * @param {boolean} rentUtilities.maintenance - - Determines if maintenance bills are included in the rents
+ * @param {boolean} rentIntensions - List of rentIntension created for this property
+ * @param {boolean} likes - Like id collection related to this property
+ * @param {boolean} featuring - Determines if the property is being Featured or not(Listed)
  */
 const propertySchema = new mongoose_1.Schema({
     ownerId: {

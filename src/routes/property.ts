@@ -11,6 +11,10 @@ import { IProperty, IUser } from "../models/interfaces";
 import { User } from "../models/user";
 import { Tag } from "../models/tag";
 import { FeaturedProperties } from "../models/featured-properties";
+import { Complain } from "../models/complain";
+import { Review } from "../models/review";
+import { RentIntension } from "../models/rent-intension";
+import { Like } from "../models/like";
 
 const PropertyRouter = express.Router()
 
@@ -250,7 +254,7 @@ PropertyRouter.get('/api/search-quaters/:quaterRef', async (req: Request, res: R
                     "quater": 1,
                 }
             },
-            {$group: {_id : '$quater'}},
+            {$group: {_id : '$quater.ref'}},
             {$limit: 10}
         ])
         res.send({ok: true, data: quaters})
@@ -574,6 +578,28 @@ PropertyRouter.delete('/api/properties/:id/delete', isLoggedIn, isAdmin, async (
         if (relatedFeaturing) {
             await FeaturedProperties.findByIdAndDelete(relatedFeaturing._id)
         }
+        // delete related reviews
+        await Review.deleteMany({
+            $and: [
+                {type: 'Property'},
+                {refId: deletedproperty._id.toString()}
+            ]
+        })
+        // delete related complains
+        await Complain.deleteMany({
+            $and: [
+                {type: 'PROPERTY'},
+                {targetId: deletedproperty._id}
+            ]
+        })
+        // delete related likes
+        await Like.deleteMany({
+            _id: {
+                $in: deletedproperty.likes?.map(id => new Types.ObjectId(id))
+            }
+        })
+        // delete rentIntensions
+        // coming up
         res.status(201).send({ok: true})
     } catch (error) {
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
