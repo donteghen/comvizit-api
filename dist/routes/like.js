@@ -89,6 +89,7 @@ LikeRouter.post('/api/properties/:id/likes/increment', auth_middleware_1.isLogge
         res.send({ ok: true });
     }
     catch (error) {
+        console.log(error);
         if (error.name === 'ValidationError') {
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;

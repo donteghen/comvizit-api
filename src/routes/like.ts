@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express'
 import { Types } from 'mongoose';
 import { Property } from '../models/property';
 import { User } from '../models/user';
-import { DELETE_OPERATION_FAILED, NOT_FOUND, SAVE_OPERATION_FAILED } from '../constants/error';
+import { NOT_FOUND, SAVE_OPERATION_FAILED } from '../constants/error';
 import { isAdmin, isLoggedIn, isTenant} from '../middleware/auth-middleware';
 import { Like } from "../models/like";
 
@@ -77,6 +77,7 @@ LikeRouter.post('/api/properties/:id/likes/increment', isLoggedIn, isTenant, asy
 
         res.send({ok: true})
     } catch (error) {
+        console.log(error)
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
