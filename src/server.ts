@@ -21,6 +21,7 @@ import {ReviewRouter} from './routes/review'
 import {LikeRouter} from './routes/like'
 import {FavoriteRouter} from './routes/favorite'
 import {FeaturedRouter} from './routes/featured-properties'
+import {RentIntensionRouter} from './routes/rent-intension'
 import cronScheduler from './services/cron'
 
 
@@ -71,6 +72,7 @@ app.use(TagRouter)
 app.use(ReviewRouter)
 app.use(LikeRouter)
 app.use(FavoriteRouter)
+app.use(RentIntensionRouter)
 
 // start all cron jobs
 cronScheduler();

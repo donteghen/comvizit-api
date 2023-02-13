@@ -194,3 +194,10 @@ export const ADDED_ALREADY_TO_FAV_LIST: ErrorResponse = {
     message: 'This property ahs alredy been added to your favorite list',
     messageFr: 'French this property ahs alredy been added to your favorite list'
 }
+
+export const RENTINTENSION_ALREADY_EXISTS: ErrorResponse = {
+    name: 'RENTINTENSION_ALREADY_EXISTS',
+    code: 1023,
+    message: 'You already initiated a rent-intension for this property',
+    messageFr: 'French You already initiated a rent-intension for this property'
+}

@@ -16,15 +16,26 @@ const rentIntensionSchema = new mongoose_1.Schema({
         required: true
     },
     landlordId: {
-        user: mongoose_1.Schema.Types.ObjectId,
+        type: mongoose_1.Schema.Types.ObjectId,
         required: true
     },
     potentialTenantId: {
-        user: mongoose_1.Schema.Types.ObjectId,
+        type: mongoose_1.Schema.Types.ObjectId,
         required: true
     },
     comment: {
         user: String
+    },
+    status: {
+        type: String,
+        required: true,
+        default: 'INICIATED',
+        enum: ['INITIATED', 'CONCLUDED', 'UNCONCLUDED']
+    },
+    initiatedAt: {
+        type: Number,
+        required: true,
+        default: Date.now()
     }
 }, {
     virtuals: true,

@@ -17,15 +17,26 @@ const rentIntensionSchema = new Schema<IRentIntension>({
         required: true
     },
     landlordId: {
-        user: Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         required: true
     },
     potentialTenantId: {
-        user: Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         required: true
     },
     comment: {
         user: String
+    },
+    status: {
+        type: String,
+        required: true,
+        default: 'INICIATED',
+        enum: ['INITIATED', 'CONCLUDED', 'UNCONCLUDED']
+    },
+    initiatedAt: {
+        type: Number,
+        required: true,
+        default: Date.now()
     }
 }, {
     virtuals: true,

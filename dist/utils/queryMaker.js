@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.townAggregator = exports.categoryAggregator = void 0;
+exports.rentIntensionLookup = exports.townAggregator = exports.categoryAggregator = void 0;
 function categoryAggregator(quaterRef) {
     return [
         // match  quater ref
@@ -363,4 +363,70 @@ function townAggregator() {
     ];
 }
 exports.townAggregator = townAggregator;
+// subpipeline for getting rent-intensions
+function rentIntensionLookup(filter) {
+    return [
+        {
+            $match: filter
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "potentialTenantId",
+                foreignField: "_id",
+                as: 'potentialTenant'
+            }
+        },
+        {
+            $unwind: {
+                path: '$potentialTenant'
+            }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "landlordId",
+                foreignField: "_id",
+                as: 'potentialTenant'
+            }
+        },
+        {
+            $unwind: {
+                path: '$potentialTenant'
+            }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "landlordId",
+                foreignField: "_id",
+                as: 'landlord'
+            }
+        },
+        {
+            $unwind: {
+                path: '$landlord'
+            }
+        },
+        {
+            $lookup: {
+                from: "properties",
+                localField: "propertyId",
+                foreignField: "_id",
+                as: 'property'
+            }
+        },
+        {
+            $unwind: {
+                path: '$property'
+            }
+        },
+        {
+            $sort: {
+                createdAt: -1
+            }
+        }
+    ];
+}
+exports.rentIntensionLookup = rentIntensionLookup;
 //# sourceMappingURL=queryMaker.js.map

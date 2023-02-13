@@ -188,5 +188,7 @@ export interface IRentIntension extends Document {
     propertyId: Types.ObjectId,
     landlordId: Types.ObjectId,
     potentialTenantId: Types.ObjectId,
-    comment: string
+    comment: string,
+    status: string,
+    initiatedAt: number
 }

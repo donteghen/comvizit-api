@@ -403,3 +403,69 @@ export function townAggregator () : PipelineStage | any  {
     }
   ]
 }
+
+// subpipeline for getting rent-intensions
+export function rentIntensionLookup (filter: any): PipelineStage | any {
+  return [
+    {
+      $match: filter
+    },
+    {
+      $lookup: {
+          from: "users",
+          localField: "potentialTenantId",
+          foreignField: "_id",
+          as: 'potentialTenant'
+        }
+    },
+    {
+        $unwind: {
+            path: '$potentialTenant'
+        }
+    },
+    {
+      $lookup: {
+          from: "users",
+          localField: "landlordId",
+          foreignField: "_id",
+          as: 'potentialTenant'
+        }
+    },
+    {
+        $unwind: {
+            path: '$potentialTenant'
+        }
+    },
+    {
+      $lookup: {
+          from: "users",
+          localField: "landlordId",
+          foreignField: "_id",
+          as: 'landlord'
+        }
+    },
+    {
+        $unwind: {
+            path: '$landlord'
+        }
+    },
+    {
+      $lookup: {
+          from: "properties",
+          localField: "propertyId",
+          foreignField: "_id",
+          as: 'property'
+        }
+    },
+    {
+        $unwind: {
+            path: '$property'
+        }
+    },
+    {
+        $sort: {
+            createdAt: -1
+        }
+    }
+  ]
+}

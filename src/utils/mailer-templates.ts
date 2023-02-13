@@ -14,17 +14,17 @@ export const notifyAccountCreated = {
 }
 
 export const welcomeTemplate = {
-subject: 'Welcome to Comvizit',
-heading: 'Welcome to Comvizit, the one of a kind property rental platform',
-detail:'Thanks for verifying your account. Your account registration is now completely, so you may start enjoying the features.<br/> <strong>Visit your profile</strong>',
-linkText: 'Go to Platform'
+    subject: 'Welcome to Comvizit',
+    heading: 'Welcome to Comvizit, the one of a kind property rental platform',
+    detail:'Thanks for verifying your account. Your account registration is now completely, so you may start enjoying the features.<br/> <strong>Visit your profile</strong>',
+    linkText: 'Go to Platform'
 }
 
 export const notifyAccountVerified = {
-subject: 'New Account Verification',
-heading: 'Update On Account Verifcation',
-detail:'A new user recently verified their account<br><strong>Visit the admin dashboard for follow-up</strong>',
-linkText: 'Go to Admin Dashboard'
+    subject: 'New Account Verification',
+    heading: 'Update On Account Verifcation',
+    detail:'A new user recently verified their account<br><strong>Visit the admin dashboard for follow-up</strong>',
+    linkText: 'Go to Admin Dashboard'
 }
 
 export const notifyAccountApproved = {
@@ -72,7 +72,7 @@ export const notifyPropertyAvailability = (userName: string, propertyId: string,
     return {
         subject: 'Property Availability Status',
         heading: 'Property Availability Status Update',
-        detail:`Dear ${userName}<br/><br/> The property with ID:<strong>${propertyId}</strong> has been marked as ${availabilityStatus}<br><strong>Visit your account to confirm, thanks!</strong>`,
+        detail:`Dear ${userName},<br/><br/> The property with ID:<strong>${propertyId}</strong> has been marked as ${availabilityStatus}<br><strong>Visit your account to confirm, thanks!</strong>`,
         linkText: 'Visit Dashboard'
     }
 }
@@ -111,7 +111,7 @@ export const notifyPropertyAvailability = (userName: string, propertyId: string,
 export const notifyNewComplained= {
     subject: 'New Complain Recieved',
     heading: 'New Complain Recieved',
-    detail:`Dear Admin<br/><br/> A new complain has been sent concerning a landlord / property.<br/><strong>Please visit the dashboard to follow that up</strong>.`,
+    detail:`Dear Admin,<br/><br/> A new complain has been sent concerning a landlord / property.<br/><strong>Please visit the dashboard to follow that up</strong>.`,
     linkText: 'Go To Dashboard'
 }
 
@@ -120,27 +120,34 @@ export const notifyNewComplained= {
 export const notifyNewInquiry = {
     subject: 'New Inquiry Message',
     heading: 'Inquiry Msssage Update',
-    detail:`Dear Admin<br/><br/> A new inquiry has been sent by a potential landlord / tenant/ partner.<br/><strong>Please visit the dashboard to follow that up</strong>.`,
+    detail:`Dear Admin,<br/><br/> A new inquiry has been sent by a potential landlord / tenant/ partner.<br/><strong>Please visit the dashboard to follow that up</strong>.`,
     linkText: 'Go To Dashboard'
 }
 
 export const notifyNewContactMe = {
     subject: 'New Contact Me Request',
     heading: 'Contact Me Request',
-    detail:`Dear Admin<br/><br/> A new contact-me-back message has been sent by a potential landlord / tenant/ partner.<br/><strong>Please visit the dashboard to follow that up</strong>.`,
+    detail:`Dear Admin,<br/><br/> A new contact-me-back message has been sent by a potential landlord / tenant/ partner.<br/><strong>Please visit the dashboard to follow that up</strong>.`,
     linkText: 'Go To Dashboard'
 }
 
-////////////////////////// ------Project Request Related ------/////////////////////////////////
+////////////////////////// ------RentIntension Related ------/////////////////////////////////
 
-// export const notifyNewPropertyRequest = (userName: string, projectName: string, projectId: string) => {
-// return {
-//     subject: 'Project Request Updates',
-//     heading: 'New Project Request',
-//     detail:`Dear Admin<br/><br/>A new request has been made<br/>By: <strong>${userName}</strong><br/>For project named: <strong>${projectName}</strong><br/> ID: <strong>${projectId}</strong>.<br/><strong>Please visit the dashboard to follow that up</strong>.`,
-//     linkText: 'Follow Up Now'
-// }
-// }
+export const notifyNewRentIntensionToAdmin = {
+    subject: 'New Rent Intension Iniatiated',
+    heading: 'Rent Intension Update',
+    detail:`Dear Admin,<br/><br/> A rent initension has been initiated by a potential tenant.<br/><strong>Please visit the dashboard to follow that up</strong>.`,
+    linkText: 'Go To Dashboard'
+}
+
+export const notifyRentIntensionToLandlord = (lordLordName: string) => {
+    return {
+        subject: 'New Rent Intension Iniatiated',
+        heading: 'Rent Intension Update',
+        detail:`Dear ${lordLordName},<br/><br/> A rent initension has been initiated by a potential tenant.<br/><strong>Please visit your profile activity to follow that up with the request.</strong>.`,
+        linkText: 'Visit Your Profile'
+    }
+}
 
 // export const notifyProjectRequestStatusChanged = (userName:string, projectName:string, projectId:string, newStatus:string) => {
 // return {
@@ -164,20 +171,3 @@ export const notifyNewContactMe = {
 
 /////////////////////////// ------Testimonials Related ------/////////////////////////////////
 
-// export const confirmPaymentReceived = (userName:string, projectName: string, projectPlan:string, ) => {
-// return {
-//     subject: 'Project Plan Payment Confirmation',
-//     heading: 'Project Plan Payment Updates',
-//     detail:`Dear ${userName}<br/><br/> Thanks for your recent payment.<br/><br/>This is to confirm that your payment for the project: <strong>${projectName}</strong>, on <strong>${projectPlan} Plan</strong> has been successfully received and processed.<br/><strong>Please visit profile setting's payment page for details, thanks!</strong>.`,
-//     linkText: 'Visit Your Profile Now'
-// }
-// }
-
-// export const confirmPaymentRefund = (userName:string, projectName: string, projectPlan:string, ) => {
-// return {
-//     subject: 'Project Plan Payment Refund Confirmation',
-//     heading: 'Project Plan Payment Refund Updates',
-//     detail:`Dear ${userName}<br/><br/>This is to confirm that your recent payment made for the project: <strong>${projectName}</strong>, on <strong>${projectPlan} Plan</strong> has been successfully refunded.<br/><strong>Please visit profile setting's payment page for details or contact the support team if there are any issues with the refund thanks!</strong>.`,
-//     linkText: 'Visit Your Profile Now'
-// }
-// }
