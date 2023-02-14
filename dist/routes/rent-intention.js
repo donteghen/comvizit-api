@@ -166,4 +166,4 @@ RentIntentionRouter.delete('/api/rent-intentions/:id/delete', auth_middleware_1.
         res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_e = error.code) !== null && _e !== void 0 ? _e : 1000 });
     }
 }));
-//# sourceMappingURL=rent-intension.js.map
+//# sourceMappingURL=rent-intention.js.map

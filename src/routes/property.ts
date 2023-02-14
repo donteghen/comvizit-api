@@ -4,16 +4,15 @@ import express, { Request, Response } from 'express'
 import { Types, PipelineStage } from "mongoose";
 import { categoryAggregator, townAggregator } from "../utils/queryMaker";
 import { isAdmin, isLandlord, isLoggedIn, isTenant } from "../middleware/auth-middleware";
-import {ADDED_ALREADY_TO_FAV_LIST, DELETE_OPERATION_FAILED, NOT_AUTHORIZED, NOT_FOUND, NOT_PROPERTY_OWNER, SAVE_OPERATION_FAILED, TAG_ALREADY_EXISTS} from '../constants/error'
+import { DELETE_OPERATION_FAILED, NOT_AUTHORIZED, NOT_FOUND, NOT_PROPERTY_OWNER, SAVE_OPERATION_FAILED, TAG_ALREADY_EXISTS} from '../constants/error'
 import {notifyPropertyAvailability} from '../utils/mailer-templates'
 import { mailer } from "../helper/mailer";
-import { IProperty, IUser } from "../models/interfaces";
+import { IUser } from "../models/interfaces";
 import { User } from "../models/user";
 import { Tag } from "../models/tag";
 import { FeaturedProperties } from "../models/featured-properties";
 import { Complain } from "../models/complain";
 import { Review } from "../models/review";
-import { RentIntension } from "../models/rent-intension";
 import { Like } from "../models/like";
 
 const PropertyRouter = express.Router()

@@ -1,7 +1,7 @@
 "use strict";
 ////////////////////////// ------User Related ------/////////////////////////////////
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.notifyRentIntensionToLandlord = exports.notifyNewRentIntensionToAdmin = exports.notifyNewContactMe = exports.notifyNewInquiry = exports.notifyNewComplained = exports.notifyPropertyAvailability = exports.notifyPropertyDeleted = exports.notifyAccountDisapproved = exports.notifyAccountApproved = exports.notifyAccountVerified = exports.welcomeTemplate = exports.notifyAccountCreated = exports.verifyAccountTemplate = void 0;
+exports.notifyRentIntentionToLandlord = exports.notifyNewRentIntentionToAdmin = exports.notifyNewContactMe = exports.notifyNewInquiry = exports.notifyNewComplained = exports.notifyPropertyAvailability = exports.notifyPropertyDeleted = exports.notifyAccountDisapproved = exports.notifyAccountApproved = exports.notifyAccountVerified = exports.welcomeTemplate = exports.notifyAccountCreated = exports.verifyAccountTemplate = void 0;
 exports.verifyAccountTemplate = {
     subject: 'Account verification',
     heading: 'Account Verification',
@@ -116,14 +116,14 @@ exports.notifyNewContactMe = {
     detail: `Dear Admin,<br/><br/> A new contact-me-back message has been sent by a potential landlord / tenant/ partner.<br/><strong>Please visit the dashboard to follow that up</strong>.`,
     linkText: 'Go To Dashboard'
 };
-////////////////////////// ------RentIntension Related ------/////////////////////////////////
-exports.notifyNewRentIntensionToAdmin = {
-    subject: 'New Rent Intension Iniatiated',
+////////////////////////// ------RentIntention Related ------/////////////////////////////////
+exports.notifyNewRentIntentionToAdmin = {
+    subject: 'New Rent Intention Iniatiated',
     heading: 'Rent Intension Update',
-    detail: `Dear Admin,<br/><br/> A rent initension has been initiated by a potential tenant.<br/><strong>Please visit the dashboard to follow that up</strong>.`,
+    detail: `Dear Admin,<br/><br/> A rent intentension has been initiated by a potential tenant.<br/><strong>Please visit the dashboard to follow that up</strong>.`,
     linkText: 'Go To Dashboard'
 };
-const notifyRentIntensionToLandlord = (lordLordName) => {
+const notifyRentIntentionToLandlord = (lordLordName) => {
     return {
         subject: 'New Rent Intension Iniatiated',
         heading: 'Rent Intension Update',
@@ -131,7 +131,7 @@ const notifyRentIntensionToLandlord = (lordLordName) => {
         linkText: 'Visit Your Profile'
     };
 };
-exports.notifyRentIntensionToLandlord = notifyRentIntensionToLandlord;
+exports.notifyRentIntentionToLandlord = notifyRentIntentionToLandlord;
 // export const notifyProjectRequestStatusChanged = (userName:string, projectName:string, projectId:string, newStatus:string) => {
 // return {
 //     subject: 'Project Request Updates',

@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.rentIntensionLookup = exports.townAggregator = exports.categoryAggregator = void 0;
+exports.singleRentIntentionLookup = exports.rentIntentionLookup = exports.townAggregator = exports.categoryAggregator = void 0;
+const mongoose_1 = require("mongoose");
 function categoryAggregator(quaterRef) {
     return [
         // match  quater ref
@@ -364,7 +365,7 @@ function townAggregator() {
 }
 exports.townAggregator = townAggregator;
 // subpipeline for getting rent-intensions
-function rentIntensionLookup(filter) {
+function rentIntentionLookup(filter) {
     return [
         {
             $match: filter
@@ -428,5 +429,68 @@ function rentIntensionLookup(filter) {
         }
     ];
 }
-exports.rentIntensionLookup = rentIntensionLookup;
+exports.rentIntentionLookup = rentIntentionLookup;
+// subpipeline for getting a single rent-intentions detail
+function singleRentIntentionLookup(id) {
+    return [
+        {
+            $match: {
+                _id: new mongoose_1.Types.ObjectId(id)
+            }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "potentialTenantId",
+                foreignField: "_id",
+                as: 'potentialTenant'
+            }
+        },
+        {
+            $unwind: {
+                path: '$potentialTenant'
+            }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "landlordId",
+                foreignField: "_id",
+                as: 'potentialTenant'
+            }
+        },
+        {
+            $unwind: {
+                path: '$potentialTenant'
+            }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "landlordId",
+                foreignField: "_id",
+                as: 'landlord'
+            }
+        },
+        {
+            $unwind: {
+                path: '$landlord'
+            }
+        },
+        {
+            $lookup: {
+                from: "properties",
+                localField: "propertyId",
+                foreignField: "_id",
+                as: 'property'
+            }
+        },
+        {
+            $unwind: {
+                path: '$property'
+            }
+        }
+    ];
+}
+exports.singleRentIntentionLookup = singleRentIntentionLookup;
 //# sourceMappingURL=queryMaker.js.map

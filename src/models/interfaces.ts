@@ -184,11 +184,20 @@ export interface ILike extends Document {
     likerId: Types.ObjectId
 }
 
-export interface IRentIntension extends Document {
+export interface IRentIntention extends Document {
     propertyId: Types.ObjectId,
     landlordId: Types.ObjectId,
     potentialTenantId: Types.ObjectId,
     comment: string,
     status: string,
     initiatedAt: number
+}
+
+export interface IRentalHistory extends Document {
+    propertyId: Types.ObjectId,
+    landlordId: Types.ObjectId,
+    tenantId: Types.ObjectId,
+    startDate: number,
+    endDate: number,
+    status: string
 }

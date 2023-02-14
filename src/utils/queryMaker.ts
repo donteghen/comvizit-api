@@ -1,4 +1,4 @@
-import { PipelineStage } from "mongoose"
+import { PipelineStage, Types } from "mongoose"
 export function categoryAggregator (quaterRef: string): PipelineStage | any {
     return [
             // match  quater ref
@@ -405,7 +405,7 @@ export function townAggregator () : PipelineStage | any  {
 }
 
 // subpipeline for getting rent-intensions
-export function rentIntensionLookup (filter: any): PipelineStage | any {
+export function rentIntentionLookup (filter: any): PipelineStage | any {
   return [
     {
       $match: filter
@@ -465,6 +465,69 @@ export function rentIntensionLookup (filter: any): PipelineStage | any {
     {
         $sort: {
             createdAt: -1
+        }
+    }
+  ]
+}
+
+// subpipeline for getting a single rent-intentions detail
+export function singleRentIntentionLookup (id: string) {
+  return [
+    {
+      $match: {
+        _id: new Types.ObjectId(id)
+      }
+    },
+    {
+      $lookup: {
+          from: "users",
+          localField: "potentialTenantId",
+          foreignField: "_id",
+          as: 'potentialTenant'
+        }
+    },
+    {
+        $unwind: {
+            path: '$potentialTenant'
+        }
+    },
+    {
+      $lookup: {
+          from: "users",
+          localField: "landlordId",
+          foreignField: "_id",
+          as: 'potentialTenant'
+        }
+    },
+    {
+        $unwind: {
+            path: '$potentialTenant'
+        }
+    },
+    {
+      $lookup: {
+          from: "users",
+          localField: "landlordId",
+          foreignField: "_id",
+          as: 'landlord'
+        }
+    },
+    {
+        $unwind: {
+            path: '$landlord'
+        }
+    },
+    {
+      $lookup: {
+          from: "properties",
+          localField: "propertyId",
+          foreignField: "_id",
+          as: 'property'
+        }
+    },
+    {
+        $unwind: {
+            path: '$property'
         }
     }
   ]

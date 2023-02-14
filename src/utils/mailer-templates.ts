@@ -131,16 +131,16 @@ export const notifyNewContactMe = {
     linkText: 'Go To Dashboard'
 }
 
-////////////////////////// ------RentIntension Related ------/////////////////////////////////
+////////////////////////// ------RentIntention Related ------/////////////////////////////////
 
-export const notifyNewRentIntensionToAdmin = {
-    subject: 'New Rent Intension Iniatiated',
+export const notifyNewRentIntentionToAdmin = {
+    subject: 'New Rent Intention Iniatiated',
     heading: 'Rent Intension Update',
-    detail:`Dear Admin,<br/><br/> A rent initension has been initiated by a potential tenant.<br/><strong>Please visit the dashboard to follow that up</strong>.`,
+    detail:`Dear Admin,<br/><br/> A rent intentension has been initiated by a potential tenant.<br/><strong>Please visit the dashboard to follow that up</strong>.`,
     linkText: 'Go To Dashboard'
 }
 
-export const notifyRentIntensionToLandlord = (lordLordName: string) => {
+export const notifyRentIntentionToLandlord = (lordLordName: string) => {
     return {
         subject: 'New Rent Intension Iniatiated',
         heading: 'Rent Intension Update',
