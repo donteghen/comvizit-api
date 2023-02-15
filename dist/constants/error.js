@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RENTINTENTION_ALREADY_EXISTS = exports.ADDED_ALREADY_TO_FAV_LIST = exports.REVIEW_ALREADY_EXIST = exports.ACCOUNST_IS_ALREADY_VERIFIED = exports.RESET_TOKEN_DEACTIVED = exports.INVALID_RESET_TOKEN = exports.PROPERTY_UNAVAILABLE_FOR_FEATURING = exports.INVALID_PROPERTY_ID_FOR_FEATURING = exports.PROPERTY_IS_ALREADY_FEATURED = exports.INVALID_REQUEST = exports.TAG_ALREADY_EXISTS = exports.NOT_PROPERTY_OWNER = exports.EMAIL_ALREADY_EXITS = exports.AUTH_FAILED = exports.PASSWORD_INCORRECT = exports.LOGIN_FAILED = exports.DELETE_OPERATION_FAILED = exports.USER_UPDATE_OPERATION_FAILED = exports.SAVE_OPERATION_FAILED = exports.NEW_PASSWORD_IS_INVALID = exports.OLD_PASSWORD_IS_INCORRECT = exports.NO_ADMIN = exports.NO_LANDLORD = exports.NO_TENANT = exports.NO_USER = exports.NOT_AUTHORIZED = exports.NOT_FOUND = exports.NOT_SPECIFIED = void 0;
+exports.RENTALHISTORY_CURRENTLY_ONGOING = exports.RENTINTENTION_ALREADY_EXISTS = exports.ADDED_ALREADY_TO_FAV_LIST = exports.REVIEW_ALREADY_EXIST = exports.ACCOUNST_IS_ALREADY_VERIFIED = exports.RESET_TOKEN_DEACTIVED = exports.INVALID_RESET_TOKEN = exports.PROPERTY_UNAVAILABLE_FOR_FEATURING = exports.INVALID_PROPERTY_ID_FOR_FEATURING = exports.PROPERTY_IS_ALREADY_FEATURED = exports.INVALID_REQUEST = exports.TAG_ALREADY_EXISTS = exports.NOT_PROPERTY_OWNER = exports.EMAIL_ALREADY_EXITS = exports.AUTH_FAILED = exports.PASSWORD_INCORRECT = exports.LOGIN_FAILED = exports.DELETE_OPERATION_FAILED = exports.USER_UPDATE_OPERATION_FAILED = exports.SAVE_OPERATION_FAILED = exports.NEW_PASSWORD_IS_INVALID = exports.OLD_PASSWORD_IS_INCORRECT = exports.NO_ADMIN = exports.NO_LANDLORD = exports.NO_TENANT = exports.NO_USER = exports.NOT_AUTHORIZED = exports.NOT_FOUND = exports.NOT_SPECIFIED = void 0;
 exports.NOT_SPECIFIED = {
     name: 'NOT SPECIFIED',
     code: 1000,
@@ -171,5 +171,11 @@ exports.RENTINTENTION_ALREADY_EXISTS = {
     code: 1023,
     message: 'You already initiated a rent-intension for this property',
     messageFr: 'French You already initiated a rent-intension for this property'
+};
+exports.RENTALHISTORY_CURRENTLY_ONGOING = {
+    name: 'RENTALHISTORY_CURRENTLY_ONGOING',
+    code: 1023,
+    message: 'There is an ongoing rental history with the provided parameters',
+    messageFr: 'French There is an ongoing rental history with the provided parameters'
 };
 //# sourceMappingURL=error.js.map

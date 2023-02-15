@@ -201,3 +201,10 @@ export const RENTINTENTION_ALREADY_EXISTS: ErrorResponse = {
     message: 'You already initiated a rent-intension for this property',
     messageFr: 'French You already initiated a rent-intension for this property'
 }
+
+export const RENTALHISTORY_CURRENTLY_ONGOING: ErrorResponse = {
+    name: 'RENTALHISTORY_CURRENTLY_ONGOING',
+    code: 1023,
+    message: 'There is an ongoing rental history with the provided parameters',
+    messageFr: 'French There is an ongoing rental history with the provided parameters'
+}

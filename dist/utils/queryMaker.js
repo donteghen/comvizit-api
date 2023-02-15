@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.singleRentIntentionLookup = exports.rentIntentionLookup = exports.townAggregator = exports.categoryAggregator = void 0;
+exports.singleRentalHistoryLookup = exports.rentalHistoryLookup = exports.singleRentIntentionLookup = exports.rentIntentionLookup = exports.townAggregator = exports.categoryAggregator = void 0;
 const mongoose_1 = require("mongoose");
 function categoryAggregator(quaterRef) {
     return [
@@ -388,19 +388,6 @@ function rentIntentionLookup(filter) {
                 from: "users",
                 localField: "landlordId",
                 foreignField: "_id",
-                as: 'potentialTenant'
-            }
-        },
-        {
-            $unwind: {
-                path: '$potentialTenant'
-            }
-        },
-        {
-            $lookup: {
-                from: "users",
-                localField: "landlordId",
-                foreignField: "_id",
                 as: 'landlord'
             }
         },
@@ -436,19 +423,6 @@ function singleRentIntentionLookup(id) {
         {
             $match: {
                 _id: new mongoose_1.Types.ObjectId(id)
-            }
-        },
-        {
-            $lookup: {
-                from: "users",
-                localField: "potentialTenantId",
-                foreignField: "_id",
-                as: 'potentialTenant'
-            }
-        },
-        {
-            $unwind: {
-                path: '$potentialTenant'
             }
         },
         {
@@ -493,4 +467,107 @@ function singleRentIntentionLookup(id) {
     ];
 }
 exports.singleRentIntentionLookup = singleRentIntentionLookup;
+// subpipeline for getting rent-intensions
+function rentalHistoryLookup(filter) {
+    return [
+        {
+            $match: filter
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "tenantId",
+                foreignField: "_id",
+                as: 'tenant'
+            }
+        },
+        {
+            $unwind: {
+                path: '$tenant'
+            }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "landlordId",
+                foreignField: "_id",
+                as: 'landlord'
+            }
+        },
+        {
+            $unwind: {
+                path: '$landlord'
+            }
+        },
+        {
+            $lookup: {
+                from: "properties",
+                localField: "propertyId",
+                foreignField: "_id",
+                as: 'property'
+            }
+        },
+        {
+            $unwind: {
+                path: '$property'
+            }
+        },
+        {
+            $sort: {
+                createdAt: -1
+            }
+        }
+    ];
+}
+exports.rentalHistoryLookup = rentalHistoryLookup;
+// subpipeline for getting a single rental history detail
+function singleRentalHistoryLookup(id) {
+    return [
+        {
+            $match: {
+                _id: new mongoose_1.Types.ObjectId(id)
+            }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "tenantId",
+                foreignField: "_id",
+                as: 'tenant'
+            }
+        },
+        {
+            $unwind: {
+                path: '$tenant'
+            }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "landlordId",
+                foreignField: "_id",
+                as: 'landlord'
+            }
+        },
+        {
+            $unwind: {
+                path: '$landlord'
+            }
+        },
+        {
+            $lookup: {
+                from: "properties",
+                localField: "propertyId",
+                foreignField: "_id",
+                as: 'property'
+            }
+        },
+        {
+            $unwind: {
+                path: '$property'
+            }
+        }
+    ];
+}
+exports.singleRentalHistoryLookup = singleRentalHistoryLookup;
 //# sourceMappingURL=queryMaker.js.map

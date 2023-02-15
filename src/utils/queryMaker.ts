@@ -428,19 +428,6 @@ export function rentIntentionLookup (filter: any): PipelineStage | any {
           from: "users",
           localField: "landlordId",
           foreignField: "_id",
-          as: 'potentialTenant'
-        }
-    },
-    {
-        $unwind: {
-            path: '$potentialTenant'
-        }
-    },
-    {
-      $lookup: {
-          from: "users",
-          localField: "landlordId",
-          foreignField: "_id",
           as: 'landlord'
         }
     },
@@ -478,10 +465,11 @@ export function singleRentIntentionLookup (id: string) {
         _id: new Types.ObjectId(id)
       }
     },
+
     {
       $lookup: {
           from: "users",
-          localField: "potentialTenantId",
+          localField: "landlordId",
           foreignField: "_id",
           as: 'potentialTenant'
         }
@@ -496,12 +484,102 @@ export function singleRentIntentionLookup (id: string) {
           from: "users",
           localField: "landlordId",
           foreignField: "_id",
-          as: 'potentialTenant'
+          as: 'landlord'
         }
     },
     {
         $unwind: {
-            path: '$potentialTenant'
+            path: '$landlord'
+        }
+    },
+    {
+      $lookup: {
+          from: "properties",
+          localField: "propertyId",
+          foreignField: "_id",
+          as: 'property'
+        }
+    },
+    {
+        $unwind: {
+            path: '$property'
+        }
+    }
+  ]
+}
+
+// subpipeline for getting rent-intensions
+export function rentalHistoryLookup (filter: any): PipelineStage | any {
+  return [
+    {
+      $match: filter
+    },
+    {
+      $lookup: {
+          from: "users",
+          localField: "tenantId",
+          foreignField: "_id",
+          as: 'tenant'
+        }
+    },
+    {
+        $unwind: {
+            path: '$tenant'
+        }
+    },
+    {
+      $lookup: {
+          from: "users",
+          localField: "landlordId",
+          foreignField: "_id",
+          as: 'landlord'
+        }
+    },
+    {
+        $unwind: {
+            path: '$landlord'
+        }
+    },
+    {
+      $lookup: {
+          from: "properties",
+          localField: "propertyId",
+          foreignField: "_id",
+          as: 'property'
+        }
+    },
+    {
+        $unwind: {
+            path: '$property'
+        }
+    },
+    {
+        $sort: {
+            createdAt: -1
+        }
+    }
+  ]
+}
+
+// subpipeline for getting a single rental history detail
+export function singleRentalHistoryLookup (id: string) {
+  return [
+    {
+      $match: {
+        _id: new Types.ObjectId(id)
+      }
+    },
+    {
+      $lookup: {
+          from: "users",
+          localField: "tenantId",
+          foreignField: "_id",
+          as: 'tenant'
+        }
+    },
+    {
+        $unwind: {
+            path: '$tenant'
         }
     },
     {

@@ -34,7 +34,7 @@ function setFilter(key:string, value:any): any {
 
 // ***************************** Shared enpoints ***********************************************
 
-// get all rentIntentions
+// get  rentIntentions
 RentIntentionRouter.get('/api/rent-intentions', isLoggedIn, async (req: Request, res: Response) => {
     try {
         let filter: any = {}

@@ -43,12 +43,7 @@ export const notifyAccountDisapproved = {
 
 ////////////////////////// ------Property Related ------/////////////////////////////////
 
-// export const notifyProjectCreated = {
-// subject: 'New Project Added',
-// heading: 'Project Creation Update',
-// detail:'A new project has been added by a user<br><strong>Visit the admin dashboard for follow-up</strong>',
-// linkText: 'Go to Admin Dashboard'
-// }
+
 
 export const notifyPropertyDeleted = (userEmail:string, propertyId:string) => {
     return {
@@ -59,14 +54,6 @@ export const notifyPropertyDeleted = (userEmail:string, propertyId:string) => {
     }
 }
 
-// export const notifyProjectPlanUpgraded = (userName:string, projectName:string, projectId:string, newPlan:string) => {
-// return {
-//     subject: 'Project Plan Upgrade',
-//     heading: 'Your Project Plan Updates',
-//     detail:`Dear ${userName}<br/><br/> Your project named: ${projectName} with id:<strong>${projectId}</strong> has been upgraded to ${newPlan}<br><strong>Visit your dashboard to confirm, thanks!</strong>`,
-//     linkText: 'Visit Dashboard'
-// }
-// }
 
 export const notifyPropertyAvailability = (userName: string, propertyId: string, availabilityStatus: string) => {
     return {
@@ -77,35 +64,7 @@ export const notifyPropertyAvailability = (userName: string, propertyId: string,
     }
 }
 
-// export const notifyProjectActivated = (userName:string, projectName:string, projectId:string) => {
-// return {
-//     subject: 'Property Active State Changed',
-//     heading: 'Property Is Active',
-//     detail:`Dear ${userName}<br/><br/> Your project named: ${projectName} with id:<strong>${projectId}</strong> has been activated. You will start recieving project reports<br><strong>Visit your dashboard to confirm, thanks!</strong>`,
-//     linkText: 'Go To Dashboard'
-// }
-// }
 
-// export const notifyProjectDeactivated = (userName:string, projectName:string, projectId:string) => {
-// return {
-//     subject: 'Project Active State Changed',
-//     heading: 'Project Is Not Active',
-//     detail:`Dear ${userName}<br/><br/> Your project named: ${projectName} with id:<strong>${projectId}</strong> has been deactivated. You will not longer be recieving project reports.<br><strong>Contact the support team to sort out the issue</strong>`,
-//     linkText: 'Contact Support'
-// }
-// }
-
-
-////////////////////////// ------Inquiry Related ------/////////////////////////////////
-
-// export const notifyReportDisptached = (userName:string, projectName:string, projectId:string) => {
-// return {
-//     subject: 'Project Report Update',
-//     heading: ' This Project\'s Latest Report Is Ready',
-//     detail:`Dear ${userName}<br/><br/> There is a new report for your project named: ${projectName} <br/>Id:<strong>${projectId}</strong>.<br/>As per your project plan or in respond to an on-demand report, a new report has been created and upload to your dashboard. <strong>Click on the button below to go to your dahsboard</strong>.<br>`,
-//     linkText: 'Visit Dashboard'
-// }
-// }
 ////////////////////////// ------Complaint Related ------/////////////////////////////////
 
 export const notifyNewComplained= {
@@ -149,25 +108,39 @@ export const notifyRentIntentionToLandlord = (lordLordName: string) => {
     }
 }
 
-// export const notifyProjectRequestStatusChanged = (userName:string, projectName:string, projectId:string, newStatus:string) => {
-// return {
-//     subject: 'Project Request Updates',
-//     heading: 'New Project Request',
-//     detail:`Dear ${userName}<br/><br/>Your request with regards to the project named: <strong>${projectName}</strong>, ID: <strong>${projectId}</strong> ${newStatus === 'IN_PROGRESS' ? 'is in progress' : 'has been processed'}.<br/><strong>Please visit the dashboard to confirm, thanks!</strong>.`,
-//     linkText: 'Continue to Dashboard'
-// }
-// }
+////////////////////////// ------Rental History Related ------/////////////////////////////////
+export const notifyRentalHistoryCreatedToLandlord = (lordLordName: string) => {
+    return {
+        subject: 'New Rental Histoy',
+        heading: 'Rental Histoy Record Update',
+        detail:`Dear ${lordLordName},<br/><br/> A rental history has been created in line with your current rental lease.<br/><strong>Note: Please don/'t forget to inform us whenever this current property is vacated or rent contract is terminated, so that we will in turn update this record accordingly.</strong>.<br/>You can find your consult your profile to see the new record by clicking the button`,
+        linkText: 'Visit Your Profile'
+    }
+}
 
-////////////////////////// ------Testimonials Related ------/////////////////////////////////
+export const notifyRentalHistoryCreatedToTenant = (tenantName: string) => {
+    return {
+        _subject: 'New Rental Histoy',
+        _heading: 'Rental Histoy Record Update',
+        _detail:`Dear ${tenantName},<br/><br/> A rental history has been created in line with your current rental agreement.<br/><strong>Note: Please don/'t forget to inform us whenever you vacate this property or decide to terminated the rental contract for any reason, so that we will inturn update this record accordingly.</strong>.<br/>You can find your consult your profile to see the new record by clicking the button`,
+        _linkText: 'Visit Your Profile'
+    }
+}
 
-// export const notifyNewtestimonialAdded = () => {
-// return {
-//     subject: 'Testimonials Update',
-//     heading: 'Latest on Testimonials',
-//     detail:'Dear Admin<br/><br/>A new testimonial has been added. <strong>Please visit the dashboard to confirm</strong>',
-//     linkText: 'Visit Dashboard Now'
-// }
-// }
+export const notifyRentalHistoryTerminatedToLandlord = (lordLordName: string) => {
+    return {
+        subject: 'Rental Histoy Termination',
+        heading: 'Rental Histoy Termination Update',
+        detail:`Dear ${lordLordName},<br/><br/> Your rental history has been terminated.<br/><strong>Thank you one more for choosing us!</strong>.<br/>You can confirm by visiting your account page`,
+        linkText: 'Visit Profile Now'
+    }
+}
 
-/////////////////////////// ------Testimonials Related ------/////////////////////////////////
-
+export const notifyRentalHistoryTerminatedToTenant = (tenantName: string) => {
+    return {
+        _subject: 'Rental Histoy Termination',
+        _heading: 'Rental Histoy Termination Update',
+        _detail:`Dear ${tenantName},<br/><br/> Your rental history has been terminated.<br/><strong>Thank you one more for choosing us!</strong>.<br/>If you are currently searching for another place, then click the search now link`,
+        _linkText: 'Search Now'
+    }
+}

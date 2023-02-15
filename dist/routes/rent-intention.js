@@ -43,7 +43,7 @@ function setFilter(key, value) {
 }
 // ***************************** public enpoints ***********************************************
 // ***************************** Shared enpoints ***********************************************
-// get all rentIntentions
+// get  rentIntentions
 RentIntentionRouter.get('/api/rent-intentions', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
