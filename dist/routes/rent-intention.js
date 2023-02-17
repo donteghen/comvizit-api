@@ -127,7 +127,7 @@ RentIntentionRouter.post('/api/rent-intentions', auth_middleware_1.isLoggedIn, a
 }));
 // ***************************** Landlord restricted enpoints ***********************************************
 // ***************************** Admin restricted enpoints ***********************************************
-// undate the rent-intension status
+// update the rent-intension status
 RentIntentionRouter.patch('/api/rent-intentions/:id/status-update', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _d;
     try {

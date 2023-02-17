@@ -98,7 +98,7 @@ const notifyRentalHistoryCreatedToLandlord = (lordLordName) => {
     return {
         subject: 'New Rental Histoy',
         heading: 'Rental Histoy Record Update',
-        detail: `Dear ${lordLordName},<br/><br/> A rental history has been created in line with your current rental lease.<br/><strong>Note: Please don/'t forget to inform us whenever this current property is vacated or rent contract is terminated, so that we will in turn update this record accordingly.</strong>.<br/>You can find your consult your profile to see the new record by clicking the button`,
+        detail: `Dear ${lordLordName},<br/><br/> A rental history has been created in line with your current rental lease.<br/><strong>Note: Please don/'t forget to inform us whenever this current property is vacated or rent contract is terminated, so that we will in turn update this record accordingly.</strong>.<br/>You can consult your profile to see the new record by clicking the button`,
         linkText: 'Visit Your Profile'
     };
 };
@@ -107,7 +107,7 @@ const notifyRentalHistoryCreatedToTenant = (tenantName) => {
     return {
         _subject: 'New Rental Histoy',
         _heading: 'Rental Histoy Record Update',
-        _detail: `Dear ${tenantName},<br/><br/> A rental history has been created in line with your current rental agreement.<br/><strong>Note: Please don/'t forget to inform us whenever you vacate this property or decide to terminated the rental contract for any reason, so that we will inturn update this record accordingly.</strong>.<br/>You can find your consult your profile to see the new record by clicking the button`,
+        _detail: `Dear ${tenantName},<br/><br/> A rental history has been created in line with your current rental agreement.<br/><strong>Note: Please don/'t forget to inform us whenever you vacate this property or decide to terminated the rental contract for any reason, so that we will inturn update this record accordingly.</strong>.<br/>You can consult your profile to see the new record by clicking the button`,
         _linkText: 'Visit Your Profile'
     };
 };

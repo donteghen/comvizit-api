@@ -36,9 +36,13 @@ const rentalHistorySchema = new Schema<IRentalHistory>({
     status: {
         type: String,
         required: true,
-        default: 'INITIATED',
+        default: 'ONGOING',
         enum: ['ONGOING', 'TERMINATED']
     },
+    rentIntentionId: {
+        type: Schema.Types.ObjectId,
+        required: true
+    }
 
 }, {
     virtuals: true,

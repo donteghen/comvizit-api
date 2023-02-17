@@ -22,6 +22,7 @@ import {LikeRouter} from './routes/like'
 import {FavoriteRouter} from './routes/favorite'
 import {FeaturedRouter} from './routes/featured-properties'
 import {RentIntentionRouter} from './routes/rent-intention'
+import {RentalHistoryRouter} from './routes/rental-history'
 import cronScheduler from './services/cron'
 
 
@@ -73,7 +74,7 @@ app.use(ReviewRouter)
 app.use(LikeRouter)
 app.use(FavoriteRouter)
 app.use(RentIntentionRouter)
-
+app.use(RentalHistoryRouter)
 // start all cron jobs
 cronScheduler();
 

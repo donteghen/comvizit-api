@@ -11,7 +11,7 @@ export const NOT_SPECIFIED: ErrorResponse = {
 export const NOT_FOUND: ErrorResponse = {
     name:'NOT_FOUND',
     code: 404,
-    message: 'Not found! The requested resource is available',
+    message: 'Not found! The requested resource is not available',
     messageFr: 'french not found'
 }
 

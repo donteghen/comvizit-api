@@ -199,5 +199,6 @@ export interface IRentalHistory extends Document {
     tenantId: Types.ObjectId,
     startDate: number,
     endDate: number,
-    status: string
+    status: string,
+    rentIntentionId: Types.ObjectId
 }

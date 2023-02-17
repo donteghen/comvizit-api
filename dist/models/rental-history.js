@@ -35,9 +35,13 @@ const rentalHistorySchema = new mongoose_1.Schema({
     status: {
         type: String,
         required: true,
-        default: 'INITIATED',
+        default: 'ONGOING',
         enum: ['ONGOING', 'TERMINATED']
     },
+    rentIntentionId: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        required: true
+    }
 }, {
     virtuals: true,
     timestamps: true

@@ -123,7 +123,7 @@ RentIntentionRouter.post('/api/rent-intentions', isLoggedIn, isTenant, async (re
 
 // ***************************** Admin restricted enpoints ***********************************************
 
-// undate the rent-intension status
+// update the rent-intension status
 RentIntentionRouter.patch('/api/rent-intentions/:id/status-update', isLoggedIn, isAdmin,async (req:Request, res: Response) => {
     try {
         // get the corresponding rent-intension by id
