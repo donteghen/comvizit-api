@@ -10,7 +10,7 @@ exports.NOT_SPECIFIED = {
 exports.NOT_FOUND = {
     name: 'NOT_FOUND',
     code: 404,
-    message: 'Not found! The requested resource is available',
+    message: 'Not found! The requested resource is not available',
     messageFr: 'french not found'
 };
 exports.NOT_AUTHORIZED = {

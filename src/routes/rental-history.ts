@@ -21,18 +21,16 @@ const RentalHistoryRouter = express.Router()
  */
 function setFilter(key:string, value:any) {
     switch (key) {
+        case 'id':
+            return {'_id': new Types.ObjectId(value)}
         case 'propertyId':
             return {'propertyId': new Types.ObjectId(value)}
         case 'landlordId':
             return {landlordId: new Types.ObjectId(value)}
         case 'tenantId':
             return {'tenantId': new Types.ObjectId(value)}
-        case 'startDate':
-            return {startDate: {$lte: value}}
-        case 'endDate':
-            return {endDate: {$lte: value}}
         case 'status':
-            return {endDate: {$lte: value}}
+            return {status:  value}
         default:
             return {}
     }

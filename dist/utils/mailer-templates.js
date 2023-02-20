@@ -116,7 +116,7 @@ const notifyRentalHistoryTerminatedToLandlord = (lordLordName) => {
     return {
         subject: 'Rental Histoy Termination',
         heading: 'Rental Histoy Termination Update',
-        detail: `Dear ${lordLordName},<br/><br/> Your rental history has been terminated.<br/><strong>Thank you one more for choosing us!</strong>.<br/>You can confirm by visiting your account page`,
+        detail: `Dear ${lordLordName},<br/><br/> Your rental history has been terminated.<br/><strong>Thank you once more for choosing us!</strong>.<br/>You can confirm by visiting your account page`,
         linkText: 'Visit Profile Now'
     };
 };
@@ -125,7 +125,7 @@ const notifyRentalHistoryTerminatedToTenant = (tenantName) => {
     return {
         _subject: 'Rental Histoy Termination',
         _heading: 'Rental Histoy Termination Update',
-        _detail: `Dear ${tenantName},<br/><br/> Your rental history has been terminated.<br/><strong>Thank you one more for choosing us!</strong>.<br/>If you are currently searching for another place, then click the search now link`,
+        _detail: `Dear ${tenantName},<br/><br/> Your rental history has been terminated.<br/><strong>Thank you once more for choosing us!</strong>.<br/>If you are currently searching for another place, then click the search now link`,
         _linkText: 'Search Now'
     };
 };
