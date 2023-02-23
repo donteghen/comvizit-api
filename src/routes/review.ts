@@ -3,6 +3,7 @@ import { isAdmin, isLoggedIn } from '../middleware/auth-middleware';
 import {DELETE_OPERATION_FAILED, INVALID_REQUEST, NOT_FOUND, REVIEW_ALREADY_EXIST, SAVE_OPERATION_FAILED} from '../constants/error'
 import {Types} from 'mongoose';
 import { Review } from '../models/review';
+import {constants} from '../constants/declared'
 
 const ReviewRouter = express.Router()
 
@@ -58,6 +59,30 @@ ReviewRouter.post('/api/reviews/create', isLoggedIn, async (req: Request, res: R
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
+        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+    }
+})
+
+// fetch reviews and respond with the calculated average rating
+ReviewRouter.post('/api/reviews-rating-count', async (req: Request, res: Response) => {
+    try {
+        let averageRating: number = 0
+        if (!req.body.refId || !req.body.type) {
+            throw INVALID_REQUEST
+        }
+        const reviews = await Review.find({
+            type: req.body.type,
+            refId: req.body.refId.trim(),
+            status: constants.REVIEW_STATUS.ACTIVE
+        },
+        {rating: 1})
+        if (reviews?.length > 0) {
+            const total: number = reviews.map(review => Number(review.rating)).reduce((prev:number, sum: number) => prev + sum, 0)
+            averageRating = Number((total / reviews?.length).toFixed(1))
+        }
+
+        res.send({ok: true, data: {averageRating}, reviews})
+    } catch (error) {
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })

@@ -18,6 +18,7 @@ const auth_middleware_1 = require("../middleware/auth-middleware");
 const error_1 = require("../constants/error");
 const mongoose_1 = require("mongoose");
 const review_1 = require("../models/review");
+const declared_1 = require("../constants/declared");
 const ReviewRouter = express_1.default.Router();
 exports.ReviewRouter = ReviewRouter;
 /**
@@ -74,9 +75,32 @@ ReviewRouter.post('/api/reviews/create', auth_middleware_1.isLoggedIn, (req, res
         res.status(400).send({ ok: false, error: error.message, code: (_a = error.code) !== null && _a !== void 0 ? _a : 1000 });
     }
 }));
+// fetch reviews and respond with the calculated average rating
+ReviewRouter.post('/api/reviews-rating-count', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _b;
+    try {
+        let averageRating = 0;
+        if (!req.body.refId || !req.body.type) {
+            throw error_1.INVALID_REQUEST;
+        }
+        const reviews = yield review_1.Review.find({
+            type: req.body.type,
+            refId: req.body.refId.trim(),
+            status: declared_1.constants.REVIEW_STATUS.ACTIVE
+        }, { rating: 1 });
+        if ((reviews === null || reviews === void 0 ? void 0 : reviews.length) > 0) {
+            const total = reviews.map(review => Number(review.rating)).reduce((prev, sum) => prev + sum, 0);
+            averageRating = Number((total / (reviews === null || reviews === void 0 ? void 0 : reviews.length)).toFixed(1));
+        }
+        res.send({ ok: true, data: { averageRating }, reviews });
+    }
+    catch (error) {
+        res.status(400).send({ ok: false, error: error.message, code: (_b = error.code) !== null && _b !== void 0 ? _b : 1000 });
+    }
+}));
 // get all reviews (with or without query string)
 ReviewRouter.get('/api/reviews', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _b;
+    var _c;
     try {
         let filter = {};
         const queries = Object.keys(req.query);
@@ -91,12 +115,12 @@ ReviewRouter.get('/api/reviews', (req, res) => __awaiter(void 0, void 0, void 0,
         res.send({ ok: true, data: reviews });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_b = error.code) !== null && _b !== void 0 ? _b : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_c = error.code) !== null && _c !== void 0 ? _c : 1000 });
     }
 }));
 // get a single review by id
 ReviewRouter.get('/api/reviews/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c;
+    var _d;
     try {
         const review = yield review_1.Review.findById(req.params.id).populate('author', ['fullname', 'avatar', 'address.town']).exec();
         if (!review) {
@@ -105,13 +129,13 @@ ReviewRouter.get('/api/reviews/:id', (req, res) => __awaiter(void 0, void 0, voi
         res.send({ ok: true, data: review });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_c = error.code) !== null && _c !== void 0 ? _c : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_d = error.code) !== null && _d !== void 0 ? _d : 1000 });
     }
 }));
 // ***************************** admin enpoints ***********************************************
 // update review's status
 ReviewRouter.patch('/api/reviews/:id/status-update', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _d;
+    var _e;
     try {
         if (req.body.status) {
             const review = yield review_1.Review.findById(req.params.id);
@@ -135,12 +159,12 @@ ReviewRouter.patch('/api/reviews/:id/status-update', auth_middleware_1.isLoggedI
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_d = error.code) !== null && _d !== void 0 ? _d : 1000 });
+        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_e = error.code) !== null && _e !== void 0 ? _e : 1000 });
     }
 }));
 // delete a review by id
 ReviewRouter.delete('/api/reviews/:id/delete', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _e;
+    var _f;
     try {
         const review = yield review_1.Review.findByIdAndDelete(req.params.id);
         if (!review) {
@@ -149,7 +173,7 @@ ReviewRouter.delete('/api/reviews/:id/delete', auth_middleware_1.isLoggedIn, aut
         res.send({ ok: true });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_e = error.code) !== null && _e !== void 0 ? _e : 1000 });
+        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_f = error.code) !== null && _f !== void 0 ? _f : 1000 });
     }
 }));
 //# sourceMappingURL=review.js.map

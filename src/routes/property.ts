@@ -422,6 +422,7 @@ PropertyRouter.get('/api/property/:propertyId/related-properties/:quaterref', as
     try {
         const relatedProperties = await Property.find({
             $and: [
+                {availability:'Available'},
                 {'quater.ref': req.params.quaterref},
                 {_id : {$ne : req.params.propertyId}}
             ]})

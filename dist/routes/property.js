@@ -425,6 +425,7 @@ PropertyRouter.get('/api/property/:propertyId/related-properties/:quaterref', (r
     try {
         const relatedProperties = yield property_1.Property.find({
             $and: [
+                { availability: 'Available' },
                 { 'quater.ref': req.params.quaterref },
                 { _id: { $ne: req.params.propertyId } }
             ]
