@@ -125,6 +125,7 @@ RentalHistoryRouter.post('/api/rental-histories', isLoggedIn, isAdmin, async (re
             propertyId: new Types.ObjectId(propertyId.toString()),
             landlordId: new Types.ObjectId(landlordId.toString()),
             tenantId: new Types.ObjectId(tenantId.toString()),
+            rentIntentionId: new Types.ObjectId(rentIntentionId.toString()),
             status: 'ONGOING'
         })
         if (existAlreadyAndOngoing) {
@@ -147,7 +148,7 @@ RentalHistoryRouter.post('/api/rental-histories', isLoggedIn, isAdmin, async (re
                 propertyId: new Types.ObjectId(propertyId.toString()),
                 landlordId: new Types.ObjectId(landlordId.toString()),
                 potentialTenantId: new Types.ObjectId(tenantId.toString()),
-                comment: ""
+                comment: "I'm interested in this property and will love to rent it. Please get back to me soonest"
             })
             // updated isNewIntentionCreated
             isNewIntentionCreated = true
@@ -195,6 +196,7 @@ RentalHistoryRouter.post('/api/rental-histories', isLoggedIn, isAdmin, async (re
         // send the response
         res.send({ok: true})
     } catch (error) {
+        console.log(error)
         // check if a rentIntention was created and delete it
         if (isNewIntentionCreated) {
             // add a logger

@@ -130,6 +130,7 @@ RentalHistoryRouter.post('/api/rental-histories', auth_middleware_1.isLoggedIn, 
             propertyId: new mongoose_1.Types.ObjectId(propertyId.toString()),
             landlordId: new mongoose_1.Types.ObjectId(landlordId.toString()),
             tenantId: new mongoose_1.Types.ObjectId(tenantId.toString()),
+            rentIntentionId: new mongoose_1.Types.ObjectId(rentIntentionId.toString()),
             status: 'ONGOING'
         });
         if (existAlreadyAndOngoing) {
@@ -150,7 +151,7 @@ RentalHistoryRouter.post('/api/rental-histories', auth_middleware_1.isLoggedIn, 
                 propertyId: new mongoose_1.Types.ObjectId(propertyId.toString()),
                 landlordId: new mongoose_1.Types.ObjectId(landlordId.toString()),
                 potentialTenantId: new mongoose_1.Types.ObjectId(tenantId.toString()),
-                comment: ""
+                comment: "I'm interested in this property and will love to rent it. Please get back to me soonest"
             });
             // updated isNewIntentionCreated
             isNewIntentionCreated = true;
@@ -192,6 +193,7 @@ RentalHistoryRouter.post('/api/rental-histories', auth_middleware_1.isLoggedIn, 
         res.send({ ok: true });
     }
     catch (error) {
+        console.log(error);
         // check if a rentIntention was created and delete it
         if (isNewIntentionCreated) {
             // add a logger
