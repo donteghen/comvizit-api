@@ -40,10 +40,10 @@ function setFilter(key, value) {
 }
 // ***************************** public enpoints ***********************************************
 // get all featured properties (with or without query string)
-FeaturedRouter.get('/api/featured/properties', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+FeaturedRouter.get('/api/featured/properties-active', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        let matchFilter = {};
+        let matchFilter = { status: 'Active' };
         const pipeline = [{ $sort: { createAt: -1 } }];
         let subpipeline = [
             {
@@ -147,6 +147,9 @@ FeaturedRouter.patch('/api/featured/properties/:propertyId/status/update', auth_
             if (!featuredProperty) {
                 throw error_1.NOT_FOUND;
             }
+            if (Date.now() > (featuredProperty.startedAt + featuredProperty.duration)) {
+                throw error_1.FEATURING_EXPIRED;
+            }
             featuredProperty.status = req.body.status;
             const updateFeaturedProperty = yield featuredProperty.save();
             // update related property's featuring state
@@ -182,6 +185,56 @@ FeaturedRouter.delete('/api/featured/properties/:propertyId/delete', auth_middle
     }
     catch (error) {
         res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_e = error.code) !== null && _e !== void 0 ? _e : 1000 });
+    }
+}));
+// get all featured properties (with or without query string)
+FeaturedRouter.get('/api/featured/properties', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _f;
+    try {
+        let matchFilter = {};
+        const pipeline = [{ $sort: { createAt: -1 } }];
+        let subpipeline = [
+            {
+                $lookup: {
+                    from: "properties",
+                    localField: "propertyId",
+                    foreignField: "_id",
+                    as: "property"
+                }
+            },
+            {
+                $unwind: {
+                    path: "$property"
+                }
+            },
+        ];
+        const queries = Object.keys(req.query);
+        if (queries.length > 0) {
+            queries.forEach(key => {
+                if (key === 'quaterref' && req.query[key] !== undefined && req.query[key] !== null) {
+                    subpipeline.push({
+                        $match: {
+                            "property.quater.ref": req.query[key]
+                        }
+                    });
+                }
+                if (req.query[key]) {
+                    matchFilter = Object.assign(matchFilter, setFilter(key, req.query[key]));
+                }
+            });
+        }
+        if (Object.keys(matchFilter).length > 0) {
+            pipeline.push({ $match: matchFilter });
+        }
+        if (subpipeline) {
+            pipeline.push(...subpipeline);
+        }
+        // console.log(pipeline)
+        const featuredProperties = yield featured_properties_1.FeaturedProperties.aggregate(pipeline);
+        res.send({ ok: true, data: featuredProperties });
+    }
+    catch (error) {
+        res.status(400).send({ ok: false, error: error.message, code: (_f = error.code) !== null && _f !== void 0 ? _f : 1000 });
     }
 }));
 //# sourceMappingURL=featured-properties.js.map

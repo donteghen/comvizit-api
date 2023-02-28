@@ -208,3 +208,9 @@ export const RENTALHISTORY_CURRENTLY_ONGOING: ErrorResponse = {
     message: 'There is an ongoing rental history with the provided parameters',
     messageFr: 'French There is an ongoing rental history with the provided parameters'
 }
+export const FEATURING_EXPIRED: ErrorResponse = {
+    name: 'FEATURING_EXPIRED',
+    code: 1024,
+    message: 'This feature is expired, please start a new one',
+    messageFr: 'French This feature is expired, please start a new one'
+}

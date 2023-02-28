@@ -368,7 +368,7 @@ PropertyRouter.get('/api/properties-group-by-town', async (req: Request, res: Re
 })
 
 /**
- * get properties in a town and  groups by district ref and their count
+ * get properties in a town and group them by district ref and their count
  */
 PropertyRouter.get('/api/properties-group-by-district', async (req: Request, res: Response) => {
     try {
@@ -387,6 +387,7 @@ PropertyRouter.get('/api/properties-group-by-district', async (req: Request, res
                 }
             })
         }
+
         const groupsByDistrictRef = await Property.aggregate(pipeline)
         res.send({ok: true, data: groupsByDistrictRef})
     } catch (error) {

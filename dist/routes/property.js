@@ -367,7 +367,7 @@ PropertyRouter.get('/api/properties-group-by-town', (req, res) => __awaiter(void
     }
 }));
 /**
- * get properties in a town and  groups by district ref and their count
+ * get properties in a town and group them by district ref and their count
  */
 PropertyRouter.get('/api/properties-group-by-district', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _j, _k;

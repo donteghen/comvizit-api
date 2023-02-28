@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express'
-import { DELETE_OPERATION_FAILED, INVALID_PROPERTY_ID_FOR_FEATURING, INVALID_REQUEST, NOT_FOUND, PROPERTY_IS_ALREADY_FEATURED, PROPERTY_UNAVAILABLE_FOR_FEATURING } from '../constants/error';
+import { DELETE_OPERATION_FAILED, FEATURING_EXPIRED, INVALID_PROPERTY_ID_FOR_FEATURING, INVALID_REQUEST, NOT_FOUND, PROPERTY_IS_ALREADY_FEATURED, PROPERTY_UNAVAILABLE_FOR_FEATURING } from '../constants/error';
 import { isAdmin, isLoggedIn } from '../middleware/auth-middleware';
 import { FeaturedProperties } from "../models/featured-properties";
 import {PipelineStage, Types} from 'mongoose'
@@ -27,9 +27,9 @@ function setFilter(key:string, value:any): any {
 // ***************************** public enpoints ***********************************************
 
 // get all featured properties (with or without query string)
-FeaturedRouter.get('/api/featured/properties',  async (req: Request, res: Response) => {
+FeaturedRouter.get('/api/featured/properties-active',  async (req: Request, res: Response) => {
     try {
-        let matchFilter: any = {}
+        let matchFilter: any = {status: 'Active'}
         const pipeline: PipelineStage[] = [{$sort: {createAt: -1}}]
         let subpipeline: PipelineStage[] = [
             {
@@ -138,6 +138,9 @@ FeaturedRouter.patch('/api/featured/properties/:propertyId/status/update', isLog
             if (!featuredProperty) {
                 throw NOT_FOUND
             }
+            if (Date.now() > (featuredProperty.startedAt + featuredProperty.duration)) {
+                throw FEATURING_EXPIRED
+            }
             featuredProperty.status = req.body.status
             const updateFeaturedProperty = await featuredProperty.save()
             // update related property's featuring state
@@ -171,6 +174,62 @@ FeaturedRouter.delete('/api/featured/properties/:propertyId/delete', isLoggedIn,
         res.send({ok: true})
     } catch (error) {
         res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
+    }
+})
+
+// get all featured properties (with or without query string)
+FeaturedRouter.get('/api/featured/properties', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
+    try {
+        let matchFilter: any = {}
+        const pipeline: PipelineStage[] = [{$sort: {createAt: -1}}]
+        let subpipeline: PipelineStage[] = [
+            {
+                $lookup: {
+                    from: "properties",
+                    localField: "propertyId",
+                    foreignField: "_id",
+                    as: "property"
+                }
+            },
+            {
+                $unwind: {
+                    path: "$property"
+                }
+            },
+
+        ]
+
+        const queries = Object.keys(req.query)
+        if (queries.length > 0) {
+            queries.forEach(key => {
+
+                if (key === 'quaterref' && req.query[key] !== undefined && req.query[key] !== null) {
+                    subpipeline.push(
+                        {
+                            $match: {
+                                "property.quater.ref": req.query[key]
+                            }
+                        }
+                    )
+                }
+                if (req.query[key]) {
+                    matchFilter = Object.assign(matchFilter, setFilter(key, req.query[key]))
+                }
+            })
+        }
+        if (Object.keys(matchFilter).length > 0) {
+            pipeline.push({$match: matchFilter})
+        }
+        if (subpipeline) {
+            pipeline.push(...subpipeline)
+        }
+
+        // console.log(pipeline)
+        const featuredProperties = await FeaturedProperties.aggregate(pipeline)
+        res.send({ok: true, data: featuredProperties})
+
+    } catch (error) {
+        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
 
