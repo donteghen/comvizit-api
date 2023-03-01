@@ -30,7 +30,8 @@ function setFilter(key:string, value:any): any {
 FeaturedRouter.get('/api/featured/properties-active',  async (req: Request, res: Response) => {
     try {
         let matchFilter: any = {status: 'Active'}
-        const pipeline: PipelineStage[] = [{$sort: {createAt: -1}}]
+        const sortPipelineStage : PipelineStage = {$sort: {createAt: -1}}
+        const pipeline: PipelineStage[] = []
         let subpipeline: PipelineStage[] = [
             {
                 $lookup: {
@@ -61,6 +62,24 @@ FeaturedRouter.get('/api/featured/properties-active',  async (req: Request, res:
                         }
                     )
                 }
+                if (key === 'districtref' && req.query[key] !== undefined && req.query[key] !== null) {
+                    subpipeline.push(
+                        {
+                            $match: {
+                                "property.district.ref": req.query[key]
+                            }
+                        }
+                    )
+                }
+                if (key === 'town' && req.query[key] !== undefined && req.query[key] !== null) {
+                    subpipeline.push(
+                        {
+                            $match: {
+                                "property.town": req.query[key]
+                            }
+                        }
+                    )
+                }
                 if (req.query[key]) {
                     matchFilter = Object.assign(matchFilter, setFilter(key, req.query[key]))
                 }
@@ -72,8 +91,8 @@ FeaturedRouter.get('/api/featured/properties-active',  async (req: Request, res:
         if (subpipeline) {
             pipeline.push(...subpipeline)
         }
+        pipeline.push(sortPipelineStage)
 
-        // console.log(pipeline)
         const featuredProperties = await FeaturedProperties.aggregate(pipeline)
         res.send({ok: true, data: featuredProperties})
 

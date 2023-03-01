@@ -44,7 +44,8 @@ FeaturedRouter.get('/api/featured/properties-active', (req, res) => __awaiter(vo
     var _a;
     try {
         let matchFilter = { status: 'Active' };
-        const pipeline = [{ $sort: { createAt: -1 } }];
+        const sortPipelineStage = { $sort: { createAt: -1 } };
+        const pipeline = [];
         let subpipeline = [
             {
                 $lookup: {
@@ -70,6 +71,20 @@ FeaturedRouter.get('/api/featured/properties-active', (req, res) => __awaiter(vo
                         }
                     });
                 }
+                if (key === 'districtref' && req.query[key] !== undefined && req.query[key] !== null) {
+                    subpipeline.push({
+                        $match: {
+                            "property.district.ref": req.query[key]
+                        }
+                    });
+                }
+                if (key === 'town' && req.query[key] !== undefined && req.query[key] !== null) {
+                    subpipeline.push({
+                        $match: {
+                            "property.town": req.query[key]
+                        }
+                    });
+                }
                 if (req.query[key]) {
                     matchFilter = Object.assign(matchFilter, setFilter(key, req.query[key]));
                 }
@@ -81,7 +96,7 @@ FeaturedRouter.get('/api/featured/properties-active', (req, res) => __awaiter(vo
         if (subpipeline) {
             pipeline.push(...subpipeline);
         }
-        // console.log(pipeline)
+        pipeline.push(sortPipelineStage);
         const featuredProperties = yield featured_properties_1.FeaturedProperties.aggregate(pipeline);
         res.send({ ok: true, data: featuredProperties });
     }
