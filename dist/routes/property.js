@@ -409,11 +409,34 @@ PropertyRouter.get('/api/count-properties-per-town', (req, res) => __awaiter(voi
 PropertyRouter.get('/api/properties/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _m;
     try {
-        const property = yield property_1.Property.findById(req.params.id).populate('ownerId');
-        if (!property) {
+        const pipeline = [
+            {
+                $match: {
+                    _id: new mongoose_1.Types.ObjectId(req.params.id)
+                }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'ownerId',
+                    foreignField: '_id',
+                    as: "owner"
+                }
+            },
+            {
+                $lookup: {
+                    from: 'tags',
+                    localField: '_id',
+                    foreignField: 'refId',
+                    as: "tags"
+                }
+            }
+        ];
+        const properties = yield property_1.Property.aggregate(pipeline);
+        if (!properties[0]) {
             throw error_1.NOT_FOUND;
         }
-        res.send({ ok: true, data: property });
+        res.send({ ok: true, data: properties[0] });
     }
     catch (error) {
         res.status(400).send({ ok: false, error: error.message, code: (_m = error.code) !== null && _m !== void 0 ? _m : 1000 });

@@ -15,6 +15,7 @@ import { Complain } from "../models/complain";
 import { Review } from "../models/review";
 import { Like } from "../models/like";
 
+
 const PropertyRouter = express.Router()
 
 const pageSize: number = 24 // number of documents returned per request for the get all properties route
@@ -408,11 +409,34 @@ PropertyRouter.get('/api/count-properties-per-town', async (req: Request, res: R
 // get single properties by id
 PropertyRouter.get('/api/properties/:id', async (req: Request, res: Response) => {
     try {
-        const property = await Property.findById(req.params.id).populate('ownerId')
-        if (!property) {
+        const pipeline: PipelineStage[] = [
+            {
+                $match: {
+                    _id: new Types.ObjectId(req.params.id)
+                }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'ownerId',
+                    foreignField: '_id',
+                    as : "owner"
+                }
+            },
+            {
+                $lookup: {
+                    from: 'tags',
+                    localField: '_id',
+                    foreignField: 'refId',
+                    as : "tags"
+                }
+            }
+        ]
+        const properties = await Property.aggregate(pipeline)
+        if (!properties[0]) {
             throw NOT_FOUND
         }
-        res.send({ok:true, data: property})
+        res.send({ok:true, data: properties[0]})
     } catch (error) {
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }

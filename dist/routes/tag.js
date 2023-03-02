@@ -48,7 +48,7 @@ TagRouter.post('/api/tags/add', auth_middleware_1.isLoggedIn, auth_middleware_1.
     var _a;
     try {
         const { type, title, refId } = req.body;
-        const code = title ? title.toString().toLowerCase().replaceAll(" ", "_") : '';
+        const code = title ? title.toString().toLowerCase().split(' ').join('_') : '';
         const existAlready = yield tag_1.Tag.findOne({ $and: [{ refId }, { code }] });
         if (existAlready) {
             if (existAlready.status === 'Active') {
@@ -72,6 +72,7 @@ TagRouter.post('/api/tags/add', auth_middleware_1.isLoggedIn, auth_middleware_1.
         res.send({ ok: true, data: tag });
     }
     catch (error) {
+        // add a logger
         if (error.name === 'ValidationError') {
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;

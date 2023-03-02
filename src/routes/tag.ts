@@ -35,7 +35,7 @@ function setFilter(key:string, value:any): any {
 TagRouter.post('/api/tags/add', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
         const {type, title, refId} = req.body
-        const code = title ? title.toString().toLowerCase().replaceAll(" ", "_") : ''
+        const code: string = title ? title.toString().toLowerCase().split(' ').join('_') : ''
         const existAlready = await Tag.findOne({$and: [{refId}, {code}]})
         if (existAlready) {
             if (existAlready.status === 'Active') {
@@ -60,6 +60,8 @@ TagRouter.post('/api/tags/add', isLoggedIn, isAdmin, async (req: Request, res: R
 
         res.send({ok: true, data: tag})
     } catch (error) {
+
+        // add a logger
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
