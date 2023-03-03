@@ -147,9 +147,55 @@ PropertyRouter.get('/api/properties-in-quater/:quaterref', (req, res) => __await
         res.status(400).send({ ok: false, error: error.message, code: (_a = error.code) !== null && _a !== void 0 ? _a : 1000 });
     }
 }));
-// get all properties
-PropertyRouter.get('/api/properties', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+// get all properties by tag
+PropertyRouter.get('/api/properties-by-tag/:code', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _b;
+    try {
+        if (!req.params.code) {
+            throw error_1.INVALID_REQUEST;
+        }
+        const tags = yield tag_1.Tag.find({ code: req.params.code });
+        const tagRefIds = tags === null || tags === void 0 ? void 0 : tags.map(tag => tag.refId);
+        let sorting = { createdAt: -1 };
+        let pageNum = 1;
+        const queries = Object.keys(req.query);
+        let filter = { availability: 'Available', _id: { $in: tagRefIds } };
+        if (queries.length > 0) {
+            queries.forEach(key => {
+                if (req.query[key]) {
+                    if (key === 'page') {
+                        pageNum = Number.parseInt(req.query[key], 10);
+                    }
+                    filter = Object.assign(filter, setFilter(key, req.query[key]));
+                }
+            });
+        }
+        console.log(filter);
+        const properties = yield property_1.Property.aggregate([
+            {
+                $match: filter
+            },
+            {
+                $sort: sorting
+            },
+            {
+                $skip: (pageNum - 1) * pageSize
+            },
+            {
+                $limit: pageSize
+            }
+        ]);
+        const resultCount = yield property_1.Property.countDocuments(filter);
+        const totalPages = Math.ceil(resultCount / pageSize);
+        res.send({ ok: true, data: { properties, currPage: pageNum, totalPages, resultCount } });
+    }
+    catch (error) {
+        res.status(400).send({ ok: false, error: error.message, code: (_b = error.code) !== null && _b !== void 0 ? _b : 1000 });
+    }
+}));
+// get all properties by admin
+PropertyRouter.get('/api/properties', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _c;
     try {
         let filter = {};
         const queries = Object.keys(req.query);
@@ -160,7 +206,7 @@ PropertyRouter.get('/api/properties', auth_middleware_1.isLoggedIn, auth_middlew
                 }
             });
         }
-        // console.log(req.query, filter)
+        console.log(req.query, filter);
         const properties = yield property_1.Property.aggregate([
             {
                 $match: filter
@@ -180,12 +226,12 @@ PropertyRouter.get('/api/properties', auth_middleware_1.isLoggedIn, auth_middlew
         res.send({ ok: true, data: properties });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_b = error.code) !== null && _b !== void 0 ? _b : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_c = error.code) !== null && _c !== void 0 ? _c : 1000 });
     }
 }));
 // get all landlords properties
 PropertyRouter.get('/api/landlord-properties', auth_middleware_1.isLoggedIn, auth_middleware_1.isLandlord, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c;
+    var _d;
     try {
         let filter = { ownerId: new mongoose_1.Types.ObjectId(req.user.id) };
         const queries = Object.keys(req.query);
@@ -216,24 +262,24 @@ PropertyRouter.get('/api/landlord-properties', auth_middleware_1.isLoggedIn, aut
     }
     catch (error) {
         console.log(error);
-        res.status(400).send({ ok: false, error: error.message, code: (_c = error.code) !== null && _c !== void 0 ? _c : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_d = error.code) !== null && _d !== void 0 ? _d : 1000 });
     }
 }));
 // search using quaterref index for property's quater.ref and return various category counts
 PropertyRouter.get('/api/search-property-categories/:quaterRef', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _d;
+    var _e;
     try {
         const catAggregator = (0, queryMaker_1.categoryAggregator)(req.params.quaterRef);
         const quaters = yield property_1.Property.aggregate(catAggregator);
         res.send({ ok: true, data: quaters });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_d = error.code) !== null && _d !== void 0 ? _d : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_e = error.code) !== null && _e !== void 0 ? _e : 1000 });
     }
 }));
 // search with autocomplete index for quater and return matching quater name & ref
 PropertyRouter.get('/api/search-quaters/:quaterRef', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _e;
+    var _f;
     try {
         const quaters = yield property_1.Property.aggregate([
             {
@@ -261,12 +307,12 @@ PropertyRouter.get('/api/search-quaters/:quaterRef', (req, res) => __awaiter(voi
         res.send({ ok: true, data: quaters });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_e = error.code) !== null && _e !== void 0 ? _e : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_f = error.code) !== null && _f !== void 0 ? _f : 1000 });
     }
 }));
 // get properties in a town
 PropertyRouter.get('/api/town-properties/:town', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _f;
+    var _g;
     try {
         let filter = { availability: 'Available' };
         let sorting = { createdAt: -1 };
@@ -303,12 +349,12 @@ PropertyRouter.get('/api/town-properties/:town', (req, res) => __awaiter(void 0,
         res.send({ ok: true, data: { properties, currPage: pageNum, totalPages, resultCount } });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_f = error.code) !== null && _f !== void 0 ? _f : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_g = error.code) !== null && _g !== void 0 ? _g : 1000 });
     }
 }));
 // get properties in a district
 PropertyRouter.get('/api/district-properties/:districtref', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _g;
+    var _h;
     try {
         let filter = { availability: 'Available' };
         let sorting = { createdAt: -1 };
@@ -345,12 +391,12 @@ PropertyRouter.get('/api/district-properties/:districtref', (req, res) => __awai
         res.send({ ok: true, data: { properties, currPage: pageNum, totalPages, resultCount } });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_g = error.code) !== null && _g !== void 0 ? _g : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_h = error.code) !== null && _h !== void 0 ? _h : 1000 });
     }
 }));
 // get properties groups by town and their count
 PropertyRouter.get('/api/properties-group-by-town', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _h;
+    var _j;
     try {
         const groupsByTown = yield property_1.Property.aggregate([
             {
@@ -363,14 +409,14 @@ PropertyRouter.get('/api/properties-group-by-town', (req, res) => __awaiter(void
         res.send({ ok: true, data: groupsByTown });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_h = error.code) !== null && _h !== void 0 ? _h : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_j = error.code) !== null && _j !== void 0 ? _j : 1000 });
     }
 }));
 /**
  * get properties in a town and group them by district ref and their count
  */
 PropertyRouter.get('/api/properties-group-by-district', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _j, _k;
+    var _k, _l;
     try {
         const pipeline = [
             {
@@ -383,7 +429,7 @@ PropertyRouter.get('/api/properties-group-by-district', (req, res) => __awaiter(
         if (req.query.town) {
             pipeline.unshift({
                 $match: {
-                    town: (_j = req.query.town) === null || _j === void 0 ? void 0 : _j.toString()
+                    town: (_k = req.query.town) === null || _k === void 0 ? void 0 : _k.toString()
                 }
             });
         }
@@ -391,23 +437,23 @@ PropertyRouter.get('/api/properties-group-by-district', (req, res) => __awaiter(
         res.send({ ok: true, data: groupsByDistrictRef });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_k = error.code) !== null && _k !== void 0 ? _k : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_l = error.code) !== null && _l !== void 0 ? _l : 1000 });
     }
 }));
 // get property count for popular towns
 PropertyRouter.get('/api/count-properties-per-town', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _l;
+    var _m;
     try {
         const towncountlist = yield property_1.Property.aggregate((0, queryMaker_1.townAggregator)());
         res.send({ ok: true, data: towncountlist });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_l = error.code) !== null && _l !== void 0 ? _l : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_m = error.code) !== null && _m !== void 0 ? _m : 1000 });
     }
 }));
 // get single properties by id
 PropertyRouter.get('/api/properties/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _m;
+    var _o;
     try {
         const pipeline = [
             {
@@ -439,12 +485,12 @@ PropertyRouter.get('/api/properties/:id', (req, res) => __awaiter(void 0, void 0
         res.send({ ok: true, data: properties[0] });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_m = error.code) !== null && _m !== void 0 ? _m : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_o = error.code) !== null && _o !== void 0 ? _o : 1000 });
     }
 }));
 // get properties in same quater (Related prperties in same quater)
 PropertyRouter.get('/api/property/:propertyId/related-properties/:quaterref', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _o;
+    var _p;
     try {
         const relatedProperties = yield property_1.Property.find({
             $and: [
@@ -457,14 +503,14 @@ PropertyRouter.get('/api/property/:propertyId/related-properties/:quaterref', (r
         res.send({ ok: true, data: relatedProperties });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_o = error.code) !== null && _o !== void 0 ? _o : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_p = error.code) !== null && _p !== void 0 ? _p : 1000 });
     }
 }));
 // ***************************** Tenant Only endpoints ***********************************************
 // ***************************** admin endpoints ***********************************************
 // create new property
 PropertyRouter.post('/api/properties', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _p;
+    var _q;
     try {
         const newProperty = new property_1.Property(Object.assign(Object.assign({}, req.body), { ownerId: new mongoose_1.Types.ObjectId(req.body.ownerId) }));
         const property = yield newProperty.save();
@@ -475,12 +521,12 @@ PropertyRouter.post('/api/properties', auth_middleware_1.isLoggedIn, auth_middle
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_p = error.code) !== null && _p !== void 0 ? _p : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_q = error.code) !== null && _q !== void 0 ? _q : 1000 });
     }
 }));
 // update property availability status
 PropertyRouter.patch('/api/properties/:id/availability/update', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _q;
+    var _r;
     try {
         let propertyOwner;
         // check if user is landlord or admin and property belongs to that user(landlord)
@@ -519,12 +565,12 @@ PropertyRouter.patch('/api/properties/:id/availability/update', auth_middleware_
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_q = error.code) !== null && _q !== void 0 ? _q : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_r = error.code) !== null && _r !== void 0 ? _r : 1000 });
     }
 }));
 // update property
 PropertyRouter.patch('/api/properties/:id/update', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _r;
+    var _s;
     try {
         const update = {};
         Object.keys(req.body).forEach(key => {
@@ -545,12 +591,12 @@ PropertyRouter.patch('/api/properties/:id/update', auth_middleware_1.isLoggedIn,
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_r = error.code) !== null && _r !== void 0 ? _r : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_s = error.code) !== null && _s !== void 0 ? _s : 1000 });
     }
 }));
 // update property media
 PropertyRouter.patch('/api/properties/:id/update-media', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _s;
+    var _t;
     try {
         const { photos, videos, virtualTours } = req.body.media;
         const property = yield property_1.Property.findById(req.params.id);
@@ -569,12 +615,12 @@ PropertyRouter.patch('/api/properties/:id/update-media', auth_middleware_1.isLog
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_s = error.code) !== null && _s !== void 0 ? _s : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_t = error.code) !== null && _t !== void 0 ? _t : 1000 });
     }
 }));
 // delete property
 PropertyRouter.delete('/api/properties/:id/delete', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _t, _u;
+    var _u, _v;
     try {
         const deletedproperty = yield property_1.Property.findByIdAndDelete(req.params.id);
         if (!deletedproperty) {
@@ -604,7 +650,7 @@ PropertyRouter.delete('/api/properties/:id/delete', auth_middleware_1.isLoggedIn
         // delete related likes
         yield like_1.Like.deleteMany({
             _id: {
-                $in: (_t = deletedproperty.likes) === null || _t === void 0 ? void 0 : _t.map(id => new mongoose_1.Types.ObjectId(id))
+                $in: (_u = deletedproperty.likes) === null || _u === void 0 ? void 0 : _u.map(id => new mongoose_1.Types.ObjectId(id))
             }
         });
         // delete rentIntensions
@@ -612,7 +658,7 @@ PropertyRouter.delete('/api/properties/:id/delete', auth_middleware_1.isLoggedIn
         res.status(201).send({ ok: true });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_u = error.code) !== null && _u !== void 0 ? _u : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_v = error.code) !== null && _v !== void 0 ? _v : 1000 });
     }
 }));
 //# sourceMappingURL=property.js.map

@@ -13,5 +13,10 @@ export const constants = {
     REVIEW_STATUS: {
         ACTIVE: 'Active',
         'INACTIVE': 'Inactive'
+    },
+    USER_ROLE: {
+        ADMIN: 'ADMIN',
+        TENANT: 'TENANT',
+        LANDLORD: 'LANDLORD'
     }
 }

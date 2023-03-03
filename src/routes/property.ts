@@ -3,8 +3,8 @@ import express, { Request, Response } from 'express'
 
 import { Types, PipelineStage } from "mongoose";
 import { categoryAggregator, townAggregator } from "../utils/queryMaker";
-import { isAdmin, isLandlord, isLoggedIn, isTenant } from "../middleware/auth-middleware";
-import { DELETE_OPERATION_FAILED, NOT_AUTHORIZED, NOT_FOUND, NOT_PROPERTY_OWNER, SAVE_OPERATION_FAILED, TAG_ALREADY_EXISTS} from '../constants/error'
+import { isAdmin, isLandlord, isLoggedIn } from "../middleware/auth-middleware";
+import { DELETE_OPERATION_FAILED, INVALID_REQUEST, NOT_AUTHORIZED, NOT_FOUND, NOT_PROPERTY_OWNER, SAVE_OPERATION_FAILED} from '../constants/error'
 import {notifyPropertyAvailability} from '../utils/mailer-templates'
 import { mailer } from "../helper/mailer";
 import { IUser } from "../models/interfaces";
@@ -14,7 +14,8 @@ import { FeaturedProperties } from "../models/featured-properties";
 import { Complain } from "../models/complain";
 import { Review } from "../models/review";
 import { Like } from "../models/like";
-
+// utils & helpers
+import { constants } from "../constants/declared";
 
 const PropertyRouter = express.Router()
 
@@ -144,19 +145,69 @@ PropertyRouter.get('/api/properties-in-quater/:quaterref', async (req: Request, 
     }
 })
 
-// get all properties
-PropertyRouter.get('/api/properties', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
+// get all properties by tag
+PropertyRouter.get('/api/properties-by-tag/:code', async (req: Request, res: Response) => {
     try {
-        let filter: any = {}
+        if (!req.params.code) {
+            throw INVALID_REQUEST
+        }
+        const tags = await Tag.find({code: req.params.code})
+        const tagRefIds = tags?.map(tag => tag.refId)
+        let sorting:any = {createdAt: -1}
+        let pageNum: number = 1
+        const queries = Object.keys(req.query)
+        let filter: any = {availability:'Available', _id: {$in: tagRefIds}}
+        if (queries.length > 0) {
+            queries.forEach(key => {
+                if (req.query[key]) {
+                    if (key === 'page') {
+                        pageNum = Number.parseInt(req.query[key] as string, 10)
+                    }
+                    filter = Object.assign(filter, setFilter(key, req.query[key]))
+                }
+            })
+        }
+
+
+        console.log(filter)
+        const properties = await Property.aggregate([
+            {
+                $match: filter
+            },
+            {
+                $sort: sorting
+            },
+            {
+                $skip: (pageNum - 1) * pageSize
+            },
+            {
+                $limit: pageSize
+            }
+
+        ])
+
+        const resultCount = await Property.countDocuments(filter)
+        const totalPages = Math.ceil(resultCount / pageSize)
+
+        res.send({ok: true, data: {properties, currPage: pageNum, totalPages, resultCount}})
+    } catch (error) {
+        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+    }
+})
+// get all properties by admin
+PropertyRouter.get('/api/properties', isLoggedIn,  isAdmin, async (req: Request, res: Response) => {
+    try {
+        let filter: any =  {}
         const queries = Object.keys(req.query)
         if (queries.length > 0) {
             queries.forEach(key => {
+
                 if (req.query[key]) {
                     filter = Object.assign(filter, setFilter(key, req.query[key]))
                 }
             })
         }
-        // console.log(req.query, filter)
+        console.log(req.query, filter)
         const properties = await Property.aggregate([
             {
                 $match: filter

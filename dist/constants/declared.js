@@ -16,6 +16,11 @@ exports.constants = {
     REVIEW_STATUS: {
         ACTIVE: 'Active',
         'INACTIVE': 'Inactive'
+    },
+    USER_ROLE: {
+        ADMIN: 'ADMIN',
+        TENANT: 'TENANT',
+        LANDLORD: 'LANDLORD'
     }
 };
 //# sourceMappingURL=declared.js.map
