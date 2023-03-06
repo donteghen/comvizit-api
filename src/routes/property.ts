@@ -169,7 +169,7 @@ PropertyRouter.get('/api/properties-by-tag/:code', async (req: Request, res: Res
         }
 
 
-        console.log(filter)
+        // console.log(filter)
         const properties = await Property.aggregate([
             {
                 $match: filter

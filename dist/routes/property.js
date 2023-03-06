@@ -170,7 +170,7 @@ PropertyRouter.get('/api/properties-by-tag/:code', (req, res) => __awaiter(void 
                 }
             });
         }
-        console.log(filter);
+        // console.log(filter)
         const properties = yield property_1.Property.aggregate([
             {
                 $match: filter
