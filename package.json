@@ -18,6 +18,8 @@
   "author": "Donald Ticha Teghen <donaldteghen@gmail.com>",
   "license": "ISC",
   "dependencies": {
+    "@logtail/node": "0.3.1",
+    "@logtail/winston": "0.3.1",
     "@sendgrid/mail": "7.7.0",
     "@types/supertest": "2.0.12",
     "bcryptjs": "2.4.3",
@@ -34,7 +36,8 @@
     "redis": "4.3.1",
     "uuidv4": "6.2.13",
     "validator": "13.7.0",
-    "winston": "3.8.2"
+    "winston": "3.8.2",
+    "winston-mongodb": "5.1.1"
   },
   "devDependencies": {
     "@babel/core": "7.19.1",
