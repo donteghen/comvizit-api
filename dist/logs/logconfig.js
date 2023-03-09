@@ -31,7 +31,6 @@ const dbOptions = {
     format: combine(errors({ stack: true }), timestamp({ format: "YY-MM-DD HH:mm:ss" }), json({}), metadata())
 };
 const mongoTransport = new MongoDB(Object.assign({}, dbOptions));
-console.log(process.env.LOGTAIL_SOURCE_TOKEN);
 const logtail = new node_1.Logtail(process.env.LOGTAIL_SOURCE_TOKEN);
 const logConfig = (0, winston_1.createLogger)({
     level: 'silly',

@@ -11,8 +11,8 @@
     "lint": "tslint -c tslint.json -p tsconfig.json --fix",
     "tsc": "tsc",
     "dev:start": "npm-run-all lint tsc start",
-    "dev": "nodemon --watch src -e ts --exec npm run dev:start",
-    "start": "node dist/index.js",
+    "dev": "nodemon --watch src -e ts,js --exec npm run dev:start",
+    "start": "NEW_RELIC_APP_NAME=Comvizit NEW_RELIC_LISCENCE_KEY=706eab7d4ada0d810ef91be2cddf358d92cfNRAL node -r newrelic dist/index.js",
     "test": "jest --detectOpenHandles"
   },
   "author": "Donald Ticha Teghen <donaldteghen@gmail.com>",
@@ -31,6 +31,7 @@
     "express-session": "1.17.3",
     "mongoose": "6.6.1",
     "multer": "1.4.4",
+    "newrelic": "9.11.0",
     "passport": "0.6.0",
     "passport-local": "1.0.0",
     "redis": "4.3.1",

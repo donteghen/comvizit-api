@@ -1,11 +1,9 @@
 
-import {connection, connect, disconnect} from 'mongoose'
+import {connection, connect} from 'mongoose'
 
 
-export const connectDb = () => {
-     connect(process.env.MONGO_STRING)
-     .then(() => console.log('db connected'))
-     .catch(err => console.log(err))
+export const connectDb = async() => {
+     await connect(process.env.MONGO_STRING)
 }
 
 export async function clearDb () {
