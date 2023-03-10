@@ -1,8 +1,12 @@
 
 import {connection, connect} from 'mongoose'
+import { logger } from '../logs/logger'
 
 
 export const connectDb = async() => {
+     connection.on('error', (error) => {
+          logger.error(`A db error occured : ${error?.message??"Unknown"}`)
+     })
      await connect(process.env.MONGO_STRING)
 }
 

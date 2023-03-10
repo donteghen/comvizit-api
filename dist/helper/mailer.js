@@ -14,8 +14,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mailer = void 0;
 const mail_1 = __importDefault(require("@sendgrid/mail"));
+const logger_1 = require("../logs/logger");
 const mailer_html_1 = require("../utils/mailer-html");
 const mailer = (toEmail, subject, heading, detail, link, linkText) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
         // let mailresponse: MailResponse
         mail_1.default.setApiKey(process.env.SENDGRID_API_KEY);
@@ -34,6 +36,7 @@ const mailer = (toEmail, subject, heading, detail, link, linkText) => __awaiter(
         };
     }
     catch (error) {
+        logger_1.logger.error(`The Email to ${toEmail} with subject: ${subject} failed due to ${(_a = error === null || error === void 0 ? void 0 : error.message) !== null && _a !== void 0 ? _a : 'Unknown mailer error'}`);
         return {
             ok: false,
             error: error.response.body,

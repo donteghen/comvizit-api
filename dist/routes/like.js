@@ -20,6 +20,7 @@ const user_1 = require("../models/user");
 const error_1 = require("../constants/error");
 const auth_middleware_1 = require("../middleware/auth-middleware");
 const like_1 = require("../models/like");
+const logger_1 = require("../logs/logger");
 const LikeRouter = express_1.default.Router();
 exports.LikeRouter = LikeRouter;
 // query helper function
@@ -38,19 +39,20 @@ exports.LikeRouter = LikeRouter;
 // ***************************** public enpoints ***********************************************
 // get a property's like count
 LikeRouter.get('/api/properties/:id/likes/count', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _a, _b;
     try {
         const propertyLikeCount = yield like_1.Like.countDocuments({ propertyId: new mongoose_1.Types.ObjectId(req.params.id) });
         res.send({ ok: true, data: { count: propertyLikeCount } });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_a = error.code) !== null && _a !== void 0 ? _a : 1000 });
+        logger_1.logger.error(`An Error occured while getting the likes count for the property with id: ${req.params.id} due to ${(_a = error === null || error === void 0 ? void 0 : error.message) !== null && _a !== void 0 ? _a : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error: error.message, code: (_b = error.code) !== null && _b !== void 0 ? _b : 1000 });
     }
 }));
 // ***************************** tenant enpoints ***********************************************
 // like a property
 LikeRouter.post('/api/properties/:id/likes/increment', auth_middleware_1.isLoggedIn, auth_middleware_1.isTenant, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _b;
+    var _c, _d;
     try {
         // check if the tenant has already liked the property
         const isLikedAlready = yield like_1.Like.findOne({
@@ -89,24 +91,25 @@ LikeRouter.post('/api/properties/:id/likes/increment', auth_middleware_1.isLogge
         res.send({ ok: true });
     }
     catch (error) {
-        console.log(error);
+        logger_1.logger.error(`An Error occured while liking the property with id: ${req.params.id} by user with id: ${req.user.id} due to ${(_c = error === null || error === void 0 ? void 0 : error.message) !== null && _c !== void 0 ? _c : 'Unknown Source'}`);
         if (error.name === 'ValidationError') {
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_b = error.code) !== null && _b !== void 0 ? _b : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_d = error.code) !== null && _d !== void 0 ? _d : 1000 });
     }
 }));
 // ***************************** admin enpoints ***********************************************
 // get a property's like count
 LikeRouter.get('/api/likes/count', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c;
+    var _e, _f;
     try {
         const likeCount = yield like_1.Like.countDocuments();
         res.send({ ok: true, data: { count: likeCount } });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_c = error.code) !== null && _c !== void 0 ? _c : 1000 });
+        logger_1.logger.error(`An Error occured while getting the likes collection count by an admin due to ${(_e = error === null || error === void 0 ? void 0 : error.message) !== null && _e !== void 0 ? _e : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error: error.message, code: (_f = error.code) !== null && _f !== void 0 ? _f : 1000 });
     }
 }));
 //# sourceMappingURL=like.js.map

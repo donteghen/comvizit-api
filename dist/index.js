@@ -44,6 +44,10 @@ function init(workerId) {
             console.log(`Worker ${workerId} is listining at: http://loccalhost:${PORT}`);
         }).setTimeout(maxTimeout);
     })
-        .catch(err => { console.error("Failed to initialize DB", err); });
+        .catch(error => {
+        var _a;
+        logger_1.logger.error(`Failed to initialize DB due to:  ${(_a = error === null || error === void 0 ? void 0 : error.message) !== null && _a !== void 0 ? _a : 'Unknown error'}`);
+        console.error(new Date(Date.now()).toLocaleString(), " : Failed to initialize DB", error);
+    });
 }
 //# sourceMappingURL=index.js.map

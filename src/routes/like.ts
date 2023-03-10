@@ -5,6 +5,7 @@ import { User } from '../models/user';
 import { NOT_FOUND, SAVE_OPERATION_FAILED } from '../constants/error';
 import { isAdmin, isLoggedIn, isTenant} from '../middleware/auth-middleware';
 import { Like } from "../models/like";
+import { logger } from '../logs/logger';
 
 
 const LikeRouter = express.Router()
@@ -31,6 +32,7 @@ LikeRouter.get('/api/properties/:id/likes/count', async (req: Request, res: Resp
         const propertyLikeCount = await Like.countDocuments({propertyId: new Types.ObjectId(req.params.id)})
         res.send({ok: true, data: {count: propertyLikeCount}})
     } catch (error) {
+        logger.error(`An Error occured while getting the likes count for the property with id: ${req.params.id} due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
@@ -77,7 +79,7 @@ LikeRouter.post('/api/properties/:id/likes/increment', isLoggedIn, isTenant, asy
 
         res.send({ok: true})
     } catch (error) {
-        console.log(error)
+        logger.error(`An Error occured while liking the property with id: ${req.params.id} by user with id: ${req.user.id} due to ${error?.message??'Unknown Source'}`)
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
@@ -95,6 +97,7 @@ LikeRouter.get('/api/likes/count', isLoggedIn, isAdmin, async (req: Request, res
         const likeCount = await Like.countDocuments()
         res.send({ok: true, data: {count: likeCount}})
     } catch (error) {
+        logger.error(`An Error occured while getting the likes collection count by an admin due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })

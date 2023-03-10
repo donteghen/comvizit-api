@@ -44,5 +44,8 @@ function init( workerId: number ) {
             console.log(`Worker ${workerId} is listining at: http://loccalhost:${PORT}`)
         }).setTimeout(maxTimeout)
     })
-    .catch(err => {console.error("Failed to initialize DB", err)})
+    .catch(error => {
+        logger.error(`Failed to initialize DB due to:  ${error?.message??'Unknown error'}`)
+        console.error(new Date(Date.now()).toLocaleString(), " : Failed to initialize DB", error)
+    })
 }

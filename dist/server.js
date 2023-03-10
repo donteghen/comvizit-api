@@ -14,14 +14,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.app = void 0;
 const express_1 = __importDefault(require("express"));
+const logger_1 = require("./logs/logger");
 const express_session_1 = __importDefault(require("express-session"));
 const connectRedis = require('connect-redis');
 const redis_1 = require("redis");
 const passport_1 = __importDefault(require("passport"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
-// local module imports
-const dbconfig_1 = require("./config/dbconfig");
 const auth_middleware_1 = require("./middleware/auth-middleware");
 // import router
 const property_1 = require("./routes/property");
@@ -39,11 +38,15 @@ const rental_history_1 = require("./routes/rental-history");
 const cron_1 = __importDefault(require("./services/cron"));
 // global settings
 dotenv_1.default.config();
-(0, dbconfig_1.connectDb)();
 (0, auth_middleware_1.passportConfig)();
 // configure Redis
 const redisClient = (0, redis_1.createClient)({ legacyMode: true });
-redisClient.connect().catch(console.error);
+redisClient.connect()
+    .catch(error => {
+    var _a;
+    logger_1.logger.error(`Failed to initialize DB due to:  ${(_a = error === null || error === void 0 ? void 0 : error.message) !== null && _a !== void 0 ? _a : 'Unknown error'}`);
+    console.error(new Date(Date.now()).toLocaleString(), " : Failed to initialize DB", error);
+});
 const RedisStore = connectRedis(express_session_1.default);
 // declare and initail parameters
 const app = (0, express_1.default)();
@@ -87,7 +90,8 @@ app.use(rental_history_1.RentalHistoryRouter);
 //  Routes
 app.get('/api/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        res.send({ foo: 'bar' });
+        logger_1.logger.info('Someone landed at the route /api/');
+        res.send('Wlecome to the comvizit api');
     }
     catch (error) {
         res.status(400).send(error.message);

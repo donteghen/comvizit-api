@@ -19,6 +19,7 @@ const auth_middleware_1 = require("../middleware/auth-middleware");
 const contact_1 = require("../models/contact");
 const mailer_1 = require("../helper/mailer");
 const mailer_templates_1 = require("../utils/mailer-templates");
+const logger_1 = require("../logs/logger");
 const ContactRouter = express_1.default.Router();
 exports.ContactRouter = ContactRouter;
 // query helper function
@@ -37,7 +38,7 @@ function setFilter(key, value) {
 // ***************************** public enpoints ***********************************************
 // create new contact
 ContactRouter.post('/api/contacts', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _a, _b;
     try {
         const { fullname, email, phone } = req.body;
         const newContact = new contact_1.Contact({
@@ -52,17 +53,18 @@ ContactRouter.post('/api/contacts', (req, res) => __awaiter(void 0, void 0, void
         res.send({ ok: true, data: contact });
     }
     catch (error) {
+        logger_1.logger.error(`An error occured while creating a new contactme message due to : ${(_a = error === null || error === void 0 ? void 0 : error.message) !== null && _a !== void 0 ? _a : 'Unknown Source'}`);
         if (error.name === 'ValidationError') {
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_a = error.code) !== null && _a !== void 0 ? _a : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_b = error.code) !== null && _b !== void 0 ? _b : 1000 });
     }
 }));
 // ***************************** admin restricted endpoints ***********************************************
 // get all contact (with or without query string)
 ContactRouter.get('/api/contacts', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _b;
+    var _c, _d;
     try {
         let filter = {};
         const queries = Object.keys(req.query);
@@ -77,12 +79,13 @@ ContactRouter.get('/api/contacts', auth_middleware_1.isLoggedIn, auth_middleware
         res.send({ ok: true, data: contacts });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_b = error.code) !== null && _b !== void 0 ? _b : 1000 });
+        logger_1.logger.error(`An error occured querying contactme list due to : ${(_c = error === null || error === void 0 ? void 0 : error.message) !== null && _c !== void 0 ? _c : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error: error.message, code: (_d = error.code) !== null && _d !== void 0 ? _d : 1000 });
     }
 }));
 // get single contact by id
 ContactRouter.get('/api/contacts/:id', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c;
+    var _e, _f;
     try {
         const contact = yield contact_1.Contact.findById(req.params.id);
         if (!contact) {
@@ -91,12 +94,13 @@ ContactRouter.get('/api/contacts/:id', auth_middleware_1.isLoggedIn, auth_middle
         res.send({ ok: true, data: contact });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_c = error.code) !== null && _c !== void 0 ? _c : 1000 });
+        logger_1.logger.error(`An error occured while querying the contactme details with id: ${req.params.id} due to : ${(_e = error === null || error === void 0 ? void 0 : error.message) !== null && _e !== void 0 ? _e : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error: error.message, code: (_f = error.code) !== null && _f !== void 0 ? _f : 1000 });
     }
 }));
 // make contact as replied
 ContactRouter.patch('/api/contacts/:id/reply', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _d;
+    var _g, _h;
     try {
         const contact = yield contact_1.Contact.findById(req.params.id);
         if (!contact) {
@@ -108,16 +112,17 @@ ContactRouter.patch('/api/contacts/:id/reply', auth_middleware_1.isLoggedIn, aut
         res.send({ ok: true, data: updateContact });
     }
     catch (error) {
+        logger_1.logger.error(`An error occured while updating the replied status of the contactme with id: ${req.params.id} due to : ${(_g = error === null || error === void 0 ? void 0 : error.message) !== null && _g !== void 0 ? _g : 'Unknown Source'}`);
         if (error.name === 'ValidationError') {
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_d = error.code) !== null && _d !== void 0 ? _d : 1000 });
+        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_h = error.code) !== null && _h !== void 0 ? _h : 1000 });
     }
 }));
 // delete contact
 ContactRouter.delete('/api/contacts/:id/delete', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _e;
+    var _j, _k;
     try {
         const contact = yield contact_1.Contact.findById(req.params.id);
         if (!contact) {
@@ -130,7 +135,8 @@ ContactRouter.delete('/api/contacts/:id/delete', auth_middleware_1.isLoggedIn, a
         res.send({ ok: true });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_e = error.code) !== null && _e !== void 0 ? _e : 1000 });
+        logger_1.logger.error(`An error occured while deleting the contactme message with id: ${req.params.id} due to : ${(_j = error === null || error === void 0 ? void 0 : error.message) !== null && _j !== void 0 ? _j : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_k = error.code) !== null && _k !== void 0 ? _k : 1000 });
     }
 }));
 //# sourceMappingURL=contact.js.map

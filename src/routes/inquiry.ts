@@ -4,6 +4,7 @@ import { Inquiry } from "../models/inquiry";
 import { mailer } from '../helper/mailer';
 import {notifyNewInquiry} from '../utils/mailer-templates'
 import { NOT_FOUND } from '../constants/error';
+import { logger } from '../logs/logger';
 
 
 const InquiryRouter = express.Router()
@@ -44,6 +45,7 @@ InquiryRouter.post('/api/inquiries', async (req: Request, res: Response) => {
 
         res.send({ok: true, data: inquiry})
     } catch (error) {
+        logger.error(`An Error occured while creating a new inquiry due to ${error?.message??'Unknown Source'}`)
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
@@ -69,6 +71,7 @@ InquiryRouter.get('/api/inquiries', isLoggedIn, isAdmin, async (req: Request, re
         const inquiries = await Inquiry.find(filter)
         res.send({ok: true, data: inquiries})
     } catch (error) {
+        logger.error(`An Error occured while querying inquiry collection due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
@@ -82,6 +85,7 @@ InquiryRouter.get('/api/inquiries/:id', isLoggedIn, isAdmin, async (req: Request
         }
         res.send({ok: true, data: inquiry})
     } catch (error) {
+        logger.error(`An Error occured while getting the details of the inquiry with id: ${req.params.id} due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
@@ -100,6 +104,7 @@ InquiryRouter.patch('/api/inquiries/:id/reply', isLoggedIn, isAdmin, async (req:
         const updateInquiry = await inquiry.save()
         res.send({ok: true, data: updateInquiry})
     } catch (error) {
+        logger.error(`An Error occured while updating the replied status of the inquiry with id: ${req.params.id} due to ${error?.message??'Unknown Source'}`)
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
@@ -117,6 +122,7 @@ InquiryRouter.delete('/api/inquiries/:id/delete', isLoggedIn, isAdmin, async (re
         }
         res.send({ok: true})
     } catch (error) {
+        logger.error(`An Error occured while deleting the inquiry with id: ${req.params.id} due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
     }
 })

@@ -19,6 +19,7 @@ const error_1 = require("../constants/error");
 const mongoose_1 = require("mongoose");
 const review_1 = require("../models/review");
 const declared_1 = require("../constants/declared");
+const logger_1 = require("../logs/logger");
 const ReviewRouter = express_1.default.Router();
 exports.ReviewRouter = ReviewRouter;
 /**
@@ -48,7 +49,7 @@ function setFilter(key, value) {
 // ***************************** public enpoints ***********************************************
 // create a new review
 ReviewRouter.post('/api/reviews/create', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _a, _b;
     try {
         const { type, rating, comment, refId, status } = req.body;
         const author = new mongoose_1.Types.ObjectId(req.user.id);
@@ -67,17 +68,17 @@ ReviewRouter.post('/api/reviews/create', auth_middleware_1.isLoggedIn, (req, res
         res.send({ ok: true, data: review });
     }
     catch (error) {
-        console.log(error);
+        logger_1.logger.error(`An Error occured while creating a new review of type: ${req.body.type} by the user with id: ${req.user.id} due to ${(_a = error === null || error === void 0 ? void 0 : error.message) !== null && _a !== void 0 ? _a : 'Unknown Source'}`);
         if (error.name === 'ValidationError') {
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_a = error.code) !== null && _a !== void 0 ? _a : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_b = error.code) !== null && _b !== void 0 ? _b : 1000 });
     }
 }));
 // fetch reviews and respond with the calculated average rating
 ReviewRouter.post('/api/reviews-rating-count', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _b;
+    var _c, _d;
     try {
         let averageRating = 0;
         if (!req.body.refId || !req.body.type) {
@@ -95,12 +96,13 @@ ReviewRouter.post('/api/reviews-rating-count', (req, res) => __awaiter(void 0, v
         res.send({ ok: true, data: { averageRating }, reviews });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_b = error.code) !== null && _b !== void 0 ? _b : 1000 });
+        logger_1.logger.error(`An Error occured while fetching  review count for the review of type: ${req.body.type}  with refId: ${req.body.refId} due to ${(_c = error === null || error === void 0 ? void 0 : error.message) !== null && _c !== void 0 ? _c : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error: error.message, code: (_d = error.code) !== null && _d !== void 0 ? _d : 1000 });
     }
 }));
 // get all reviews (with or without query string)
 ReviewRouter.get('/api/reviews', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c;
+    var _e, _f;
     try {
         let filter = {};
         const queries = Object.keys(req.query);
@@ -115,12 +117,13 @@ ReviewRouter.get('/api/reviews', (req, res) => __awaiter(void 0, void 0, void 0,
         res.send({ ok: true, data: reviews });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_c = error.code) !== null && _c !== void 0 ? _c : 1000 });
+        logger_1.logger.error(`An Error occured while querying all reviews due to ${(_e = error === null || error === void 0 ? void 0 : error.message) !== null && _e !== void 0 ? _e : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error: error.message, code: (_f = error.code) !== null && _f !== void 0 ? _f : 1000 });
     }
 }));
 // get a single review by id
 ReviewRouter.get('/api/reviews/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _d;
+    var _g, _h;
     try {
         const review = yield review_1.Review.findById(req.params.id).populate('author', ['fullname', 'avatar', 'address.town']).exec();
         if (!review) {
@@ -129,13 +132,14 @@ ReviewRouter.get('/api/reviews/:id', (req, res) => __awaiter(void 0, void 0, voi
         res.send({ ok: true, data: review });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_d = error.code) !== null && _d !== void 0 ? _d : 1000 });
+        logger_1.logger.error(`An Error occured while querying the details of the review with id: ${req.params.id} due to ${(_g = error === null || error === void 0 ? void 0 : error.message) !== null && _g !== void 0 ? _g : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error: error.message, code: (_h = error.code) !== null && _h !== void 0 ? _h : 1000 });
     }
 }));
 // ***************************** admin enpoints ***********************************************
 // update review's status
 ReviewRouter.patch('/api/reviews/:id/status-update', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _e;
+    var _j, _k;
     try {
         if (req.body.status) {
             const review = yield review_1.Review.findById(req.params.id);
@@ -154,17 +158,17 @@ ReviewRouter.patch('/api/reviews/:id/status-update', auth_middleware_1.isLoggedI
         }
     }
     catch (error) {
-        // console.log(error)
+        logger_1.logger.error(`An Error occured while update the status of the review with id: ${req.params.id} due to ${(_j = error === null || error === void 0 ? void 0 : error.message) !== null && _j !== void 0 ? _j : 'Unknown Source'}`);
         if (error.name === 'ValidationError') {
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_e = error.code) !== null && _e !== void 0 ? _e : 1000 });
+        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_k = error.code) !== null && _k !== void 0 ? _k : 1000 });
     }
 }));
 // delete a review by id
 ReviewRouter.delete('/api/reviews/:id/delete', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _f;
+    var _l, _m;
     try {
         const review = yield review_1.Review.findByIdAndDelete(req.params.id);
         if (!review) {
@@ -173,7 +177,8 @@ ReviewRouter.delete('/api/reviews/:id/delete', auth_middleware_1.isLoggedIn, aut
         res.send({ ok: true });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_f = error.code) !== null && _f !== void 0 ? _f : 1000 });
+        logger_1.logger.error(`An Error occured while deleting the review with id: ${req.params.id} due to ${(_l = error === null || error === void 0 ? void 0 : error.message) !== null && _l !== void 0 ? _l : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_m = error.code) !== null && _m !== void 0 ? _m : 1000 });
     }
 }));
 //# sourceMappingURL=review.js.map

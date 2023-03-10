@@ -1,11 +1,11 @@
 import express, { Request, Response } from 'express'
 import { Types } from 'mongoose';
-import { Property } from '../models/property';
 import { User } from '../models/user';
-import { DELETE_OPERATION_FAILED, NOT_FOUND, SAVE_OPERATION_FAILED } from '../constants/error';
-import { isAdmin, isLoggedIn, isTenant} from '../middleware/auth-middleware';
+import { NOT_FOUND } from '../constants/error';
+import { isLoggedIn, isTenant} from '../middleware/auth-middleware';
 import { Favorite } from "../models/favorite";
-import { IFavorite, IProperty } from '../models/interfaces';
+import { IFavorite } from '../models/interfaces';
+import { logger } from '../logs/logger';
 
 const FavoriteRouter = express.Router()
 
@@ -42,6 +42,7 @@ FavoriteRouter.get('/api/fav-property-list', isLoggedIn, isTenant, async (req: R
         }
         res.send({ok:true, data: favProperties})
     } catch (error) {
+        logger.error(`An Error while querying favorite list due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
@@ -81,6 +82,7 @@ FavoriteRouter.patch('/api/fav-property-list/add-favorite', isLoggedIn, isTenant
 
         res.send({ok:true})
     } catch (error) {
+        logger.error(`An Error occured while adding a favorite property to fav collection due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
@@ -108,6 +110,7 @@ FavoriteRouter.patch('/api/fav-property-list/remove-favorite', isLoggedIn, isTen
         const updatedUser = await user.save()
         res.send({ok:true, data: updatedUser})
     } catch (error) {
+        logger.error(`An Error occured while removing a favorite property from fav collection due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
@@ -127,6 +130,7 @@ FavoriteRouter.patch('/api/fav-property-list/clear-favorite-list', isLoggedIn, i
         const updatedUser = await user.save()
         res.send({ok:true, data: updatedUser})
     } catch (error) {
+        logger.error(`An Error occured while clearing a fav collection due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })

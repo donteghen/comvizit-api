@@ -4,6 +4,7 @@ import {DELETE_OPERATION_FAILED, INVALID_REQUEST, NOT_FOUND, REVIEW_ALREADY_EXIS
 import {Types} from 'mongoose';
 import { Review } from '../models/review';
 import {constants} from '../constants/declared'
+import { logger } from '../logs/logger';
 
 const ReviewRouter = express.Router()
 
@@ -54,7 +55,7 @@ ReviewRouter.post('/api/reviews/create', isLoggedIn, async (req: Request, res: R
 
         res.send({ok: true, data: review})
     } catch (error) {
-        console.log(error)
+        logger.error(`An Error occured while creating a new review of type: ${req.body.type} by the user with id: ${req.user.id} due to ${error?.message??'Unknown Source'}`)
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
@@ -83,6 +84,7 @@ ReviewRouter.post('/api/reviews-rating-count', async (req: Request, res: Respons
 
         res.send({ok: true, data: {averageRating}, reviews})
     } catch (error) {
+        logger.error(`An Error occured while fetching  review count for the review of type: ${req.body.type}  with refId: ${req.body.refId} due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
@@ -102,6 +104,7 @@ ReviewRouter.get('/api/reviews', async (req: Request, res: Response) => {
         const reviews = await Review.find(filter).sort({createdAt: -1}).populate('author', ['fullname', 'avatar', 'address.town'] ).exec()
         res.send({ok: true, data: reviews})
     } catch (error) {
+        logger.error(`An Error occured while querying all reviews due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
@@ -115,6 +118,7 @@ ReviewRouter.get('/api/reviews/:id',  async (req: Request, res: Response) => {
         }
         res.send({ok: true, data: review})
     } catch (error) {
+        logger.error(`An Error occured while querying the details of the review with id: ${req.params.id} due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
@@ -142,7 +146,7 @@ ReviewRouter.patch('/api/reviews/:id/status-update', isLoggedIn, isAdmin, async 
             throw INVALID_REQUEST
         }
     } catch (error) {
-        // console.log(error)
+        logger.error(`An Error occured while update the status of the review with id: ${req.params.id} due to ${error?.message??'Unknown Source'}`)
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
@@ -160,6 +164,7 @@ ReviewRouter.delete('/api/reviews/:id/delete', isLoggedIn, isAdmin, async (req: 
         }
         res.send({ok: true})
     } catch (error) {
+        logger.error(`An Error occured while deleting the review with id: ${req.params.id} due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
     }
 })

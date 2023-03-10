@@ -3,6 +3,7 @@ import { isAdmin, isLoggedIn } from '../middleware/auth-middleware';
 import { Tag } from "../models/tag";
 import {DELETE_OPERATION_FAILED, INVALID_REQUEST, NOT_FOUND, SAVE_OPERATION_FAILED, TAG_ALREADY_EXISTS} from '../constants/error'
 import {Types} from 'mongoose';
+import { logger } from '../logs/logger';
 
 const TagRouter = express.Router()
 
@@ -60,8 +61,7 @@ TagRouter.post('/api/tags/add', isLoggedIn, isAdmin, async (req: Request, res: R
 
         res.send({ok: true, data: tag})
     } catch (error) {
-
-        // add a logger
+        logger.error(`An Error occured while tagging a document with type: ${req.body.type} with refId ${req.body.refId} by admin due to ${error?.message??'Unknown Source'}`)
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
@@ -85,6 +85,7 @@ TagRouter.get('/api/tags', async (req: Request, res: Response) => {
         const tags = await Tag.find(filter)
         res.send({ok: true, data: tags})
     } catch (error) {
+        logger.error(`An Error occured while querying tag list due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
@@ -98,6 +99,7 @@ TagRouter.get('/api/tags/:id',  async (req: Request, res: Response) => {
         }
         res.send({ok: true, data: tag})
     } catch (error) {
+        logger.error(`An Error occured while querying the details of the tag with id: ${req.params.id} due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
@@ -126,7 +128,7 @@ TagRouter.patch('/api/tags/:id/update', isLoggedIn, isAdmin, async (req: Request
             throw INVALID_REQUEST
         }
     } catch (error) {
-        // console.log(error)
+        logger.error(`An Error occured while updating the status of the tag with id: ${req.params.id} due to ${error?.message??'Unknown Source'}`)
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
@@ -144,6 +146,7 @@ TagRouter.delete('/api/tags/:id/delete', isLoggedIn, isAdmin, async (req: Reques
         }
         res.send({ok: true})
     } catch (error) {
+        logger.error(`An Error occured while deleting the tag with id: ${req.params.id} due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
     }
 })

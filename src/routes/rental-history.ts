@@ -9,6 +9,7 @@ import { User } from '../models/user';
 import { singleRentalHistoryLookup, rentalHistoryLookup } from '../utils/queryMaker';
 import { RentIntention } from '../models/rent-intention';
 import { IRentIntention } from '../models/interfaces';
+import { logger } from '../logs/logger';
 
 const RentalHistoryRouter = express.Router()
 
@@ -83,6 +84,7 @@ RentalHistoryRouter.get('/api/rental-histories', isLoggedIn, async (req: Request
         res.send({ok: true, data: rentalHistoryList})
 
     } catch (error) {
+        logger.error(`An Error occured while querying rental-history list due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
@@ -99,6 +101,7 @@ RentalHistoryRouter.get('/api/rental-histories/:id/detail', isLoggedIn, async (r
         }
         res.send({ok: true, data: rentalHistory[0]})
     } catch (error) {
+        logger.error(`An Error occured while querying the details of the rental-history with id: ${req.params.id} due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
@@ -196,7 +199,7 @@ RentalHistoryRouter.post('/api/rental-histories', isLoggedIn, isAdmin, async (re
         // send the response
         res.send({ok: true})
     } catch (error) {
-        console.log(error)
+        logger.error(`An Error occured while creating a new rental-history for rent-intention with id: ${req.body.rentIntentionId} due to ${error?.message??'Unknown Source'}`)
         // check if a rentIntention was created and delete it
         if (isNewIntentionCreated) {
             // add a logger
@@ -242,6 +245,7 @@ RentalHistoryRouter.patch('/api/rental-histories/:id/terminate', isLoggedIn, isA
         const _success = await mailer(_tenant.email, _subject, _heading, _detail, tenantLink, _linkText )
         res.send({ok: true})
     } catch (error) {
+        logger.error(`An Error occured while terminating the rental-history with id: ${req.body.rentIntentionId} due to ${error?.message??'Unknown Source'}`)
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return

@@ -4,6 +4,7 @@ import { isAdmin, isLoggedIn } from '../middleware/auth-middleware';
 import { Contact } from "../models/contact";
 import { mailer } from '../helper/mailer';
 import {notifyNewContactMe} from '../utils/mailer-templates'
+import { logger } from '../logs/logger';
 
 const ContactRouter = express.Router()
 
@@ -40,6 +41,7 @@ ContactRouter.post('/api/contacts', async (req: Request, res: Response) => {
 
         res.send({ok: true, data: contact})
     } catch (error) {
+        logger.error(`An error occured while creating a new contactme message due to : ${error?.message??'Unknown Source'}`)
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
@@ -65,6 +67,7 @@ ContactRouter.get('/api/contacts', isLoggedIn, isAdmin, async (req: Request, res
         const contacts = await Contact.find(filter)
         res.send({ok: true, data: contacts})
     } catch (error) {
+        logger.error(`An error occured querying contactme list due to : ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
@@ -78,6 +81,7 @@ ContactRouter.get('/api/contacts/:id', isLoggedIn, isAdmin, async (req: Request,
         }
         res.send({ok: true, data: contact})
     } catch (error) {
+        logger.error(`An error occured while querying the contactme details with id: ${req.params.id} due to : ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
@@ -95,6 +99,7 @@ ContactRouter.patch('/api/contacts/:id/reply', isLoggedIn, isAdmin, async (req: 
         const updateContact = await contact.save()
         res.send({ok: true, data: updateContact})
     } catch (error) {
+        logger.error(`An error occured while updating the replied status of the contactme with id: ${req.params.id} due to : ${error?.message??'Unknown Source'}`)
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
@@ -116,6 +121,7 @@ ContactRouter.delete('/api/contacts/:id/delete', isLoggedIn, isAdmin, async (req
         }
         res.send({ok: true})
     } catch (error) {
+        logger.error(`An error occured while deleting the contactme message with id: ${req.params.id} due to : ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
     }
 })

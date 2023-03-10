@@ -5,6 +5,7 @@ import { Complain } from "../models/complain";
 import { mailer } from '../helper/mailer';
 import {notifyNewComplained} from '../utils/mailer-templates'
 import { Types } from 'mongoose';
+import { logger } from '../logs/logger';
 
 
 const ComplainRouter = express.Router()
@@ -56,7 +57,7 @@ ComplainRouter.post('/api/complains', isLoggedIn, isTenant, async (req: Request,
 
         res.send({ok: true, data: complain})
     } catch (error) {
-        console.log(error)
+        logger.error(`An error occured while creating a complain due to : ${error?.message??'Unknown Source'}`)
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
@@ -82,6 +83,7 @@ ComplainRouter.get('/api/complains', isLoggedIn, async (req: Request, res: Respo
         const complains = await Complain.find(filter)
         res.send({ok: true, data: complains})
     } catch (error) {
+        logger.error(`An error occured while querying complain list due to : ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
@@ -95,6 +97,7 @@ ComplainRouter.get('/api/complains/:id', isLoggedIn, isAdmin, async (req: Reques
         }
         res.send({ok: true, data: complain})
     } catch (error) {
+        logger.error(`An error occured while querying complain detail by id: ${req.params.id} due to : ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message})
     }
 })
@@ -112,7 +115,7 @@ ComplainRouter.patch('/api/complains/:id/process', isLoggedIn, isAdmin, async (r
         const updateComplain = await complain.save()
         res.send({ok: true, data: updateComplain})
     } catch (error) {
-        // console.log(error)
+        logger.error(`An error occured while updating the complain with id: ${req.params.id} due to : ${error?.message??'Unknown Source'}`)
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
@@ -134,6 +137,7 @@ ComplainRouter.delete('/api/complains/:id/delete', isLoggedIn, isAdmin, async (r
         }
         res.send({ok: true})
     } catch (error) {
+        logger.error(`An error occured while deleting the complain with id: ${req.params.id} due to : ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error:error?.message})
     }
 })

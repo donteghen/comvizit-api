@@ -11,7 +11,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.closeDb = exports.clearDb = exports.connectDb = void 0;
 const mongoose_1 = require("mongoose");
+const logger_1 = require("../logs/logger");
 const connectDb = () => __awaiter(void 0, void 0, void 0, function* () {
+    mongoose_1.connection.on('error', (error) => {
+        var _a;
+        logger_1.logger.error(`A db error occured : ${(_a = error === null || error === void 0 ? void 0 : error.message) !== null && _a !== void 0 ? _a : "Unknown"}`);
+    });
     yield (0, mongoose_1.connect)(process.env.MONGO_STRING);
 });
 exports.connectDb = connectDb;

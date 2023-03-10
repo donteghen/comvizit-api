@@ -1,4 +1,5 @@
 import express, {Request, Response} from 'express'
+import { logger } from './logs/logger'
 import session from 'express-session'
 const connectRedis = require('connect-redis')
 import { createClient } from 'redis'
@@ -26,13 +27,17 @@ import {RentalHistoryRouter} from './routes/rental-history'
 import cronScheduler from './services/cron'
 
 
+
 // global settings
 dotenv.config()
-connectDb()
 passportConfig()
 // configure Redis
 const redisClient = createClient({ legacyMode: true });
-redisClient.connect().catch(console.error);
+redisClient.connect()
+.catch(error => {
+  logger.error(`Failed to initialize DB due to:  ${error?.message??'Unknown error'}`)
+  console.error(new Date(Date.now()).toLocaleString(), " : Failed to initialize DB", error)
+});
 const RedisStore = connectRedis(session);
 
 
@@ -81,7 +86,8 @@ cronScheduler();
 //  Routes
 app.get('/api/', async (req: Request, res: Response) => {
     try {
-        res.send({foo: 'bar'})
+      logger.info('Someone landed at the route /api/')
+        res.send('Wlecome to the comvizit api')
     } catch (error) {
         res.status(400).send(error.message)
     }

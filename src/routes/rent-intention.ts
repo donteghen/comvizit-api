@@ -1,13 +1,13 @@
 import express, { Request, Response } from 'express'
 import { Types } from 'mongoose';
-import { Property } from '../models/property';
 import { User } from '../models/user';
-import { NOT_FOUND, SAVE_OPERATION_FAILED, DELETE_OPERATION_FAILED, RENTINTENTION_ALREADY_EXISTS } from '../constants/error';
-import { isAdmin, isLandlord, isLoggedIn, isTenant} from '../middleware/auth-middleware';
+import { NOT_FOUND, DELETE_OPERATION_FAILED, RENTINTENTION_ALREADY_EXISTS } from '../constants/error';
+import { isAdmin, isLoggedIn, isTenant} from '../middleware/auth-middleware';
 import { RentIntention } from "../models/rent-intention";
 import { rentIntentionLookup, singleRentIntentionLookup } from '../utils/queryMaker';
 import { mailer } from '../helper/mailer';
 import { notifyNewRentIntentionToAdmin, notifyRentIntentionToLandlord } from '../utils/mailer-templates';
+import { logger } from '../logs/logger';
 
 
 const RentIntentionRouter = express.Router()
@@ -49,6 +49,7 @@ RentIntentionRouter.get('/api/rent-intentions', isLoggedIn, async (req: Request,
         const rentIntentions = await RentIntention.aggregate(rentIntentionLookup(filter))
         res.send({ok: true, data: rentIntentions})
     } catch (error) {
+        logger.error(`An Error occured while querying rent-intention list due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
@@ -63,6 +64,7 @@ RentIntentionRouter.get('/api/rent-intentions/:id', isLoggedIn, async (req: Requ
         }
         res.send({ok: true, data: rentIntention[0]})
     } catch (error) {
+        logger.error(`An Error occured while querying the details of the rent-intention with id: ${req.params.id} due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
@@ -111,6 +113,7 @@ RentIntentionRouter.post('/api/rent-intentions', isLoggedIn, isTenant, async (re
         // send the response
         res.send({ok: true})
     } catch (error) {
+        logger.error(`An Error occured while creating a new rent-intention for property with id: ${req.body.propertyId} by user with id: ${req.user.id} due to ${error?.message??'Unknown Source'}`)
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
@@ -135,6 +138,7 @@ RentIntentionRouter.patch('/api/rent-intentions/:id/status-update', isLoggedIn, 
         await rentIntention.save()
         res.send({ok: true})
     } catch (error) {
+        logger.error(`An Error occured while updating the details of the rent-intention with id: ${req.params.id} due to ${error?.message??'Unknown Source'}`)
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
@@ -157,6 +161,7 @@ RentIntentionRouter.delete('/api/rent-intentions/:id/delete', isLoggedIn, isAdmi
 
         res.send({ok: true})
     } catch (error) {
+        logger.error(`An Error occured while deleting the rent-intention with id: ${req.params.id} due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
     }
 })

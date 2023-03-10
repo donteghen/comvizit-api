@@ -1,4 +1,5 @@
 import sgMail from '@sendgrid/mail'
+import { logger } from '../logs/logger'
 import {mailerHtml} from '../utils/mailer-html'
 
 
@@ -29,6 +30,7 @@ const mailer = async (toEmail: string, subject: string, heading: string, detail:
         }
 
     } catch (error) {
+        logger.error(`The Email to ${toEmail} with subject: ${subject} failed due to ${error?.message??'Unknown mailer error'}`)
         return  {
             ok:false,
             error: error.response.body,

@@ -4,6 +4,7 @@ import { isAdmin, isLoggedIn } from '../middleware/auth-middleware';
 import { FeaturedProperties } from "../models/featured-properties";
 import {PipelineStage, Types} from 'mongoose'
 import { Property } from '../models/property';
+import { logger } from '../logs/logger';
 const FeaturedRouter = express.Router()
 
 /**
@@ -97,6 +98,7 @@ FeaturedRouter.get('/api/featured/properties-active',  async (req: Request, res:
         res.send({ok: true, data: featuredProperties})
 
     } catch (error) {
+        logger.error(`An Error occured while querying active featured properties due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
@@ -110,6 +112,7 @@ FeaturedRouter.get('/api/featured/properties/:propertyId',  async (req: Request,
         }
         res.send({ok: true, data: featuredProperty})
     } catch (error) {
+        logger.error(`An Error occured while querying the property featuring details with id: ${req.params.propertyId} due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
@@ -141,6 +144,7 @@ FeaturedRouter.post('/api/featured/properties/create', isLoggedIn, isAdmin, asyn
         await relatedProperty.save()
         res.send({ok: true, data: featuredProperty})
     } catch (error) {
+        logger.error(`An Error occured while creating a new property featring for property : ${req.body.propertyId} due to ${error?.message??'Unknown Source'}`)
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
@@ -171,7 +175,7 @@ FeaturedRouter.patch('/api/featured/properties/:propertyId/status/update', isLog
             throw INVALID_REQUEST
         }
     } catch (error) {
-        // console.log(error)
+        logger.error(`An Error occured while updating a property featring with id: ${req.params.propertyId} due to${error?.message??'Unknown Source'}`)
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
@@ -192,6 +196,7 @@ FeaturedRouter.delete('/api/featured/properties/:propertyId/delete', isLoggedIn,
         relatedProperty.featuring = false
         res.send({ok: true})
     } catch (error) {
+        logger.error(`An Error occured while deleting a property featring with id: ${req.params.propertyId} due to${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
     }
 })
@@ -248,6 +253,7 @@ FeaturedRouter.get('/api/featured/properties', isLoggedIn, isAdmin, async (req: 
         res.send({ok: true, data: featuredProperties})
 
     } catch (error) {
+        logger.error(`An Error occured while querying all featured properties by an admin due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
