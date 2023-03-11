@@ -51,7 +51,9 @@ const logConfig = createLogger({
     ),
     transports: [
         new transports.Console(),
-        new LogtailTransport(logtail),
+        new LogtailTransport(logtail, {
+            level: 'info'
+        }),
         mongoTransport
     ]
 });

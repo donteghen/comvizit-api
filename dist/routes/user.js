@@ -34,6 +34,7 @@ const like_1 = require("../models/like");
 const review_1 = require("../models/review");
 const complain_1 = require("../models/complain");
 const tag_1 = require("../models/tag");
+const logger_1 = require("../logs/logger");
 const UserRouter = express_1.default.Router();
 exports.UserRouter = UserRouter;
 function setFilter(key, value) {
@@ -53,7 +54,7 @@ function setFilter(key, value) {
 // ***************************** public enpoints ***********************************************
 // get landlord's profile of a landlord(for property owner card on client) by id and role === 'LANDLORD'
 UserRouter.get('/api/users/landlords/:id/card', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _a, _b;
     try {
         const query = {
             $and: [
@@ -69,12 +70,13 @@ UserRouter.get('/api/users/landlords/:id/card', (req, res) => __awaiter(void 0, 
         res.send({ ok: true, data: { landlord, propertyCount } });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_a = error.code) !== null && _a !== void 0 ? _a : 1000 });
+        logger_1.logger.error(`An Error occured while getting the landlord\'s card details of the landlord with id: ${req.params.id} due to ${(_a = error === null || error === void 0 ? void 0 : error.message) !== null && _a !== void 0 ? _a : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error: error.message, code: (_b = error.code) !== null && _b !== void 0 ? _b : 1000 });
     }
 }));
 // Verify newly created account
 UserRouter.patch('/api/users/all/:id/verify', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _b;
+    var _c, _d;
     try {
         const user = yield user_1.User.findById(req.params.id);
         if (!user) {
@@ -99,12 +101,13 @@ UserRouter.patch('/api/users/all/:id/verify', (req, res) => __awaiter(void 0, vo
         res.send({ ok: true });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_b = error.code) !== null && _b !== void 0 ? _b : 1000 });
+        logger_1.logger.error(`An Error occured while verifying a newly created account by the user with id: ${req.params.id} due to ${(_c = error === null || error === void 0 ? void 0 : error.message) !== null && _c !== void 0 ? _c : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_d = error.code) !== null && _d !== void 0 ? _d : 1000 });
     }
 }));
 // reset password endpoint
 UserRouter.post('/api/user/reset-password', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c;
+    var _e, _f;
     try {
         console.log(req.body);
         const user = yield user_1.User.findOne({ email: req.body.email });
@@ -123,13 +126,13 @@ UserRouter.post('/api/user/reset-password', (req, res) => __awaiter(void 0, void
         res.send({ ok: true });
     }
     catch (error) {
-        console.log(error);
-        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_c = error.code) !== null && _c !== void 0 ? _c : 1000 });
+        logger_1.logger.error(`An Error occured while attempting a password reset by the user with email: ${req.body.email} due to ${(_e = error === null || error === void 0 ? void 0 : error.message) !== null && _e !== void 0 ? _e : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_f = error.code) !== null && _f !== void 0 ? _f : 1000 });
     }
 }));
 // confirm password reset
 UserRouter.post('/api/user/confirm-reset-password', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _d;
+    var _g, _h;
     try {
         const userEmail = req.query.user;
         const token = req.query.token;
@@ -160,13 +163,13 @@ UserRouter.post('/api/user/confirm-reset-password', (req, res) => __awaiter(void
         res.send({ ok: true });
     }
     catch (error) {
-        // console.log(error)
-        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_d = error.code) !== null && _d !== void 0 ? _d : 1000 });
+        logger_1.logger.error(`An Error occured while confirming a password reset by the user with email: ${req.query.user} due to ${(_g = error === null || error === void 0 ? void 0 : error.message) !== null && _g !== void 0 ? _g : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_h = error.code) !== null && _h !== void 0 ? _h : 1000 });
     }
 }));
 // user signup route
 UserRouter.post('/api/users/signup', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _e;
+    var _j, _k, _l;
     try {
         const { email, password, fullname, lang, role, address, phone } = req.body;
         const newUser = new user_1.User({
@@ -183,20 +186,21 @@ UserRouter.post('/api/users/signup', (req, res) => __awaiter(void 0, void 0, voi
         res.send({ ok: true });
     }
     catch (error) {
+        logger_1.logger.error(`An Error occured while signing up a new user with phone number: ${(_j = req.body.phone) !== null && _j !== void 0 ? _j : 'N/A'} due to ${(_k = error === null || error === void 0 ? void 0 : error.message) !== null && _k !== void 0 ? _k : 'Unknown Source'}`);
         console.log(error);
         if (error.name === 'ValidationError') {
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_e = error.code) !== null && _e !== void 0 ? _e : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_l = error.code) !== null && _l !== void 0 ? _l : 1000 });
     }
 }));
 // ***************************** Shared Restricted endpoints ***********************************************
 // Change user password
 UserRouter.post('/api/user/profile/change-password', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _f;
+    var _m, _o;
     try {
-        const user = yield user_1.User.findById(req.user);
+        const user = yield user_1.User.findById(req.user.id);
         if (!user) {
             let error = new Error();
             error = error_1.NO_USER;
@@ -215,13 +219,13 @@ UserRouter.post('/api/user/profile/change-password', auth_middleware_1.isLoggedI
         res.send({ ok: true, data: updatedUser });
     }
     catch (error) {
-        // console.log(error)
-        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_f = error.code) !== null && _f !== void 0 ? _f : 1000 });
+        logger_1.logger.error(`An Error occured while attepting password change by the user with email: ${req.user.email} and id: ${req.user.id} due to ${(_m = error === null || error === void 0 ? void 0 : error.message) !== null && _m !== void 0 ? _m : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_o = error.code) !== null && _o !== void 0 ? _o : 1000 });
     }
 }));
 // upload authenticated user's avatar
 UserRouter.patch('/api/user/avatarUpload', auth_middleware_1.isLoggedIn, multerUpload_1.default.single('avatar'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _g, _h, _j;
+    var _p, _q, _r, _s;
     try {
         const user = yield user_1.User.findOne({ email: req.user.email });
         if (!user) {
@@ -253,19 +257,20 @@ UserRouter.patch('/api/user/avatarUpload', auth_middleware_1.isLoggedIn, multerU
         res.send({ ok: true, data: updatedUser });
     }
     catch (error) {
+        logger_1.logger.error(`An Error occured while uploading avatar by the user with email: ${req.user.email} and id: ${req.user.id} due to ${(_p = error === null || error === void 0 ? void 0 : error.message) !== null && _p !== void 0 ? _p : 'Unknown Source'}`);
         if (error instanceof multer_1.MulterError) {
-            res.status(400).send({ ok: false, error: `Multer Upload Error : ${error.message}`, code: (_g = error.code) !== null && _g !== void 0 ? _g : 1000 });
+            res.status(400).send({ ok: false, error: `Multer Upload Error : ${error.message}`, code: (_q = error.code) !== null && _q !== void 0 ? _q : 1000 });
         }
         if (error.name === 'ValidationError') {
-            res.status(400).send({ ok: false, error: `Validation Error : ${error.message}`, code: (_h = error.code) !== null && _h !== void 0 ? _h : 1000 });
+            res.status(400).send({ ok: false, error: `Validation Error : ${error.message}`, code: (_r = error.code) !== null && _r !== void 0 ? _r : 1000 });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_j = error.code) !== null && _j !== void 0 ? _j : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_s = error.code) !== null && _s !== void 0 ? _s : 1000 });
     }
 }));
 // update user profile
 UserRouter.patch('/api/users/all/:id/profile/update', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _k, _l;
+    var _t, _u, _v;
     try {
         const updatedProps = {};
         Object.keys(req.body).forEach(key => {
@@ -282,37 +287,38 @@ UserRouter.patch('/api/users/all/:id/profile/update', auth_middleware_1.isLogged
         res.send({ ok: true, data: updatedUser });
     }
     catch (error) {
+        logger_1.logger.error(`An Error occured while profile update by the user with email: ${req.user.email} and id: ${req.user.id} due to ${(_t = error === null || error === void 0 ? void 0 : error.message) !== null && _t !== void 0 ? _t : 'Unknown Source'}`);
         if (error.name === 'ValidationError') {
-            res.status(400).send({ ok: false, error: `Validation Error : ${error.message}`, code: (_k = error.code) !== null && _k !== void 0 ? _k : 1000 });
+            res.status(400).send({ ok: false, error: `Validation Error : ${error.message}`, code: (_u = error.code) !== null && _u !== void 0 ? _u : 1000 });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_l = error.code) !== null && _l !== void 0 ? _l : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_v = error.code) !== null && _v !== void 0 ? _v : 1000 });
     }
 }));
 // fetch current user session, if any
 UserRouter.get('/api/user', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _m;
+    var _w, _x;
     try {
         res.send({ ok: true, data: req.user });
     }
     catch (error) {
-        console.log(error);
-        res.status(400).send({ ok: false, error: error.message, code: (_m = error.code) !== null && _m !== void 0 ? _m : 1000 });
+        logger_1.logger.error(`An Error occured while attepting to fetch the current session user due to ${(_w = error === null || error === void 0 ? void 0 : error.message) !== null && _w !== void 0 ? _w : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error: error.message, code: (_x = error.code) !== null && _x !== void 0 ? _x : 1000 });
     }
 }));
 // user login route
 UserRouter.post('/api/users/login', passport_1.default.authenticate("local", { failureMessage: true }), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _o;
+    var _y;
     try {
         res.send({ ok: true, data: req.user });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_o = error.code) !== null && _o !== void 0 ? _o : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_y = error.code) !== null && _y !== void 0 ? _y : 1000 });
     }
 }));
 // user logout route
 UserRouter.get('/api/users/logout', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _p;
+    var _z;
     try {
         req.session.destroy((err) => {
             if (err) {
@@ -322,7 +328,7 @@ UserRouter.get('/api/users/logout', auth_middleware_1.isLoggedIn, (req, res) => 
         });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_p = error.code) !== null && _p !== void 0 ? _p : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_z = error.code) !== null && _z !== void 0 ? _z : 1000 });
     }
 }));
 /*************************** Tenant Restricted router endpoints **************************************** */
@@ -330,7 +336,7 @@ UserRouter.get('/api/users/logout', auth_middleware_1.isLoggedIn, (req, res) => 
 /*************************** Admin Restricted router endpoints **************************************** */
 // get all tenants
 UserRouter.get('/api/users/tenants', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _q;
+    var _0;
     try {
         let filter = { role: 'TENANT' };
         const queries = Object.keys(req.query);
@@ -345,12 +351,12 @@ UserRouter.get('/api/users/tenants', auth_middleware_1.isLoggedIn, auth_middlewa
         res.send({ ok: true, data: tenantUsers });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_q = error.code) !== null && _q !== void 0 ? _q : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_0 = error.code) !== null && _0 !== void 0 ? _0 : 1000 });
     }
 }));
 // get all landlords
 UserRouter.get('/api/users/landlords', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _r;
+    var _1;
     try {
         let filter = { role: 'LANDLORD' };
         const queries = Object.keys(req.query);
@@ -365,12 +371,12 @@ UserRouter.get('/api/users/landlords', auth_middleware_1.isLoggedIn, auth_middle
         res.send({ ok: true, data: landlordUsers });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_r = error.code) !== null && _r !== void 0 ? _r : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_1 = error.code) !== null && _1 !== void 0 ? _1 : 1000 });
     }
 }));
 // get all admin users
 UserRouter.get('/api/users/admins', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _s;
+    var _2;
     try {
         let filter = { role: 'ADMIN' };
         const queries = Object.keys(req.query);
@@ -385,12 +391,12 @@ UserRouter.get('/api/users/admins', auth_middleware_1.isLoggedIn, auth_middlewar
         res.send({ ok: true, data: adminUsers });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_s = error.code) !== null && _s !== void 0 ? _s : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_2 = error.code) !== null && _2 !== void 0 ? _2 : 1000 });
     }
 }));
 // get all users (isrespective of their role)
 UserRouter.get('/api/users/all', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _t;
+    var _3;
     try {
         let filter = {};
         const queries = Object.keys(req.query);
@@ -406,12 +412,12 @@ UserRouter.get('/api/users/all', auth_middleware_1.isLoggedIn, auth_middleware_1
         res.send({ ok: true, data: users });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_t = error.code) !== null && _t !== void 0 ? _t : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_3 = error.code) !== null && _3 !== void 0 ? _3 : 1000 });
     }
 }));
 // approve user's account
 UserRouter.patch('/api/users/all/:id/approve', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _u, _v;
+    var _4, _5;
     try {
         // check if the session user is an admin, if no then it should fail as only an admin can approve a landlord or tenant account
         if (req.user.role !== 'ADMIN') {
@@ -438,15 +444,15 @@ UserRouter.patch('/api/users/all/:id/approve', auth_middleware_1.isLoggedIn, aut
             res.status(400).send({ ok: false, error: `Multer Upload Error : ${error.message},  code:error.code??1000` });
         }
         if (error.name === 'ValidationError') {
-            res.status(400).send({ ok: false, error: `Validation Error : ${error.message}`, code: (_u = error.code) !== null && _u !== void 0 ? _u : 1000 });
+            res.status(400).send({ ok: false, error: `Validation Error : ${error.message}`, code: (_4 = error.code) !== null && _4 !== void 0 ? _4 : 1000 });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_v = error.code) !== null && _v !== void 0 ? _v : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_5 = error.code) !== null && _5 !== void 0 ? _5 : 1000 });
     }
 }));
 // Disapprove user's account
 UserRouter.patch('/api/users/all/:id/disapprove', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _w, _x;
+    var _6, _7;
     try {
         // check if the session user is an admin, if no then it should fail as only an admin can disapprove a landlord or tenant account
         if (req.user.role !== 'ADMIN') {
@@ -473,15 +479,15 @@ UserRouter.patch('/api/users/all/:id/disapprove', auth_middleware_1.isLoggedIn, 
             res.status(400).send({ ok: false, error: `Multer Upload Error : ${error.message},  code:error.code??1000` });
         }
         if (error.name === 'ValidationError') {
-            res.status(400).send({ ok: false, error: `Validation Error : ${error.message}`, code: (_w = error.code) !== null && _w !== void 0 ? _w : 1000 });
+            res.status(400).send({ ok: false, error: `Validation Error : ${error.message}`, code: (_6 = error.code) !== null && _6 !== void 0 ? _6 : 1000 });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_x = error.code) !== null && _x !== void 0 ? _x : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_7 = error.code) !== null && _7 !== void 0 ? _7 : 1000 });
     }
 }));
 // delete user account
 UserRouter.delete('/api/user/all/:id', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _y, _z, _0;
+    var _8, _9, _10;
     try {
         // make sure that admin can only delete either <user.role === tenant | user.role === landlord>
         // An admin user can be deleted only by the super admin
@@ -517,20 +523,20 @@ UserRouter.delete('/api/user/all/:id', auth_middleware_1.isLoggedIn, auth_middle
         // unlink and delete linked favs
         yield favorite_1.Favorite.deleteMany({
             _id: {
-                $in: (_y = deletedUser.favorites) === null || _y === void 0 ? void 0 : _y.map(id => new mongoose_1.Types.ObjectId(id))
+                $in: (_8 = deletedUser.favorites) === null || _8 === void 0 ? void 0 : _8.map(id => new mongoose_1.Types.ObjectId(id))
             }
         });
         // unlink and delete linked likes
         yield like_1.Like.deleteMany({
             _id: {
-                $in: (_z = deletedUser.likes) === null || _z === void 0 ? void 0 : _z.map(id => new mongoose_1.Types.ObjectId(id))
+                $in: (_9 = deletedUser.likes) === null || _9 === void 0 ? void 0 : _9.map(id => new mongoose_1.Types.ObjectId(id))
             }
         });
         // rent intension comming up
         res.send({ ok: true });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_0 = error.code) !== null && _0 !== void 0 ? _0 : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_10 = error.code) !== null && _10 !== void 0 ? _10 : 1000 });
     }
 }));
 //# sourceMappingURL=user.js.map

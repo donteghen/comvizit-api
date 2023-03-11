@@ -37,7 +37,9 @@ const logConfig = (0, winston_1.createLogger)({
     format: combine(errors({ stack: true }), timestamp({ format: "YY-MM-DD HH:mm:ss" }), json()),
     transports: [
         new winston_1.transports.Console(),
-        new winston_2.LogtailTransport(logtail),
+        new winston_2.LogtailTransport(logtail, {
+            level: 'info'
+        }),
         mongoTransport
     ]
 });

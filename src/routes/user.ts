@@ -19,6 +19,7 @@ import { Like } from '../models/like'
 import {Review} from '../models/review'
 import {Complain} from '../models/complain'
 import {Tag} from '../models/tag'
+import { logger } from '../logs/logger'
 
 
 const UserRouter = express.Router()
@@ -57,6 +58,7 @@ UserRouter.get('/api/users/landlords/:id/card', async (req: Request, res: Respon
         const propertyCount = await Property.count({ownerId: landlord._id})
         res.send({ok: true, data: {landlord, propertyCount}})
     } catch (error) {
+        logger.error(`An Error occured while getting the landlord\'s card details of the landlord with id: ${req.params.id} due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok: false, error: error.message, code: error.code??1000})
     }
 })
@@ -91,6 +93,7 @@ UserRouter.patch('/api/users/all/:id/verify', async (req: Request, res: Response
 
         res.send({ok:true})
     } catch (error) {
+        logger.error(`An Error occured while verifying a newly created account by the user with id: ${req.params.id} due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
     }
 })
@@ -118,7 +121,7 @@ UserRouter.post('/api/user/reset-password',  async (req: Request, res: Response)
 
     res.send({ok:true})
     } catch (error) {
-        console.log(error)
+        logger.error(`An Error occured while attempting a password reset by the user with email: ${req.body.email} due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
     }
 
@@ -160,7 +163,7 @@ UserRouter.post('/api/user/confirm-reset-password', async (req: Request, res: Re
         await Token.deleteMany({owner:user._id})
         res.send({ok:true})
     } catch (error) {
-        // console.log(error)
+        logger.error(`An Error occured while confirming a password reset by the user with email: ${req.query.user} due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
     }
 })
@@ -188,6 +191,7 @@ UserRouter.post('/api/users/signup', async (req: Request, res: Response) => {
 
         res.send({ok:true})
     } catch (error) {
+        logger.error(`An Error occured while signing up a new user with phone number: ${req.body.phone??'N/A'} due to ${error?.message??'Unknown Source'}`)
         console.log(error)
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
@@ -202,7 +206,7 @@ UserRouter.post('/api/users/signup', async (req: Request, res: Response) => {
 // Change user password
 UserRouter.post('/api/user/profile/change-password', isLoggedIn, async (req: Request, res: Response) => {
     try {
-        const user = await User.findById(req.user)
+        const user = await User.findById(req.user.id)
         if (!user) {
             let error = new Error()
             error = NO_USER
@@ -221,7 +225,7 @@ UserRouter.post('/api/user/profile/change-password', isLoggedIn, async (req: Req
         const updatedUser = await user.save()
         res.send({ok:true, data: updatedUser})
     } catch (error) {
-        // console.log(error)
+        logger.error(`An Error occured while attepting password change by the user with email: ${req.user.email} and id: ${req.user.id} due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
     }
 })
@@ -263,7 +267,7 @@ UserRouter.patch('/api/user/avatarUpload', isLoggedIn,  multerUpload.single('ava
 
         res.send({ok:true, data: updatedUser})
     } catch (error) {
-
+        logger.error(`An Error occured while uploading avatar by the user with email: ${req.user.email} and id: ${req.user.id} due to ${error?.message??'Unknown Source'}`)
         if (error instanceof MulterError) {
             res.status(400).send({ok: false, error:`Multer Upload Error : ${error.message}`, code:error.code??1000})
         }
@@ -271,7 +275,6 @@ UserRouter.patch('/api/user/avatarUpload', isLoggedIn,  multerUpload.single('ava
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`, code:error.code??1000})
             return
         }
-
         res.status(400).send({ok:false, error: error.message, code:error.code??1000})
     }
 })
@@ -293,6 +296,7 @@ UserRouter.patch('/api/users/all/:id/profile/update', isLoggedIn,  async (req: R
         const updatedUser = await User.findById(req.params.id)
         res.send({ok: true, data: updatedUser})
     } catch (error) {
+        logger.error(`An Error occured while profile update by the user with email: ${req.user.email} and id: ${req.user.id} due to ${error?.message??'Unknown Source'}`)
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`, code:error.code??1000})
             return
@@ -306,7 +310,7 @@ UserRouter.get('/api/user', isLoggedIn, async (req: Request, res: Response) => {
 try {
     res.send({ok: true, data: req.user})
 } catch (error) {
-    console.log(error)
+    logger.error(`An Error occured while attepting to fetch the current session user due to ${error?.message??'Unknown Source'}`)
     res.status(400).send({ok:false, error: error.message, code:error.code??1000})
 }
 })

@@ -1,13 +1,13 @@
 import { Property } from "../models/property";
 import express, { Request, Response } from 'express'
 
-import { Types, PipelineStage } from "mongoose";
+import { Types, PipelineStage, ObjectId } from "mongoose";
 import { categoryAggregator, townAggregator } from "../utils/queryMaker";
 import { isAdmin, isLandlord, isLoggedIn } from "../middleware/auth-middleware";
 import { DELETE_OPERATION_FAILED, INVALID_REQUEST, NOT_AUTHORIZED, NOT_FOUND, NOT_PROPERTY_OWNER, SAVE_OPERATION_FAILED} from '../constants/error'
 import {notifyPropertyAvailability} from '../utils/mailer-templates'
 import { mailer } from "../helper/mailer";
-import { IUser } from "../models/interfaces";
+import { IProperty, IUser } from "../models/interfaces";
 import { User } from "../models/user";
 import { Tag } from "../models/tag";
 import { FeaturedProperties } from "../models/featured-properties";
@@ -16,7 +16,7 @@ import { Review } from "../models/review";
 import { Like } from "../models/like";
 // utils & helpers
 import { constants } from "../constants/declared";
-
+import { logger } from "../logs/logger";
 const PropertyRouter = express.Router()
 
 const pageSize: number = 24 // number of documents returned per request for the get all properties route
@@ -141,6 +141,7 @@ PropertyRouter.get('/api/properties-in-quater/:quaterref', async (req: Request, 
 
         res.send({ok: true, data: {properties, currPage: pageNum, totalPages, resultCount}})
     } catch (error) {
+        logger.error(`An Error occured while getting all properties in the quater with quaterref: ${req.params.quaterref} and id: ${req.user.id} due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
@@ -191,6 +192,7 @@ PropertyRouter.get('/api/properties-by-tag/:code', async (req: Request, res: Res
 
         res.send({ok: true, data: {properties, currPage: pageNum, totalPages, resultCount}})
     } catch (error) {
+        logger.error(`An Error occured while getting all properties by tag code for the tag with code: ${req.params.code} and id: ${req.user.id} due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
@@ -227,6 +229,7 @@ PropertyRouter.get('/api/properties', isLoggedIn,  isAdmin, async (req: Request,
 
         res.send({ok: true, data: properties})
     } catch (error) {
+        logger.error(`An Error occured while getting all properties by admin due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
@@ -263,7 +266,7 @@ PropertyRouter.get('/api/landlord-properties', isLoggedIn, isLandlord, async (re
         ])
         res.send({ok: true, data: properties})
     } catch (error) {
-        console.log(error)
+        logger.error(`An Error occured while getting all properties owned by the landlord with id: ${req.user.id} due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
@@ -275,6 +278,7 @@ PropertyRouter.get('/api/search-property-categories/:quaterRef', async (req: Req
         const quaters = await Property.aggregate(catAggregator)
         res.send({ok: true, data: quaters})
     } catch (error) {
+        logger.error(`An Error occured while querying the search, categorize and count property catogories for quater with quaterref: ${req.params.quaterRef} due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
@@ -310,6 +314,7 @@ PropertyRouter.get('/api/search-quaters/:quaterRef', async (req: Request, res: R
         ])
         res.send({ok: true, data: quaters})
     } catch (error) {
+        logger.error(`An Error occured while index-searching and group properties by quaterref for the quaterref: ${req.params.quaterRef} due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
@@ -354,6 +359,7 @@ PropertyRouter.get('/api/town-properties/:town', async (req: Request, res: Respo
 
         res.send({ok: true, data: {properties, currPage: pageNum, totalPages, resultCount}})
     } catch (error) {
+        logger.error(`An Error occured while attempting to get all properties in the town named: ${req.params.town} due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
@@ -398,6 +404,7 @@ PropertyRouter.get('/api/district-properties/:districtref', async (req: Request,
 
         res.send({ok: true, data: {properties, currPage: pageNum, totalPages, resultCount}})
     } catch (error) {
+        logger.error(`An Error occured while attempting to get all properties in the district named: ${req.params.districtref} due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
@@ -415,6 +422,7 @@ PropertyRouter.get('/api/properties-group-by-town', async (req: Request, res: Re
         ])
         res.send({ok: true, data: groupsByTown})
     } catch (error) {
+        logger.error(`An Error occured while grouping  and counting properties by town due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
@@ -443,6 +451,7 @@ PropertyRouter.get('/api/properties-group-by-district', async (req: Request, res
         const groupsByDistrictRef = await Property.aggregate(pipeline)
         res.send({ok: true, data: groupsByDistrictRef})
     } catch (error) {
+        logger.error(`An Error occured while grouping  and counting properties by town due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
@@ -453,6 +462,7 @@ PropertyRouter.get('/api/count-properties-per-town', async (req: Request, res: R
         const towncountlist = await Property.aggregate(townAggregator())
         res.send({ok: true, data: towncountlist})
     } catch (error) {
+        logger.error(`An Error occured while getting property count for popular towns due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
@@ -489,6 +499,7 @@ PropertyRouter.get('/api/properties/:id', async (req: Request, res: Response) =>
         }
         res.send({ok:true, data: properties[0]})
     } catch (error) {
+        logger.error(`An Error occured while getting the details of the property with id: ${req.params.id} due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
@@ -496,15 +507,74 @@ PropertyRouter.get('/api/properties/:id', async (req: Request, res: Response) =>
 // get properties in same quater (Related prperties in same quater)
 PropertyRouter.get('/api/property/:propertyId/related-properties/:quaterref', async (req: Request, res: Response) => {
     try {
-        const relatedProperties = await Property.find({
+        let relatedProperties: (IProperty & {_id: Types.ObjectId})[]
+        let relationship = 'Quater'
+        const aggregator = (_code: string) =>  [
+            {
+                $match: {
+                    code: _code
+                }
+            },
+            {
+                $lookup: {
+                    from: "properties",
+                    localField: "refId",
+                    foreignField: "_id",
+                    as: 'relatedProp'
+                }
+            },
+            {
+                $unwind: {
+                    path: "$relatedProp"
+                }
+            },
+            {
+                $match: {
+                    "relatedProp.availability": "Available",
+                    "relatedProp._id": {$ne: new Types.ObjectId(req.params.propertyId)}
+                }
+            },
+            {
+                $limit: 4
+            },
+            {
+                $project: {
+                    relatedProp: 1
+                }
+            }
+        ]
+        const propertiesInSameQuater = await Property.find({
             $and: [
                 {availability:'Available'},
                 {'quater.ref': req.params.quaterref},
                 {_id : {$ne : req.params.propertyId}}
             ]})
             .limit(4)
-        res.send({ok:true, data: relatedProperties})
+            //console.log(propertiesInSameQuater.map(p => p._id.toString()), '\n\n req.params.propertyId:   ', req.params.propertyId)
+            if (propertiesInSameQuater && (propertiesInSameQuater.length > 0)) {
+                relatedProperties = propertiesInSameQuater.filter(prop => prop._id.toString() !== req.params.propertyId)
+            }
+            // check if the previous query result is empty
+            else {
+                let result: any[] = []
+                // get a list of all tags for this property
+                const propertyTags = await Tag.find({refId: new Types.ObjectId(req.params.propertyId)})
+                // check if there are tags on the concern property
+                if (propertyTags && propertyTags.length > 0) {
+                    for(let tag of propertyTags) {
+                        // get all similar tags and lookup to get their corresponding linked (by refId) property
+                        const sameCodeTags: (IProperty & {_id: ObjectId})[] = await Tag.aggregate(aggregator(tag.code))
+                        if (sameCodeTags?.length > 0) {
+                            result.push(...sameCodeTags)
+                        }
+                    }
+                }
+                relatedProperties = result?.map(item => item?.relatedProp)
+                relationship = result.length > 0 ? 'Tag' : relationship
+            }
+        res.send({ok:true, data: {relatedProperties, relationship}})
     } catch (error) {
+        logger.error(`An Error occured while getting related properties (related by quater, or tag code) for the property with id: ${req.params.propertyId} in quater with quaterref: ${req.params.quaterref} due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
