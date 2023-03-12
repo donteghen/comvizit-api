@@ -202,3 +202,10 @@ export interface IRentalHistory extends Document {
     status: string,
     rentIntentionId: Types.ObjectId
 }
+
+export interface ILog extends Document {
+    timestamp: Date,
+    level: string,
+    message: string,
+    meta: any
+}

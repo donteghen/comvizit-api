@@ -156,7 +156,7 @@ RentalHistoryRouter.post('/api/rental-histories', isLoggedIn, isAdmin, async (re
             // updated isNewIntentionCreated
             isNewIntentionCreated = true
             // add a logger
-            console.log(new Date(Date.now()), ' Creating a related RentIntention first since it doesn\'t exit')
+            logger.info('Creating a related RentIntention first since it doesn\'t exit')
             const addedRentIntention = await newRentIntention.save()
             actualRentIntention = addedRentIntention
         }
@@ -203,12 +203,12 @@ RentalHistoryRouter.post('/api/rental-histories', isLoggedIn, isAdmin, async (re
         // check if a rentIntention was created and delete it
         if (isNewIntentionCreated) {
             // add a logger
-            console.log(new Date(Date.now()), ' Delete any related RentIntention  if created during the operation')
             await RentIntention.deleteOne({
                 propertyId: new Types.ObjectId(propertyId.toString()),
                 landlordId: new Types.ObjectId(landlordId.toString()),
                 potentialTenantId: new Types.ObjectId(tenantId.toString()),
             })
+            logger.info('Deleting any related RentIntention created during the rental-history creation operation before it failed')
         }
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})

@@ -104,7 +104,7 @@ UserRouter.patch('/api/users/all/:id/verify', async (req: Request, res: Response
 // reset password endpoint
 UserRouter.post('/api/user/reset-password',  async (req: Request, res: Response) => {
     try {
-        console.log(req.body)
+        // console.log(req.body)
         const user = await User.findOne({email:req.body.email})
     if (!user) {
         throw NO_USER
@@ -192,7 +192,7 @@ UserRouter.post('/api/users/signup', async (req: Request, res: Response) => {
         res.send({ok:true})
     } catch (error) {
         logger.error(`An Error occured while signing up a new user with phone number: ${req.body.phone??'N/A'} due to ${error?.message??'Unknown Source'}`)
-        console.log(error)
+        // console.log(error)
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
@@ -421,7 +421,7 @@ UserRouter.get('/api/users/all', isLoggedIn, isAdmin, async (req: Request, res: 
                 }
             })
         }
-        console.log(filter)
+        // console.log(filter)
         const users = await User.find(filter)
         res.send({ok:true, data: users})
     } catch (error) {

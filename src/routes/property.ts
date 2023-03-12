@@ -209,7 +209,7 @@ PropertyRouter.get('/api/properties', isLoggedIn,  isAdmin, async (req: Request,
                 }
             })
         }
-        console.log(req.query, filter)
+        // console.log(req.query, filter)
         const properties = await Property.aggregate([
             {
                 $match: filter
@@ -550,7 +550,7 @@ PropertyRouter.get('/api/property/:propertyId/related-properties/:quaterref', as
                 {_id : {$ne : req.params.propertyId}}
             ]})
             .limit(4)
-            //console.log(propertiesInSameQuater.map(p => p._id.toString()), '\n\n req.params.propertyId:   ', req.params.propertyId)
+            // console.log(propertiesInSameQuater.map(p => p._id.toString()), '\n\n req.params.propertyId:   ', req.params.propertyId)
             if (propertiesInSameQuater && (propertiesInSameQuater.length > 0)) {
                 relatedProperties = propertiesInSameQuater.filter(prop => prop._id.toString() !== req.params.propertyId)
             }
@@ -600,6 +600,7 @@ PropertyRouter.post('/api/properties', isLoggedIn, isAdmin, async (req: Request,
         const property = await newProperty.save()
         res.status(201).send({ok: true, data: property})
     } catch (error) {
+        logger.error(`An Error occured while creating a new property due to ${error?.message??'Unknown Source'}`)
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
@@ -644,7 +645,7 @@ PropertyRouter.patch('/api/properties/:id/availability/update', isLoggedIn, asyn
 
         res.status(200).send({ok: true})
     } catch (error) {
-        console.log(error)
+        logger.error(`An Error occured while updating the availability status of the property with id : ${req.params.id}  due to ${error?.message??'Unknown Source'}`)
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
@@ -672,7 +673,7 @@ PropertyRouter.patch('/api/properties/:id/update', isLoggedIn, isAdmin, async (r
 
         res.status(200).send({ok: true})
     } catch (error) {
-        console.log(error)
+        logger.error(`An Error occured while updating the property with id : ${req.params.id}  due to ${error?.message??'Unknown Source'}`)
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
@@ -697,7 +698,7 @@ PropertyRouter.patch('/api/properties/:id/update-media',  isLoggedIn, isAdmin,  
 
         res.status(200).send({ok: true, data: updatedProperty})
     } catch (error) {
-        // console.log(error)
+        logger.error(`An Error occured while updating the media contents of the property with id : ${req.params.id}  due to ${error?.message??'Unknown Source'}`)
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
@@ -748,6 +749,7 @@ PropertyRouter.delete('/api/properties/:id/delete', isLoggedIn, isAdmin, async (
         // coming up
         res.status(201).send({ok: true})
     } catch (error) {
+        logger.error(`An Error occured while attempting to delete the property with id : ${req.params.id}  due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })

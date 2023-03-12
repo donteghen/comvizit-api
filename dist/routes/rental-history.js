@@ -159,7 +159,7 @@ RentalHistoryRouter.post('/api/rental-histories', auth_middleware_1.isLoggedIn, 
             // updated isNewIntentionCreated
             isNewIntentionCreated = true;
             // add a logger
-            console.log(new Date(Date.now()), ' Creating a related RentIntention first since it doesn\'t exit');
+            logger_1.logger.info('Creating a related RentIntention first since it doesn\'t exit');
             const addedRentIntention = yield newRentIntention.save();
             actualRentIntention = addedRentIntention;
         }
@@ -200,12 +200,12 @@ RentalHistoryRouter.post('/api/rental-histories', auth_middleware_1.isLoggedIn, 
         // check if a rentIntention was created and delete it
         if (isNewIntentionCreated) {
             // add a logger
-            console.log(new Date(Date.now()), ' Delete any related RentIntention  if created during the operation');
             yield rent_intention_1.RentIntention.deleteOne({
                 propertyId: new mongoose_1.Types.ObjectId(propertyId.toString()),
                 landlordId: new mongoose_1.Types.ObjectId(landlordId.toString()),
                 potentialTenantId: new mongoose_1.Types.ObjectId(tenantId.toString()),
             });
+            logger_1.logger.info('Deleting any related RentIntention created during the rental-history creation operation before it failed');
         }
         if (error.name === 'ValidationError') {
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });

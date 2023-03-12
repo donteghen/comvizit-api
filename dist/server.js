@@ -35,6 +35,7 @@ const favorite_1 = require("./routes/favorite");
 const featured_properties_1 = require("./routes/featured-properties");
 const rent_intention_1 = require("./routes/rent-intention");
 const rental_history_1 = require("./routes/rental-history");
+const log_1 = require("./routes/log");
 const cron_1 = __importDefault(require("./services/cron"));
 // global settings
 dotenv_1.default.config();
@@ -85,6 +86,7 @@ app.use(like_1.LikeRouter);
 app.use(favorite_1.FavoriteRouter);
 app.use(rent_intention_1.RentIntentionRouter);
 app.use(rental_history_1.RentalHistoryRouter);
+app.use(log_1.LogRouter);
 // start all cron jobs
 (0, cron_1.default)();
 //  Routes

@@ -25,7 +25,7 @@ const {json, timestamp, errors, combine, metadata} = format
 const dbOptions = {
     level: 'silly',
     collection: 'logs',
-    db: 'mongodb+srv://comvizit:comvizit2022@cluster0.536pzjz.mongodb.net/?retryWrites=true&w=majority',
+    db: process.env.MONGO_STRING,
     options: { useNewUrlParser: true, useUnifiedTopology: true },
     handleExceptions: true,
     capped: true,

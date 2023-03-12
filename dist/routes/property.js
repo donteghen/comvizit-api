@@ -209,7 +209,7 @@ PropertyRouter.get('/api/properties', auth_middleware_1.isLoggedIn, auth_middlew
                 }
             });
         }
-        console.log(req.query, filter);
+        // console.log(req.query, filter)
         const properties = yield property_1.Property.aggregate([
             {
                 $match: filter
@@ -548,7 +548,7 @@ PropertyRouter.get('/api/property/:propertyId/related-properties/:quaterref', (r
             ]
         })
             .limit(4);
-        console.log(propertiesInSameQuater.map(p => p._id.toString()), '\n\n req.params.propertyId:   ', req.params.propertyId);
+        // console.log(propertiesInSameQuater.map(p => p._id.toString()), '\n\n req.params.propertyId:   ', req.params.propertyId)
         if (propertiesInSameQuater && (propertiesInSameQuater.length > 0)) {
             relatedProperties = propertiesInSameQuater.filter(prop => prop._id.toString() !== req.params.propertyId);
         }
@@ -581,23 +581,24 @@ PropertyRouter.get('/api/property/:propertyId/related-properties/:quaterref', (r
 // ***************************** admin endpoints ***********************************************
 // create new property
 PropertyRouter.post('/api/properties', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _3;
+    var _3, _4;
     try {
         const newProperty = new property_1.Property(Object.assign(Object.assign({}, req.body), { ownerId: new mongoose_1.Types.ObjectId(req.body.ownerId) }));
         const property = yield newProperty.save();
         res.status(201).send({ ok: true, data: property });
     }
     catch (error) {
+        logger_1.logger.error(`An Error occured while creating a new property due to ${(_3 = error === null || error === void 0 ? void 0 : error.message) !== null && _3 !== void 0 ? _3 : 'Unknown Source'}`);
         if (error.name === 'ValidationError') {
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_3 = error.code) !== null && _3 !== void 0 ? _3 : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_4 = error.code) !== null && _4 !== void 0 ? _4 : 1000 });
     }
 }));
 // update property availability status
 PropertyRouter.patch('/api/properties/:id/availability/update', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _4;
+    var _5, _6;
     try {
         let propertyOwner;
         // check if user is landlord or admin and property belongs to that user(landlord)
@@ -631,17 +632,17 @@ PropertyRouter.patch('/api/properties/:id/availability/update', auth_middleware_
         res.status(200).send({ ok: true });
     }
     catch (error) {
-        console.log(error);
+        logger_1.logger.error(`An Error occured while updating the availability status of the property with id : ${req.params.id}  due to ${(_5 = error === null || error === void 0 ? void 0 : error.message) !== null && _5 !== void 0 ? _5 : 'Unknown Source'}`);
         if (error.name === 'ValidationError') {
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_4 = error.code) !== null && _4 !== void 0 ? _4 : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_6 = error.code) !== null && _6 !== void 0 ? _6 : 1000 });
     }
 }));
 // update property
 PropertyRouter.patch('/api/properties/:id/update', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _5;
+    var _7, _8;
     try {
         const update = {};
         Object.keys(req.body).forEach(key => {
@@ -657,17 +658,17 @@ PropertyRouter.patch('/api/properties/:id/update', auth_middleware_1.isLoggedIn,
         res.status(200).send({ ok: true });
     }
     catch (error) {
-        console.log(error);
+        logger_1.logger.error(`An Error occured while updating the property with id : ${req.params.id}  due to ${(_7 = error === null || error === void 0 ? void 0 : error.message) !== null && _7 !== void 0 ? _7 : 'Unknown Source'}`);
         if (error.name === 'ValidationError') {
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_5 = error.code) !== null && _5 !== void 0 ? _5 : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_8 = error.code) !== null && _8 !== void 0 ? _8 : 1000 });
     }
 }));
 // update property media
 PropertyRouter.patch('/api/properties/:id/update-media', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _6;
+    var _9, _10;
     try {
         const { photos, videos, virtualTours } = req.body.media;
         const property = yield property_1.Property.findById(req.params.id);
@@ -681,17 +682,17 @@ PropertyRouter.patch('/api/properties/:id/update-media', auth_middleware_1.isLog
         res.status(200).send({ ok: true, data: updatedProperty });
     }
     catch (error) {
-        // console.log(error)
+        logger_1.logger.error(`An Error occured while updating the media contents of the property with id : ${req.params.id}  due to ${(_9 = error === null || error === void 0 ? void 0 : error.message) !== null && _9 !== void 0 ? _9 : 'Unknown Source'}`);
         if (error.name === 'ValidationError') {
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_6 = error.code) !== null && _6 !== void 0 ? _6 : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_10 = error.code) !== null && _10 !== void 0 ? _10 : 1000 });
     }
 }));
 // delete property
 PropertyRouter.delete('/api/properties/:id/delete', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _7, _8;
+    var _11, _12, _13;
     try {
         const deletedproperty = yield property_1.Property.findByIdAndDelete(req.params.id);
         if (!deletedproperty) {
@@ -721,7 +722,7 @@ PropertyRouter.delete('/api/properties/:id/delete', auth_middleware_1.isLoggedIn
         // delete related likes
         yield like_1.Like.deleteMany({
             _id: {
-                $in: (_7 = deletedproperty.likes) === null || _7 === void 0 ? void 0 : _7.map(id => new mongoose_1.Types.ObjectId(id))
+                $in: (_11 = deletedproperty.likes) === null || _11 === void 0 ? void 0 : _11.map(id => new mongoose_1.Types.ObjectId(id))
             }
         });
         // delete rentIntensions
@@ -729,7 +730,8 @@ PropertyRouter.delete('/api/properties/:id/delete', auth_middleware_1.isLoggedIn
         res.status(201).send({ ok: true });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_8 = error.code) !== null && _8 !== void 0 ? _8 : 1000 });
+        logger_1.logger.error(`An Error occured while attempting to delete the property with id : ${req.params.id}  due to ${(_12 = error === null || error === void 0 ? void 0 : error.message) !== null && _12 !== void 0 ? _12 : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error: error.message, code: (_13 = error.code) !== null && _13 !== void 0 ? _13 : 1000 });
     }
 }));
 //# sourceMappingURL=property.js.map

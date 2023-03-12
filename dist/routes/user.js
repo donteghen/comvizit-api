@@ -109,7 +109,7 @@ UserRouter.patch('/api/users/all/:id/verify', (req, res) => __awaiter(void 0, vo
 UserRouter.post('/api/user/reset-password', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _e, _f;
     try {
-        console.log(req.body);
+        // console.log(req.body)
         const user = yield user_1.User.findOne({ email: req.body.email });
         if (!user) {
             throw error_1.NO_USER;
@@ -187,7 +187,7 @@ UserRouter.post('/api/users/signup', (req, res) => __awaiter(void 0, void 0, voi
     }
     catch (error) {
         logger_1.logger.error(`An Error occured while signing up a new user with phone number: ${(_j = req.body.phone) !== null && _j !== void 0 ? _j : 'N/A'} due to ${(_k = error === null || error === void 0 ? void 0 : error.message) !== null && _k !== void 0 ? _k : 'Unknown Source'}`);
-        console.log(error);
+        // console.log(error)
         if (error.name === 'ValidationError') {
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
@@ -407,7 +407,7 @@ UserRouter.get('/api/users/all', auth_middleware_1.isLoggedIn, auth_middleware_1
                 }
             });
         }
-        console.log(filter);
+        // console.log(filter)
         const users = yield user_1.User.find(filter);
         res.send({ ok: true, data: users });
     }
