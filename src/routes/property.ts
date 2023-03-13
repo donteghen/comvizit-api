@@ -19,7 +19,7 @@ import { constants } from "../constants/declared";
 import { logger } from "../logs/logger";
 const PropertyRouter = express.Router()
 
-const pageSize: number = 24 // number of documents returned per request for the get all properties route
+const pageSize: number = Number(process.env.PAGE_SIZE) // number of documents returned per request for the get all properties route
 
 
 // query helper function
@@ -235,23 +235,46 @@ PropertyRouter.get('/api/properties', isLoggedIn,  isAdmin, async (req: Request,
 })
 
 // get all landlords properties
-PropertyRouter.get('/api/landlord-properties', isLoggedIn, isLandlord, async (req: Request, res: Response) => {
+PropertyRouter.get('/api/landlord-properties/:id', async (req: Request, res: Response) => {
 
     try {
-
-        let filter: any = {ownerId: new Types.ObjectId(req.user.id)}
+        // console.log(req.params.id)
+        let pipeline: PipelineStage[] = []
+        let filter: any = {
+            ownerId: new Types.ObjectId(req.params.id),
+            availability: 'Available'
+        }
         const queries = Object.keys(req.query)
+        let pageNum
+        let withPagination = queries?.includes('page')
         if (queries.length > 0) {
             queries.forEach(key => {
                 if (req.query[key]) {
+                    if (key === 'page') {
+                        pageNum = Number.parseInt(req.query[key] as string, 10)
+                    }
                     filter = Object.assign(filter, setFilter(key, req.query[key]))
                 }
             })
         }
+        pipeline.push({
+            $match: filter
+        })
+        if (withPagination && pageNum) {
+            pipeline.push(
+                {
+                    $sort: {createdAt: -1}
+                },
+                {
+                    $skip: (pageNum - 1) * pageSize
+                },
+                {
+                    $limit: pageSize
+                }
+            )
+        }
         const properties = await Property.aggregate([
-            {
-                $match: filter
-            },
+            ...pipeline,
             {
                 $lookup: {
                     from: "users",
@@ -264,9 +287,13 @@ PropertyRouter.get('/api/landlord-properties', isLoggedIn, isLandlord, async (re
                 $unwind: "$owner"
             }
         ])
-        res.send({ok: true, data: properties})
+        const resultCount = await Property.countDocuments(filter)
+        const totalPages = Math.ceil(resultCount / pageSize)
+
+        res.send({ok: true, data: (withPagination && pageNum) ? {properties, currPage: pageNum, totalPages, resultCount} : properties})
     } catch (error) {
-        logger.error(`An Error occured while getting all properties owned by the landlord with id: ${req.user.id} due to ${error?.message??'Unknown Source'}`)
+        // console.log(error)
+        logger.error(`An Error occured while getting all properties owned by the landlord with id: ${req.params.id} due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })

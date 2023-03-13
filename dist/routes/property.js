@@ -30,7 +30,7 @@ const like_1 = require("../models/like");
 const logger_1 = require("../logs/logger");
 const PropertyRouter = express_1.default.Router();
 exports.PropertyRouter = PropertyRouter;
-const pageSize = 24; // number of documents returned per request for the get all properties route
+const pageSize = Number(process.env.PAGE_SIZE); // number of documents returned per request for the get all properties route
 // query helper function
 function setFilter(key, value) {
     switch (key) {
@@ -234,22 +234,42 @@ PropertyRouter.get('/api/properties', auth_middleware_1.isLoggedIn, auth_middlew
     }
 }));
 // get all landlords properties
-PropertyRouter.get('/api/landlord-properties', auth_middleware_1.isLoggedIn, auth_middleware_1.isLandlord, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+PropertyRouter.get('/api/landlord-properties/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _g, _h;
     try {
-        let filter = { ownerId: new mongoose_1.Types.ObjectId(req.user.id) };
+        // console.log(req.params.id)
+        let pipeline = [];
+        let filter = {
+            ownerId: new mongoose_1.Types.ObjectId(req.params.id),
+            availability: 'Available'
+        };
         const queries = Object.keys(req.query);
+        let pageNum;
+        let withPagination = queries === null || queries === void 0 ? void 0 : queries.includes('page');
         if (queries.length > 0) {
             queries.forEach(key => {
                 if (req.query[key]) {
+                    if (key === 'page') {
+                        pageNum = Number.parseInt(req.query[key], 10);
+                    }
                     filter = Object.assign(filter, setFilter(key, req.query[key]));
                 }
             });
         }
+        pipeline.push({
+            $match: filter
+        });
+        if (withPagination && pageNum) {
+            pipeline.push({
+                $sort: { createdAt: -1 }
+            }, {
+                $skip: (pageNum - 1) * pageSize
+            }, {
+                $limit: pageSize
+            });
+        }
         const properties = yield property_1.Property.aggregate([
-            {
-                $match: filter
-            },
+            ...pipeline,
             {
                 $lookup: {
                     from: "users",
@@ -262,10 +282,13 @@ PropertyRouter.get('/api/landlord-properties', auth_middleware_1.isLoggedIn, aut
                 $unwind: "$owner"
             }
         ]);
-        res.send({ ok: true, data: properties });
+        const resultCount = yield property_1.Property.countDocuments(filter);
+        const totalPages = Math.ceil(resultCount / pageSize);
+        res.send({ ok: true, data: (withPagination && pageNum) ? { properties, currPage: pageNum, totalPages, resultCount } : properties });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while getting all properties owned by the landlord with id: ${req.user.id} due to ${(_g = error === null || error === void 0 ? void 0 : error.message) !== null && _g !== void 0 ? _g : 'Unknown Source'}`);
+        // console.log(error)
+        logger_1.logger.error(`An Error occured while getting all properties owned by the landlord with id: ${req.params.id} due to ${(_g = error === null || error === void 0 ? void 0 : error.message) !== null && _g !== void 0 ? _g : 'Unknown Source'}`);
         res.status(400).send({ ok: false, error: error.message, code: (_h = error.code) !== null && _h !== void 0 ? _h : 1000 });
     }
 }));
