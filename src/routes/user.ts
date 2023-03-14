@@ -58,6 +58,7 @@ UserRouter.get('/api/users/landlords/:id/card', async (req: Request, res: Respon
         const propertyCount = await Property.count({ownerId: landlord._id})
         res.send({ok: true, data: {landlord, propertyCount}})
     } catch (error) {
+        // console.log('this is the user router => /api/users/landlords/:id/card: line 61', error)
         logger.error(`An Error occured while getting the landlord\'s card details of the landlord with id: ${req.params.id} due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok: false, error: error.message, code: error.code??1000})
     }
