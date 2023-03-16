@@ -314,7 +314,7 @@ UserRouter.post('/api/users/login', passport_1.default.authenticate("local", { f
         res.send({ ok: true, data: req.user });
     }
     catch (error) {
-        let errMessage = res.status(400).send({ ok: false, error: error.message, code: (_y = error.code) !== null && _y !== void 0 ? _y : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_y = error.code) !== null && _y !== void 0 ? _y : 1000 });
     }
 }));
 // user logout route
