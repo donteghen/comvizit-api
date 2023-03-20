@@ -130,6 +130,7 @@ export interface IUser extends Document {
     email: string,
     password: string,
     phone: string,
+    gender: string,
     address: Address,
     updated: number,
     avatar?: string,

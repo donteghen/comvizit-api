@@ -43,6 +43,8 @@ function setFilter(key, value) {
             return { 'fullname': { "$regex": value, $options: 'i' } };
         case 'email':
             return { 'email': value };
+        case 'gender':
+            return { 'gender': value };
         case 'approved':
             return { 'approved': value };
         case 'isVerified':

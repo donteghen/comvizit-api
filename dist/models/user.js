@@ -24,6 +24,7 @@ const isStrongPassword_1 = __importDefault(require("validator/lib/isStrongPasswo
  * @param {string} email - User's email
  * @param {string} password - TUser's password
  * @param {string} phone - User's telephone number
+ * @param {string} gender - User's gender
  * @param {boolean} approved - User account approved state (approved by admin)
  * @param {boolean} isVerified - User account(email) verification state (verified by user)
  * @param {number} updated - A timestamp in millseconds of the last time this doc was updated
@@ -67,6 +68,11 @@ const userSchema = new mongoose_1.Schema({
                 return `password is must have atleast 8 characters, atleast 1 uppercase character, atleast 1 lowercase character, atleast 1 digit, atleast 1 symbol`;
             }
         }
+    },
+    gender: {
+        type: String,
+        required: true,
+        enum: ['M', 'F']
     },
     approved: {
         type: Boolean,

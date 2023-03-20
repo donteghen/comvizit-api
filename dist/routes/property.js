@@ -504,6 +504,11 @@ PropertyRouter.get('/api/properties/:id', (req, res) => __awaiter(void 0, void 0
                 }
             },
             {
+                $unwind: {
+                    path: '$owner'
+                }
+            },
+            {
                 $lookup: {
                     from: 'tags',
                     localField: '_id',

@@ -29,11 +29,13 @@ function setFilter(key:string, value:any): any {
         case 'fullname':
             return {'fullname': { "$regex": value, $options: 'i'}}
         case 'email':
-            return {'email': value}
+            return {'email': value};
+        case 'gender':
+            return {'gender': value};
         case 'approved':
-            return {'approved': value}
+            return {'approved': value};
         case 'isVerified':
-            return {'isVerified': value}
+            return {'isVerified': value};
         default:
             return {}
     }
