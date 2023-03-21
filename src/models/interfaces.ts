@@ -106,6 +106,7 @@ export interface IProperty extends Document {
     amenities: Types.Array<string>,
     features?: Types.Array<string>,
     description: string,
+    descriptionFr:string,
     coords:Coords,
     town: string,
     quater: Quater,

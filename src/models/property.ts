@@ -90,6 +90,10 @@ const propertySchema = new Schema<IProperty>({
         type: String,
         required: true
     },
+    descriptionFr: {
+        type: String,
+        required: true
+    },
     coords:{
         lat: {
             type: Number,
