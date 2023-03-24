@@ -25,12 +25,17 @@ function setFilter(key:string, value:any): any {
     }
 }
 
+const pageSize: number = Number(process.env.PAGE_SIZE) // number of documents returned per request for the get all properties route
+
+
 // ***************************** public enpoints ***********************************************
 
 // get all featured properties (with or without query string)
 FeaturedRouter.get('/api/featured/properties-active',  async (req: Request, res: Response) => {
     try {
         let matchFilter: any = {status: 'Active'}
+        // let sorting:any = {createdAt: -1}
+        let pageNum: number = 1
         const sortPipelineStage : PipelineStage = {$sort: {createAt: -1}}
         const pipeline: PipelineStage[] = []
         let subpipeline: PipelineStage[] = [
@@ -53,7 +58,9 @@ FeaturedRouter.get('/api/featured/properties-active',  async (req: Request, res:
         const queries = Object.keys(req.query)
         if (queries.length > 0) {
             queries.forEach(key => {
-
+                if (key === 'page') {
+                    pageNum = Number.parseInt(req.query[key] as string, 10)
+                }
                 if (key === 'quaterref' && req.query[key] !== undefined && req.query[key] !== null) {
                     subpipeline.push(
                         {
@@ -93,8 +100,25 @@ FeaturedRouter.get('/api/featured/properties-active',  async (req: Request, res:
             pipeline.push(...subpipeline)
         }
         pipeline.push(sortPipelineStage)
-
+        if (req.query.pageView) {
+            pipeline.push(...[
+                {
+                    $skip: (pageNum - 1) * pageSize
+                },
+                {
+                    $limit: pageSize
+                }
+            ])
+        }
+        const resultCount = await FeaturedProperties.countDocuments(matchFilter)
+        const totalPages = resultCount > 0 ? Math.ceil(resultCount / pageSize) : 1
         const featuredProperties = await FeaturedProperties.aggregate(pipeline)
+
+
+        if (req.query.pageView) {
+            return res.send({ok: true, data: {featuredProperties, currPage: pageNum, totalPages, resultCount}})
+        }
+
         res.send({ok: true, data: featuredProperties})
 
     } catch (error) {

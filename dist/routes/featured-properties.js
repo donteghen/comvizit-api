@@ -39,12 +39,15 @@ function setFilter(key, value) {
             return {};
     }
 }
+const pageSize = Number(process.env.PAGE_SIZE); // number of documents returned per request for the get all properties route
 // ***************************** public enpoints ***********************************************
 // get all featured properties (with or without query string)
 FeaturedRouter.get('/api/featured/properties-active', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     try {
         let matchFilter = { status: 'Active' };
+        // let sorting:any = {createdAt: -1}
+        let pageNum = 1;
         const sortPipelineStage = { $sort: { createAt: -1 } };
         const pipeline = [];
         let subpipeline = [
@@ -65,6 +68,9 @@ FeaturedRouter.get('/api/featured/properties-active', (req, res) => __awaiter(vo
         const queries = Object.keys(req.query);
         if (queries.length > 0) {
             queries.forEach(key => {
+                if (key === 'page') {
+                    pageNum = Number.parseInt(req.query[key], 10);
+                }
                 if (key === 'quaterref' && req.query[key] !== undefined && req.query[key] !== null) {
                     subpipeline.push({
                         $match: {
@@ -98,7 +104,22 @@ FeaturedRouter.get('/api/featured/properties-active', (req, res) => __awaiter(vo
             pipeline.push(...subpipeline);
         }
         pipeline.push(sortPipelineStage);
+        if (req.query.pageView) {
+            pipeline.push(...[
+                {
+                    $skip: (pageNum - 1) * pageSize
+                },
+                {
+                    $limit: pageSize
+                }
+            ]);
+        }
+        const resultCount = yield featured_properties_1.FeaturedProperties.countDocuments(matchFilter);
+        const totalPages = resultCount > 0 ? Math.ceil(resultCount / pageSize) : 1;
         const featuredProperties = yield featured_properties_1.FeaturedProperties.aggregate(pipeline);
+        if (req.query.pageView) {
+            return res.send({ ok: true, data: { featuredProperties, currPage: pageNum, totalPages, resultCount } });
+        }
         res.send({ ok: true, data: featuredProperties });
     }
     catch (error) {

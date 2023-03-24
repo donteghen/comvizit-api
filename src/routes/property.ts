@@ -137,7 +137,7 @@ PropertyRouter.get('/api/properties-in-quater/:quaterref', async (req: Request, 
         ])
 
         const resultCount = await Property.countDocuments(mainfilter)
-        const totalPages = Math.ceil(resultCount / pageSize)
+        const totalPages = resultCount > 0 ? Math.ceil(resultCount / pageSize) : 1
 
         res.send({ok: true, data: {properties, currPage: pageNum, totalPages, resultCount}})
     } catch (error) {
@@ -170,7 +170,7 @@ PropertyRouter.get('/api/properties-by-tag/:code', async (req: Request, res: Res
         }
 
 
-        // console.log(filter)
+        console.log('pageNum: ', pageNum, pageNum - 1, pageSize)
         const properties = await Property.aggregate([
             {
                 $match: filter
@@ -188,11 +188,11 @@ PropertyRouter.get('/api/properties-by-tag/:code', async (req: Request, res: Res
         ])
 
         const resultCount = await Property.countDocuments(filter)
-        const totalPages = Math.ceil(resultCount / pageSize)
+        const totalPages = resultCount > 0 ? Math.ceil(resultCount / pageSize) : 1
 
         res.send({ok: true, data: {properties, currPage: pageNum, totalPages, resultCount}})
     } catch (error) {
-        logger.error(`An Error occured while getting all properties by tag code for the tag with code: ${req.params.code} and id: ${req.user.id} due to ${error?.message??'Unknown Source'}`)
+        logger.error(`An Error occured while getting all properties by tag code for the tag with code: ${req.params.code} due to ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
@@ -288,7 +288,8 @@ PropertyRouter.get('/api/landlord-properties/:id', async (req: Request, res: Res
             }
         ])
         const resultCount = await Property.countDocuments(filter)
-        const totalPages = Math.ceil(resultCount / pageSize)
+        const totalPages = resultCount > 0 ? Math.ceil(resultCount / pageSize) : 1
+
 
         res.send({ok: true, data: (withPagination && pageNum) ? {properties, currPage: pageNum, totalPages, resultCount} : properties})
     } catch (error) {
@@ -382,7 +383,7 @@ PropertyRouter.get('/api/town-properties/:town', async (req: Request, res: Respo
         ])
 
         const resultCount = await Property.countDocuments(mainfilter)
-        const totalPages = Math.ceil(resultCount / pageSize)
+        const totalPages = resultCount > 0 ? Math.ceil(resultCount / pageSize) : 1
 
         res.send({ok: true, data: {properties, currPage: pageNum, totalPages, resultCount}})
     } catch (error) {
@@ -427,7 +428,7 @@ PropertyRouter.get('/api/district-properties/:districtref', async (req: Request,
         ])
 
         const resultCount = await Property.countDocuments(mainfilter)
-        const totalPages = Math.ceil(resultCount / pageSize)
+        const totalPages = resultCount > 0 ? Math.ceil(resultCount / pageSize) : 1
 
         res.send({ok: true, data: {properties, currPage: pageNum, totalPages, resultCount}})
     } catch (error) {

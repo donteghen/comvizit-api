@@ -141,7 +141,7 @@ PropertyRouter.get('/api/properties-in-quater/:quaterref', (req, res) => __await
             }
         ]);
         const resultCount = yield property_1.Property.countDocuments(mainfilter);
-        const totalPages = Math.ceil(resultCount / pageSize);
+        const totalPages = resultCount > 0 ? Math.ceil(resultCount / pageSize) : 1;
         res.send({ ok: true, data: { properties, currPage: pageNum, totalPages, resultCount } });
     }
     catch (error) {
@@ -172,7 +172,7 @@ PropertyRouter.get('/api/properties-by-tag/:code', (req, res) => __awaiter(void 
                 }
             });
         }
-        // console.log(filter)
+        console.log('pageNum: ', pageNum, pageNum - 1, pageSize);
         const properties = yield property_1.Property.aggregate([
             {
                 $match: filter
@@ -188,11 +188,11 @@ PropertyRouter.get('/api/properties-by-tag/:code', (req, res) => __awaiter(void 
             }
         ]);
         const resultCount = yield property_1.Property.countDocuments(filter);
-        const totalPages = Math.ceil(resultCount / pageSize);
+        const totalPages = resultCount > 0 ? Math.ceil(resultCount / pageSize) : 1;
         res.send({ ok: true, data: { properties, currPage: pageNum, totalPages, resultCount } });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while getting all properties by tag code for the tag with code: ${req.params.code} and id: ${req.user.id} due to ${(_c = error === null || error === void 0 ? void 0 : error.message) !== null && _c !== void 0 ? _c : 'Unknown Source'}`);
+        logger_1.logger.error(`An Error occured while getting all properties by tag code for the tag with code: ${req.params.code} due to ${(_c = error === null || error === void 0 ? void 0 : error.message) !== null && _c !== void 0 ? _c : 'Unknown Source'}`);
         res.status(400).send({ ok: false, error: error.message, code: (_d = error.code) !== null && _d !== void 0 ? _d : 1000 });
     }
 }));
@@ -283,7 +283,7 @@ PropertyRouter.get('/api/landlord-properties/:id', (req, res) => __awaiter(void 
             }
         ]);
         const resultCount = yield property_1.Property.countDocuments(filter);
-        const totalPages = Math.ceil(resultCount / pageSize);
+        const totalPages = resultCount > 0 ? Math.ceil(resultCount / pageSize) : 1;
         res.send({ ok: true, data: (withPagination && pageNum) ? { properties, currPage: pageNum, totalPages, resultCount } : properties });
     }
     catch (error) {
@@ -374,7 +374,7 @@ PropertyRouter.get('/api/town-properties/:town', (req, res) => __awaiter(void 0,
             }
         ]);
         const resultCount = yield property_1.Property.countDocuments(mainfilter);
-        const totalPages = Math.ceil(resultCount / pageSize);
+        const totalPages = resultCount > 0 ? Math.ceil(resultCount / pageSize) : 1;
         res.send({ ok: true, data: { properties, currPage: pageNum, totalPages, resultCount } });
     }
     catch (error) {
@@ -417,7 +417,7 @@ PropertyRouter.get('/api/district-properties/:districtref', (req, res) => __awai
             }
         ]);
         const resultCount = yield property_1.Property.countDocuments(mainfilter);
-        const totalPages = Math.ceil(resultCount / pageSize);
+        const totalPages = resultCount > 0 ? Math.ceil(resultCount / pageSize) : 1;
         res.send({ ok: true, data: { properties, currPage: pageNum, totalPages, resultCount } });
     }
     catch (error) {
