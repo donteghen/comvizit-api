@@ -9,7 +9,7 @@ import { IRentIntention } from './interfaces'
  * @param {object} landlord - The id of the landlord who owns the concerned property
  * @param {object} potentialTenant - The Id of the potential tenant
  * @param {string} comment - A comment from the potential tenant
- * @param {string} status - The current status of the rent-intention
+ * @param {string} status - The current status of the rent-intention(booking)
  * @param {string} initiatedAt - The timestamp in milliseconds representing the date when the rent-intention was initiated
  */
 
@@ -33,7 +33,7 @@ const rentIntentionSchema = new Schema<IRentIntention>({
         type: String,
         required: true,
         default: 'INITIATED',
-        enum: ['INITIATED', 'CONCLUDED', 'UNCONCLUDED']
+        enum: ['INITIATED','CONFIRMED', 'CONCLUDED', 'CANCELED']
     },
     initiatedAt: {
         type: Number,

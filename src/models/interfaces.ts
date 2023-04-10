@@ -65,6 +65,13 @@ export type RentUtilities = {
     maintenance: boolean
 }
 
+export type BookingSummary = {
+    fee: number,
+    cancelationFee: number,
+    paymentMethods: Types.Array<string>,
+    maxDuration: number
+}
+
 export interface IComplain {
     targetId: Types.ObjectId,
     type: string,
@@ -114,6 +121,7 @@ export interface IProperty extends Document {
     district: District,
     media?: Media,
     rentSummary: RentSummary,
+    bookingsummary: BookingSummary,
     rules: Types.Array<string>,
     preferedTenant: PreferredTenant,
     distanceFromRoad:number,

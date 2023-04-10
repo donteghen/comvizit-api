@@ -28,6 +28,10 @@ const mongoose_1 = require("mongoose");
  * @param {number} initialRent - Initial rent to be paid before moving into the property
  * @param {number} commission - The commission to be paid before moving into the property
  * @param {number}  deposit - The deposit to be paid before moving into the property
+ * @param {number} bookingSummary.fee - The fee to be paid by the potential tenant to the landlord to confirm the booking
+ * @param {number} bookingSummary.cancelationFee - The amount ot be deducted from the booking fee paid, should the tenant be the cause of an unconclusive booking
+ * @param {Array<string>}  bookingSummary.paymentMethods - The payment methods allowed by the landlord
+ * @param {number}  bookingSummary.maxDuration - The max number of days after which the booking will be cancelled
  * @param {Array<string>} rules - Property's rules to be followed by all tenants during their stay
  * @param {string} preferedTenant.gender - Gender of tenant prefered for this property
  * @param {string} preferedTenant.type - Type of tenant prefered for this property
@@ -166,6 +170,24 @@ const propertySchema = new mongoose_1.Schema({
             required: true
         }
     },
+    bookingsummary: {
+        fee: {
+            type: Number,
+            required: true
+        },
+        cancelationFee: {
+            type: Number,
+            required: true
+        },
+        paymentMethods: {
+            type: [String],
+            required: true
+        },
+        maxDuration: {
+            type: Number,
+            required: true
+        }
+    },
     rules: {
         type: [String],
         required: true
@@ -193,7 +215,7 @@ const propertySchema = new mongoose_1.Schema({
     },
     availability: {
         type: String,
-        enum: ['Inactive', 'Available', 'Taken'],
+        enum: ['Inactive', 'Available', 'Booked', 'Taken'],
         required: true,
         default: 'Inactive'
     },
