@@ -1,13 +1,15 @@
 import express, { Request, Response } from 'express'
 import { Types } from 'mongoose';
 import { User } from '../models/user';
-import { NOT_FOUND, DELETE_OPERATION_FAILED, RENTINTENTION_ALREADY_EXISTS } from '../constants/error';
+import { NOT_FOUND, DELETE_OPERATION_FAILED, RENTINTENTION_ALREADY_EXISTS, NOT_AUTHORIZED } from '../constants/error';
 import { isAdmin, isLoggedIn, isTenant} from '../middleware/auth-middleware';
 import { RentIntention } from "../models/rent-intention";
 import { rentIntentionLookup, singleRentIntentionLookup } from '../utils/queryMaker';
 import { mailer } from '../helper/mailer';
 import { notifyNewRentIntentionToAdmin, notifyRentIntentionToLandlord } from '../utils/mailer-templates';
 import { logger } from '../logs/logger';
+import { Property } from '../models/property';
+import { constants } from '../constants/declared';
 
 
 const RentIntentionRouter = express.Router()
@@ -127,15 +129,45 @@ RentIntentionRouter.post('/api/rent-intentions', isLoggedIn, isTenant, async (re
 // ***************************** Admin restricted enpoints ***********************************************
 
 // update the rent-intension status
-RentIntentionRouter.patch('/api/rent-intentions/:id/status-update', isLoggedIn, isAdmin,async (req:Request, res: Response) => {
+RentIntentionRouter.patch('/api/rent-intentions/:id/status-update', isLoggedIn, async (req:Request, res: Response) => {
     try {
+
         // get the corresponding rent-intension by id
         const rentIntention = await RentIntention.findById(req.params.id)
         if (!rentIntention) {
             throw NOT_FOUND
         }
+        // check if user is admin or landlord related to the current transaction (rent-intentsion)
+        if (req.user?.role !== constants.USER_ROLE.ADMIN) {
+            if (req.user?.role === constants.USER_ROLE.LANDLORD) {
+                if (rentIntention.landlordId.toString() !== req.user?.id)
+                throw NOT_AUTHORIZED
+            }
+        }
         rentIntention.status = req.body.status ? req.body.status : rentIntention.status
-        await rentIntention.save()
+        const updatedRentItention = await rentIntention.save()
+        // update the related property's status
+        const relatedProperty = await Property.findOne({
+            _id: rentIntention.propertyId,
+            status: {$nin : [constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.UNAVAILABLE]}
+        })
+        if (!relatedProperty) {
+            throw NOT_FOUND
+        }
+        switch (updatedRentItention.status) {
+            case constants.RENT_INTENTION_STATUS_OPTIONS.CONFIRMED:
+                relatedProperty.availability = constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.BOOKED
+                await relatedProperty.save()
+                break;
+
+            case constants.RENT_INTENTION_STATUS_OPTIONS.CANCELED:
+               relatedProperty.availability = constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE
+               await relatedProperty.save()
+               break;
+
+            default:
+                break;
+        }
         res.send({ok: true})
     } catch (error) {
         logger.error(`An Error occured while updating the details of the rent-intention with id: ${req.params.id} due to ${error?.message??'Unknown Source'}`)

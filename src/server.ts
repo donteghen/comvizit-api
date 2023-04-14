@@ -9,7 +9,7 @@ import dotenv from 'dotenv'
 
 
 // local module imports
-import {connectDb} from './config/dbconfig'
+// import {connectDb} from './config/dbconfig'
 import { passportConfig } from './middleware/auth-middleware'
 // import router
 import { PropertyRouter } from './routes/property'

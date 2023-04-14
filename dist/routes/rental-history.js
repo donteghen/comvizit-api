@@ -24,6 +24,7 @@ const user_1 = require("../models/user");
 const queryMaker_1 = require("../utils/queryMaker");
 const rent_intention_1 = require("../models/rent-intention");
 const logger_1 = require("../logs/logger");
+const declared_1 = require("../constants/declared");
 const RentalHistoryRouter = express_1.default.Router();
 exports.RentalHistoryRouter = RentalHistoryRouter;
 /**
@@ -122,6 +123,8 @@ RentalHistoryRouter.get('/api/rental-histories/:id/detail', auth_middleware_1.is
 // create a new rental histroy
 RentalHistoryRouter.post('/api/rental-histories', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _e, _f;
+    console.log(req.query.lang);
+    const lang = req.query.lang ? req.query.lang : 'en';
     const { propertyId, landlordId, tenantId, startDate, rentIntentionId } = req.body;
     let isNewIntentionCreated = false;
     try {
@@ -134,7 +137,7 @@ RentalHistoryRouter.post('/api/rental-histories', auth_middleware_1.isLoggedIn, 
             landlordId: new mongoose_1.Types.ObjectId(landlordId.toString()),
             tenantId: new mongoose_1.Types.ObjectId(tenantId.toString()),
             rentIntentionId: new mongoose_1.Types.ObjectId(rentIntentionId.toString()),
-            status: 'ONGOING'
+            status: declared_1.constants.RENTAL_HISTORY_STATUS_OPTIONS.ONGOING
         });
         if (existAlreadyAndOngoing) {
             throw error_1.RENTALHISTORY_CURRENTLY_ONGOING;
@@ -143,10 +146,13 @@ RentalHistoryRouter.post('/api/rental-histories', auth_middleware_1.isLoggedIn, 
         // check if a rent intention had been created and it's status is still INITIATED or UNCONCLUDED
         const relatedExistingRentIntention = yield rent_intention_1.RentIntention.findOne({
             _id: new mongoose_1.Types.ObjectId(rentIntentionId.toString()),
-            $or: [
-                { status: 'INITIATED' },
-                { status: 'UNCONCLUDED' }
-            ]
+            status: {
+                $in: [
+                    declared_1.constants.RENT_INTENTION_STATUS_OPTIONS.INITIATED,
+                    declared_1.constants.RENT_INTENTION_STATUS_OPTIONS.CONFIRMED,
+                    declared_1.constants.RENT_INTENTION_STATUS_OPTIONS.CONCLUDED,
+                ]
+            }
         });
         // if there is a related existing rent-intention then we will use it further down execution else create one first
         if (!relatedExistingRentIntention) {
@@ -154,7 +160,8 @@ RentalHistoryRouter.post('/api/rental-histories', auth_middleware_1.isLoggedIn, 
                 propertyId: new mongoose_1.Types.ObjectId(propertyId.toString()),
                 landlordId: new mongoose_1.Types.ObjectId(landlordId.toString()),
                 potentialTenantId: new mongoose_1.Types.ObjectId(tenantId.toString()),
-                comment: "I'm interested in this property and will love to rent it. Please get back to me soonest"
+                status: declared_1.constants.RENT_INTENTION_STATUS_OPTIONS.CONCLUDED,
+                comment: lang === 'fr' ? declared_1.messages.AUTO_CREATE_RENT_INTENTION_COMMENT.fr : declared_1.messages.AUTO_CREATE_RENT_INTENTION_COMMENT.en
             });
             // updated isNewIntentionCreated
             isNewIntentionCreated = true;
@@ -164,7 +171,14 @@ RentalHistoryRouter.post('/api/rental-histories', auth_middleware_1.isLoggedIn, 
             actualRentIntention = addedRentIntention;
         }
         else {
-            actualRentIntention = relatedExistingRentIntention;
+            if (relatedExistingRentIntention.status !== declared_1.constants.RENT_INTENTION_STATUS_OPTIONS.CONCLUDED) {
+                relatedExistingRentIntention.status = declared_1.constants.RENT_INTENTION_STATUS_OPTIONS.CONCLUDED;
+                const updatedRelatedExistingRentIntention = yield relatedExistingRentIntention.save();
+                actualRentIntention = updatedRelatedExistingRentIntention;
+            }
+            else {
+                actualRentIntention = relatedExistingRentIntention;
+            }
         }
         // create a new rental history record and save it in the database
         const newRentalHistory = new rental_history_1.RentalHistory({
@@ -224,19 +238,18 @@ RentalHistoryRouter.patch('/api/rental-histories/:id/terminate', auth_middleware
             throw error_1.NOT_FOUND;
         }
         // update and save the rentalHistory document
-        rentalHistory.status = 'TERMINATED';
+        rentalHistory.status = declared_1.constants.RENTAL_HISTORY_STATUS_OPTIONS.TERMINATED;
         rentalHistory.endDate = Date.now();
         yield rentalHistory.save();
-        // notify but tenant and landlord
+        // notify both tenant and landlord
         const _landlord = yield user_1.User.findById(rentalHistory.landlordId);
         const _tenant = yield user_1.User.findById(rentalHistory.tenantId);
-        // send an email to both the tenant and landlord
         const landlordLink = `${process.env.CLIENT_URL}/profile`;
         const tenantLink = `${process.env.CLIENT_URL}/`;
-        // landlord
+        // send an email landlord
         const { subject, heading, detail, linkText } = (0, mailer_templates_1.notifyRentalHistoryTerminatedToLandlord)(_landlord.fullname);
         const success = yield (0, mailer_1.mailer)(_landlord.email, subject, heading, detail, landlordLink, linkText);
-        // tenant
+        // send an email tenant
         const { _subject, _heading, _detail, _linkText } = (0, mailer_templates_1.notifyRentalHistoryTerminatedToTenant)(_tenant.fullname);
         const _success = yield (0, mailer_1.mailer)(_tenant.email, _subject, _heading, _detail, tenantLink, _linkText);
         res.send({ ok: true });

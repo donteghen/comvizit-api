@@ -21,6 +21,8 @@ const redis_1 = require("redis");
 const passport_1 = __importDefault(require("passport"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
+// local module imports
+// import {connectDb} from './config/dbconfig'
 const auth_middleware_1 = require("./middleware/auth-middleware");
 // import router
 const property_1 = require("./routes/property");

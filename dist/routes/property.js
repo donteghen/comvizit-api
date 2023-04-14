@@ -629,6 +629,10 @@ PropertyRouter.patch('/api/properties/:id/availability/update', auth_middleware_
     var _5, _6;
     try {
         let propertyOwner;
+        // make sure an availability status was passed within the request body
+        if (!req.body.availability) {
+            throw error_1.INVALID_REQUEST;
+        }
         // check if user is landlord or admin and property belongs to that user(landlord)
         if (req.user.role !== 'ADMIN' && req.user.role !== 'LANDLORD') {
             throw error_1.NOT_AUTHORIZED;

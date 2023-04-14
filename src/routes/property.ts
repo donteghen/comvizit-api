@@ -4,13 +4,14 @@ import express, { Request, Response } from 'express'
 import { Types, PipelineStage, ObjectId } from "mongoose";
 import { categoryAggregator, townAggregator } from "../utils/queryMaker";
 import { isAdmin, isLandlord, isLoggedIn } from "../middleware/auth-middleware";
-import { DELETE_OPERATION_FAILED, INVALID_REQUEST, NOT_AUTHORIZED, NOT_FOUND, NOT_PROPERTY_OWNER, SAVE_OPERATION_FAILED} from '../constants/error'
+import { DELETE_OPERATION_FAILED, INVALID_REQUEST, NOT_AUTHORIZED, NOT_FOUND, NOT_PROPERTY_OWNER, SAVE_OPERATION_FAILED, NOT_SPECIFIED} from '../constants/error'
 import {notifyPropertyAvailability} from '../utils/mailer-templates'
 import { mailer } from "../helper/mailer";
 import { IProperty, IUser } from "../models/interfaces";
 import { User } from "../models/user";
 import { Tag } from "../models/tag";
 import { FeaturedProperties } from "../models/featured-properties";
+import { RentIntention } from "../models/rent-intention";
 import { Complain } from "../models/complain";
 import { Review } from "../models/review";
 import { Like } from "../models/like";
@@ -20,7 +21,6 @@ import { logger } from "../logs/logger";
 const PropertyRouter = express.Router()
 
 const pageSize: number = Number(process.env.PAGE_SIZE) // number of documents returned per request for the get all properties route
-
 
 // query helper function
 function setFilter(key:string, value:any): any {
@@ -646,7 +646,10 @@ PropertyRouter.post('/api/properties', isLoggedIn, isAdmin, async (req: Request,
 PropertyRouter.patch('/api/properties/:id/availability/update', isLoggedIn, async (req: Request, res: Response) => {
     try {
         let propertyOwner: IUser | any | undefined
-
+        // make sure an availability status was passed within the request body
+        if (!req.body.availability) {
+            throw INVALID_REQUEST
+        }
         // check if user is landlord or admin and property belongs to that user(landlord)
         if (req.user.role !== 'ADMIN' && req.user.role !== 'LANDLORD') {
             throw NOT_AUTHORIZED
@@ -671,6 +674,7 @@ PropertyRouter.patch('/api/properties/:id/availability/update', isLoggedIn, asyn
         if (!updatedProperty) {
             throw SAVE_OPERATION_FAILED
         }
+
         // notify the property owner
         const {subject, heading, detail, linkText} = notifyPropertyAvailability(req.user.email, property._id.toString(), req.body.availability)
         const link = `${process.env.CLIENT_URL}/${propertyOwner.role === 'ADMIN' ? 'dashboard' : 'profile'}`

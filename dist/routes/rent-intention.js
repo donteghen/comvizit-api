@@ -23,6 +23,8 @@ const queryMaker_1 = require("../utils/queryMaker");
 const mailer_1 = require("../helper/mailer");
 const mailer_templates_1 = require("../utils/mailer-templates");
 const logger_1 = require("../logs/logger");
+const property_1 = require("../models/property");
+const declared_1 = require("../constants/declared");
 const RentIntentionRouter = express_1.default.Router();
 exports.RentIntentionRouter = RentIntentionRouter;
 // query helper function
@@ -132,30 +134,57 @@ RentIntentionRouter.post('/api/rent-intentions', auth_middleware_1.isLoggedIn, a
 // ***************************** Landlord restricted enpoints ***********************************************
 // ***************************** Admin restricted enpoints ***********************************************
 // update the rent-intension status
-RentIntentionRouter.patch('/api/rent-intentions/:id/status-update', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _g, _h;
+RentIntentionRouter.patch('/api/rent-intentions/:id/status-update', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _g, _h, _j, _k, _l;
     try {
         // get the corresponding rent-intension by id
         const rentIntention = yield rent_intention_1.RentIntention.findById(req.params.id);
         if (!rentIntention) {
             throw error_1.NOT_FOUND;
         }
+        // check if user is admin or landlord related to the current transaction (rent-intentsion)
+        if (((_g = req.user) === null || _g === void 0 ? void 0 : _g.role) !== declared_1.constants.USER_ROLE.ADMIN) {
+            if (((_h = req.user) === null || _h === void 0 ? void 0 : _h.role) === declared_1.constants.USER_ROLE.LANDLORD) {
+                if (rentIntention.landlordId.toString() !== ((_j = req.user) === null || _j === void 0 ? void 0 : _j.id))
+                    throw error_1.NOT_AUTHORIZED;
+            }
+        }
         rentIntention.status = req.body.status ? req.body.status : rentIntention.status;
-        yield rentIntention.save();
+        const updatedRentItention = yield rentIntention.save();
+        // update the related property's status
+        const relatedProperty = yield property_1.Property.findOne({
+            _id: rentIntention.propertyId,
+            status: { $nin: [declared_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.UNAVAILABLE] }
+        });
+        if (!relatedProperty) {
+            throw error_1.NOT_FOUND;
+        }
+        switch (updatedRentItention.status) {
+            case declared_1.constants.RENT_INTENTION_STATUS_OPTIONS.CONFIRMED:
+                relatedProperty.availability = declared_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.BOOKED;
+                yield relatedProperty.save();
+                break;
+            case declared_1.constants.RENT_INTENTION_STATUS_OPTIONS.CANCELED:
+                relatedProperty.availability = declared_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE;
+                yield relatedProperty.save();
+                break;
+            default:
+                break;
+        }
         res.send({ ok: true });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while updating the details of the rent-intention with id: ${req.params.id} due to ${(_g = error === null || error === void 0 ? void 0 : error.message) !== null && _g !== void 0 ? _g : 'Unknown Source'}`);
+        logger_1.logger.error(`An Error occured while updating the details of the rent-intention with id: ${req.params.id} due to ${(_k = error === null || error === void 0 ? void 0 : error.message) !== null && _k !== void 0 ? _k : 'Unknown Source'}`);
         if (error.name === 'ValidationError') {
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_h = error.code) !== null && _h !== void 0 ? _h : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_l = error.code) !== null && _l !== void 0 ? _l : 1000 });
     }
 }));
 // delete a rent-intension
 RentIntentionRouter.delete('/api/rent-intentions/:id/delete', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _j, _k;
+    var _m, _o;
     try {
         const deletedRentIntention = yield rent_intention_1.RentIntention.findById(req.params.id);
         if (!deletedRentIntention) {
@@ -168,8 +197,8 @@ RentIntentionRouter.delete('/api/rent-intentions/:id/delete', auth_middleware_1.
         res.send({ ok: true });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while deleting the rent-intention with id: ${req.params.id} due to ${(_j = error === null || error === void 0 ? void 0 : error.message) !== null && _j !== void 0 ? _j : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_k = error.code) !== null && _k !== void 0 ? _k : 1000 });
+        logger_1.logger.error(`An Error occured while deleting the rent-intention with id: ${req.params.id} due to ${(_m = error === null || error === void 0 ? void 0 : error.message) !== null && _m !== void 0 ? _m : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_o = error.code) !== null && _o !== void 0 ? _o : 1000 });
     }
 }));
 //# sourceMappingURL=rent-intention.js.map

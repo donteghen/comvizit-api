@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express'
 import { Types } from 'mongoose';
-import { DELETE_OPERATION_FAILED, INVALID_REQUEST, NOT_FOUND, RENTALHISTORY_CURRENTLY_ONGOING, SAVE_OPERATION_FAILED } from '../constants/error';
+import { INVALID_REQUEST, NOT_FOUND, RENTALHISTORY_CURRENTLY_ONGOING, SAVE_OPERATION_FAILED } from '../constants/error';
 import { isAdmin, isLoggedIn } from '../middleware/auth-middleware';
 import { RentalHistory } from "../models/rental-history";
 import { mailer } from '../helper/mailer';
@@ -10,6 +10,7 @@ import { singleRentalHistoryLookup, rentalHistoryLookup } from '../utils/queryMa
 import { RentIntention } from '../models/rent-intention';
 import { IRentIntention } from '../models/interfaces';
 import { logger } from '../logs/logger';
+import { constants, messages } from '../constants/declared';
 
 const RentalHistoryRouter = express.Router()
 
@@ -116,6 +117,8 @@ RentalHistoryRouter.get('/api/rental-histories/:id/detail', isLoggedIn, async (r
 
 // create a new rental histroy
 RentalHistoryRouter.post('/api/rental-histories', isLoggedIn, isAdmin, async (req: Request, res:Response) => {
+    console.log(req.query.lang)
+    const lang = req.query.lang ? req.query.lang : 'en'
     const {propertyId, landlordId, tenantId, startDate, rentIntentionId} = req.body
     let isNewIntentionCreated: boolean = false
     try {
@@ -129,7 +132,7 @@ RentalHistoryRouter.post('/api/rental-histories', isLoggedIn, isAdmin, async (re
             landlordId: new Types.ObjectId(landlordId.toString()),
             tenantId: new Types.ObjectId(tenantId.toString()),
             rentIntentionId: new Types.ObjectId(rentIntentionId.toString()),
-            status: 'ONGOING'
+            status: constants.RENTAL_HISTORY_STATUS_OPTIONS.ONGOING
         })
         if (existAlreadyAndOngoing) {
             throw RENTALHISTORY_CURRENTLY_ONGOING
@@ -139,10 +142,13 @@ RentalHistoryRouter.post('/api/rental-histories', isLoggedIn, isAdmin, async (re
         // check if a rent intention had been created and it's status is still INITIATED or UNCONCLUDED
         const relatedExistingRentIntention = await RentIntention.findOne({
             _id: new Types.ObjectId(rentIntentionId.toString()),
-            $or: [
-                {status: 'INITIATED'},
-                {status: 'UNCONCLUDED'}
-            ]
+            status: {
+                $in: [
+                    constants.RENT_INTENTION_STATUS_OPTIONS.INITIATED,
+                    constants.RENT_INTENTION_STATUS_OPTIONS.CONFIRMED,
+                    constants.RENT_INTENTION_STATUS_OPTIONS.CONCLUDED,
+                ]
+            }
         })
 
         // if there is a related existing rent-intention then we will use it further down execution else create one first
@@ -151,7 +157,8 @@ RentalHistoryRouter.post('/api/rental-histories', isLoggedIn, isAdmin, async (re
                 propertyId: new Types.ObjectId(propertyId.toString()),
                 landlordId: new Types.ObjectId(landlordId.toString()),
                 potentialTenantId: new Types.ObjectId(tenantId.toString()),
-                comment: "I'm interested in this property and will love to rent it. Please get back to me soonest"
+                status: constants.RENT_INTENTION_STATUS_OPTIONS.CONCLUDED,
+                comment: lang === 'fr' ? messages.AUTO_CREATE_RENT_INTENTION_COMMENT.fr : messages.AUTO_CREATE_RENT_INTENTION_COMMENT.en
             })
             // updated isNewIntentionCreated
             isNewIntentionCreated = true
@@ -161,7 +168,14 @@ RentalHistoryRouter.post('/api/rental-histories', isLoggedIn, isAdmin, async (re
             actualRentIntention = addedRentIntention
         }
         else {
-            actualRentIntention = relatedExistingRentIntention
+            if (relatedExistingRentIntention.status !== constants.RENT_INTENTION_STATUS_OPTIONS.CONCLUDED) {
+                relatedExistingRentIntention.status = constants.RENT_INTENTION_STATUS_OPTIONS.CONCLUDED
+                const updatedRelatedExistingRentIntention = await relatedExistingRentIntention.save()
+                actualRentIntention = updatedRelatedExistingRentIntention
+            }
+            else {
+                actualRentIntention = relatedExistingRentIntention
+            }
         }
 
         // create a new rental history record and save it in the database
@@ -227,20 +241,20 @@ RentalHistoryRouter.patch('/api/rental-histories/:id/terminate', isLoggedIn, isA
             throw NOT_FOUND
         }
         // update and save the rentalHistory document
-        rentalHistory.status = 'TERMINATED'
+        rentalHistory.status = constants.RENTAL_HISTORY_STATUS_OPTIONS.TERMINATED
         rentalHistory.endDate = Date.now()
         await rentalHistory.save()
 
-        // notify but tenant and landlord
+        // notify both tenant and landlord
         const _landlord = await User.findById(rentalHistory.landlordId)
         const _tenant = await User.findById(rentalHistory.tenantId)
-        // send an email to both the tenant and landlord
+
         const landlordLink = `${process.env.CLIENT_URL}/profile`
         const tenantLink = `${process.env.CLIENT_URL}/`
-        // landlord
+        // send an email landlord
         const {subject, heading, detail, linkText} = notifyRentalHistoryTerminatedToLandlord(_landlord.fullname)
         const success = await mailer(_landlord.email, subject, heading, detail, landlordLink, linkText )
-        // tenant
+        // send an email tenant
         const {_subject, _heading, _detail, _linkText} = notifyRentalHistoryTerminatedToTenant(_tenant.fullname)
         const _success = await mailer(_tenant.email, _subject, _heading, _detail, tenantLink, _linkText )
         res.send({ok: true})
