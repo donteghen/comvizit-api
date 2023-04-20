@@ -11,6 +11,7 @@ import { RentIntention } from '../models/rent-intention';
 import { IRentIntention } from '../models/interfaces';
 import { logger } from '../logs/logger';
 import { constants, messages } from '../constants/declared';
+import { setDateFilter } from '../utils/date-query-setter';
 
 const RentalHistoryRouter = express.Router()
 
@@ -38,29 +39,6 @@ function setFilter(key:string, value:any) {
     }
 }
 
-/**
- * dateSetter helper function, is a function that helps set the query filter based on startDate and endDate
- * @function
- * @param {any} reqParams - The provided search query object
- * @param {string} dateQuery - The provided query key
- * @param {Array<string>} queryArray - The current collection of the query keys
- * @returns {any} - Query condition
- */
-function dateSetter (reqParams: any, queryArray: string[], dateQuery: string) {
-    // console.log(priceQuery, Number.parseInt(reqParams['minprice'], 10), Number.parseInt(reqParams['maxprice'], 10))
-    if (dateQuery === 'startDate') {
-        if (queryArray.includes('endDate')) {
-            return {$and: [{'startDate': {$gte: Number(reqParams['startDate'])}}, {'endDate' : {$lte: Number(reqParams['endDate'])}}]}
-        }
-        return {'startDate': {$gte: Number(reqParams['startDate'])}}
-    }
-    else if (dateQuery === 'endDate') {
-        if (queryArray.includes('startDate')) {
-            return {$and: [{'startDate': {$gte: Number(reqParams['startDate'])}}, {'endDate' : {$lte: Number(reqParams['endDate'])}}]}
-        }
-        return {'endDate': {$lte: Number(reqParams['endDate'])}}
-    }
-}
 
 // ***************************** public enpoints ***********************************************
 
@@ -72,11 +50,10 @@ RentalHistoryRouter.get('/api/rental-histories', isLoggedIn, async (req: Request
         let filter: any = {}
         const queries = Object.keys(req.query)
         if (queries.length > 0) {
+            let dateFilter = setDateFilter(req.query['startDate']?.toString()??'', req.query['endDate']?.toString()??'')
+            filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) :  filter
             queries.forEach(key => {
                 if (req.query[key]) {
-                    if (key === 'startDate' || key === 'endDate') {
-                        filter = Object.assign(filter, dateSetter(req.query, queries, key))
-                    }
                     filter = Object.assign(filter, setFilter(key, req.query[key]))
                 }
             })

@@ -20,7 +20,7 @@ import {Review} from '../models/review'
 import {Complain} from '../models/complain'
 import {Tag} from '../models/tag'
 import { logger } from '../logs/logger'
-
+import { setDateFilter } from '../utils/date-query-setter';
 
 const UserRouter = express.Router()
 
@@ -44,7 +44,7 @@ function setFilter(key:string, value:any): any {
 
 // ***************************** public enpoints ***********************************************
 
-// get landlord's profile of a landlord(for property owner card on client) by id and role === 'LANDLORD'
+// get landlord's profile via querying user collection by id and role === 'LANDLORD'
 UserRouter.get('/api/users/landlords/:id/card', async (req: Request, res: Response) => {
     try {
         const query = {
@@ -360,6 +360,8 @@ UserRouter.get('/api/users/tenants', isLoggedIn, isAdmin, async (req: Request, r
         let filter: any = {role: 'TENANT'}
         const queries = Object.keys(req.query)
         if (queries.length > 0) {
+            let dateFilter = setDateFilter(req.query['startDate']?.toString()??'', req.query['endDate']?.toString()??'')
+            filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) :  filter
             queries.forEach(key => {
                 if (req.query[key]) {
                     filter = Object.assign(filter, setFilter(key, req.query[key]))
@@ -380,6 +382,8 @@ UserRouter.get('/api/users/landlords', isLoggedIn, isAdmin, async (req: Request,
         let filter: any = {role: 'LANDLORD'}
         const queries = Object.keys(req.query)
         if (queries.length > 0) {
+            let dateFilter = setDateFilter(req.query['startDate']?.toString()??'', req.query['endDate']?.toString()??'')
+            filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) :  filter
             queries.forEach(key => {
                 if (req.query[key]) {
                     filter = Object.assign(filter, setFilter(key, req.query[key]))
@@ -399,6 +403,8 @@ UserRouter.get('/api/users/admins', isLoggedIn, isAdmin, async (req: Request, re
         let filter: any = {role: 'ADMIN'}
         const queries = Object.keys(req.query)
         if (queries.length > 0) {
+            let dateFilter = setDateFilter(req.query['startDate']?.toString()??'', req.query['endDate']?.toString()??'')
+            filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) :  filter
             queries.forEach(key => {
                 if (req.query[key]) {
                     filter = Object.assign(filter, setFilter(key, req.query[key]))
@@ -418,6 +424,8 @@ UserRouter.get('/api/users/all', isLoggedIn, isAdmin, async (req: Request, res: 
         let filter: any = {}
         const queries = Object.keys(req.query)
         if (queries.length > 0) {
+            let dateFilter = setDateFilter(req.query['startDate']?.toString()??'', req.query['endDate']?.toString()??'')
+            filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) :  filter
             queries.forEach(key => {
                 if (req.query[key]) {
                     filter = Object.assign(filter, setFilter(key, req.query[key]))

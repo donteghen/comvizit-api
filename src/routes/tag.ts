@@ -4,6 +4,7 @@ import { Tag } from "../models/tag";
 import {DELETE_OPERATION_FAILED, INVALID_REQUEST, NOT_FOUND, SAVE_OPERATION_FAILED, TAG_ALREADY_EXISTS} from '../constants/error'
 import {Types} from 'mongoose';
 import { logger } from '../logs/logger';
+import { setDateFilter } from '../utils/date-query-setter';
 
 const TagRouter = express.Router()
 
@@ -76,6 +77,8 @@ TagRouter.get('/api/tags', async (req: Request, res: Response) => {
         let filter: any = {}
         const queries = Object.keys(req.query)
         if (queries.length > 0) {
+            let dateFilter = setDateFilter(req.query['startDate']?.toString()??'', req.query['endDate']?.toString()??'')
+            filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) :  filter
             queries.forEach(key => {
                 if (req.query[key]) {
                     filter = Object.assign(filter, setFilter(key, req.query[key]))

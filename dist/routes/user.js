@@ -35,6 +35,7 @@ const review_1 = require("../models/review");
 const complain_1 = require("../models/complain");
 const tag_1 = require("../models/tag");
 const logger_1 = require("../logs/logger");
+const date_query_setter_1 = require("../utils/date-query-setter");
 const UserRouter = express_1.default.Router();
 exports.UserRouter = UserRouter;
 function setFilter(key, value) {
@@ -54,7 +55,7 @@ function setFilter(key, value) {
     }
 }
 // ***************************** public enpoints ***********************************************
-// get landlord's profile of a landlord(for property owner card on client) by id and role === 'LANDLORD'
+// get landlord's profile via querying user collection by id and role === 'LANDLORD'
 UserRouter.get('/api/users/landlords/:id/card', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     try {
@@ -339,11 +340,13 @@ UserRouter.get('/api/users/logout', auth_middleware_1.isLoggedIn, (req, res) => 
 /*************************** Admin Restricted router endpoints **************************************** */
 // get all tenants
 UserRouter.get('/api/users/tenants', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _0;
+    var _0, _1, _2, _3, _4;
     try {
         let filter = { role: 'TENANT' };
         const queries = Object.keys(req.query);
         if (queries.length > 0) {
+            let dateFilter = (0, date_query_setter_1.setDateFilter)((_1 = (_0 = req.query['startDate']) === null || _0 === void 0 ? void 0 : _0.toString()) !== null && _1 !== void 0 ? _1 : '', (_3 = (_2 = req.query['endDate']) === null || _2 === void 0 ? void 0 : _2.toString()) !== null && _3 !== void 0 ? _3 : '');
+            filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) : filter;
             queries.forEach(key => {
                 if (req.query[key]) {
                     filter = Object.assign(filter, setFilter(key, req.query[key]));
@@ -354,16 +357,18 @@ UserRouter.get('/api/users/tenants', auth_middleware_1.isLoggedIn, auth_middlewa
         res.send({ ok: true, data: tenantUsers });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_0 = error.code) !== null && _0 !== void 0 ? _0 : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_4 = error.code) !== null && _4 !== void 0 ? _4 : 1000 });
     }
 }));
 // get all landlords
 UserRouter.get('/api/users/landlords', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _1;
+    var _5, _6, _7, _8, _9;
     try {
         let filter = { role: 'LANDLORD' };
         const queries = Object.keys(req.query);
         if (queries.length > 0) {
+            let dateFilter = (0, date_query_setter_1.setDateFilter)((_6 = (_5 = req.query['startDate']) === null || _5 === void 0 ? void 0 : _5.toString()) !== null && _6 !== void 0 ? _6 : '', (_8 = (_7 = req.query['endDate']) === null || _7 === void 0 ? void 0 : _7.toString()) !== null && _8 !== void 0 ? _8 : '');
+            filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) : filter;
             queries.forEach(key => {
                 if (req.query[key]) {
                     filter = Object.assign(filter, setFilter(key, req.query[key]));
@@ -374,16 +379,18 @@ UserRouter.get('/api/users/landlords', auth_middleware_1.isLoggedIn, auth_middle
         res.send({ ok: true, data: landlordUsers });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_1 = error.code) !== null && _1 !== void 0 ? _1 : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_9 = error.code) !== null && _9 !== void 0 ? _9 : 1000 });
     }
 }));
 // get all admin users
 UserRouter.get('/api/users/admins', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _2;
+    var _10, _11, _12, _13, _14;
     try {
         let filter = { role: 'ADMIN' };
         const queries = Object.keys(req.query);
         if (queries.length > 0) {
+            let dateFilter = (0, date_query_setter_1.setDateFilter)((_11 = (_10 = req.query['startDate']) === null || _10 === void 0 ? void 0 : _10.toString()) !== null && _11 !== void 0 ? _11 : '', (_13 = (_12 = req.query['endDate']) === null || _12 === void 0 ? void 0 : _12.toString()) !== null && _13 !== void 0 ? _13 : '');
+            filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) : filter;
             queries.forEach(key => {
                 if (req.query[key]) {
                     filter = Object.assign(filter, setFilter(key, req.query[key]));
@@ -394,16 +401,18 @@ UserRouter.get('/api/users/admins', auth_middleware_1.isLoggedIn, auth_middlewar
         res.send({ ok: true, data: adminUsers });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_2 = error.code) !== null && _2 !== void 0 ? _2 : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_14 = error.code) !== null && _14 !== void 0 ? _14 : 1000 });
     }
 }));
 // get all users (isrespective of their role)
 UserRouter.get('/api/users/all', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _3;
+    var _15, _16, _17, _18, _19;
     try {
         let filter = {};
         const queries = Object.keys(req.query);
         if (queries.length > 0) {
+            let dateFilter = (0, date_query_setter_1.setDateFilter)((_16 = (_15 = req.query['startDate']) === null || _15 === void 0 ? void 0 : _15.toString()) !== null && _16 !== void 0 ? _16 : '', (_18 = (_17 = req.query['endDate']) === null || _17 === void 0 ? void 0 : _17.toString()) !== null && _18 !== void 0 ? _18 : '');
+            filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) : filter;
             queries.forEach(key => {
                 if (req.query[key]) {
                     filter = Object.assign(filter, setFilter(key, req.query[key]));
@@ -415,12 +424,12 @@ UserRouter.get('/api/users/all', auth_middleware_1.isLoggedIn, auth_middleware_1
         res.send({ ok: true, data: users });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_3 = error.code) !== null && _3 !== void 0 ? _3 : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_19 = error.code) !== null && _19 !== void 0 ? _19 : 1000 });
     }
 }));
 // approve user's account
 UserRouter.patch('/api/users/all/:id/approve', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _4, _5;
+    var _20, _21;
     try {
         // check if the session user is an admin, if no then it should fail as only an admin can approve a landlord or tenant account
         if (req.user.role !== 'ADMIN') {
@@ -447,15 +456,15 @@ UserRouter.patch('/api/users/all/:id/approve', auth_middleware_1.isLoggedIn, aut
             res.status(400).send({ ok: false, error: `Multer Upload Error : ${error.message},  code:error.code??1000` });
         }
         if (error.name === 'ValidationError') {
-            res.status(400).send({ ok: false, error: `Validation Error : ${error.message}`, code: (_4 = error.code) !== null && _4 !== void 0 ? _4 : 1000 });
+            res.status(400).send({ ok: false, error: `Validation Error : ${error.message}`, code: (_20 = error.code) !== null && _20 !== void 0 ? _20 : 1000 });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_5 = error.code) !== null && _5 !== void 0 ? _5 : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_21 = error.code) !== null && _21 !== void 0 ? _21 : 1000 });
     }
 }));
 // Disapprove user's account
 UserRouter.patch('/api/users/all/:id/disapprove', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _6, _7;
+    var _22, _23;
     try {
         // check if the session user is an admin, if no then it should fail as only an admin can disapprove a landlord or tenant account
         if (req.user.role !== 'ADMIN') {
@@ -482,15 +491,15 @@ UserRouter.patch('/api/users/all/:id/disapprove', auth_middleware_1.isLoggedIn, 
             res.status(400).send({ ok: false, error: `Multer Upload Error : ${error.message},  code:error.code??1000` });
         }
         if (error.name === 'ValidationError') {
-            res.status(400).send({ ok: false, error: `Validation Error : ${error.message}`, code: (_6 = error.code) !== null && _6 !== void 0 ? _6 : 1000 });
+            res.status(400).send({ ok: false, error: `Validation Error : ${error.message}`, code: (_22 = error.code) !== null && _22 !== void 0 ? _22 : 1000 });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_7 = error.code) !== null && _7 !== void 0 ? _7 : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_23 = error.code) !== null && _23 !== void 0 ? _23 : 1000 });
     }
 }));
 // delete user account
 UserRouter.delete('/api/user/all/:id', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _8, _9, _10;
+    var _24, _25, _26;
     try {
         // make sure that admin can only delete either <user.role === tenant | user.role === landlord>
         // An admin user can be deleted only by the super admin
@@ -526,20 +535,20 @@ UserRouter.delete('/api/user/all/:id', auth_middleware_1.isLoggedIn, auth_middle
         // unlink and delete linked favs
         yield favorite_1.Favorite.deleteMany({
             _id: {
-                $in: (_8 = deletedUser.favorites) === null || _8 === void 0 ? void 0 : _8.map(id => new mongoose_1.Types.ObjectId(id))
+                $in: (_24 = deletedUser.favorites) === null || _24 === void 0 ? void 0 : _24.map(id => new mongoose_1.Types.ObjectId(id))
             }
         });
         // unlink and delete linked likes
         yield like_1.Like.deleteMany({
             _id: {
-                $in: (_9 = deletedUser.likes) === null || _9 === void 0 ? void 0 : _9.map(id => new mongoose_1.Types.ObjectId(id))
+                $in: (_25 = deletedUser.likes) === null || _25 === void 0 ? void 0 : _25.map(id => new mongoose_1.Types.ObjectId(id))
             }
         });
         // rent intension comming up
         res.send({ ok: true });
     }
     catch (error) {
-        res.status(400).send({ ok: false, error: error.message, code: (_10 = error.code) !== null && _10 !== void 0 ? _10 : 1000 });
+        res.status(400).send({ ok: false, error: error.message, code: (_26 = error.code) !== null && _26 !== void 0 ? _26 : 1000 });
     }
 }));
 //# sourceMappingURL=user.js.map

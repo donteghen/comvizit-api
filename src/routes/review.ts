@@ -5,6 +5,7 @@ import {Types} from 'mongoose';
 import { Review } from '../models/review';
 import {constants} from '../constants/declared'
 import { logger } from '../logs/logger';
+import { setDateFilter } from '../utils/date-query-setter';
 
 const ReviewRouter = express.Router()
 
@@ -95,6 +96,8 @@ ReviewRouter.get('/api/reviews', async (req: Request, res: Response) => {
         let filter: any = {}
         const queries = Object.keys(req.query)
         if (queries.length > 0) {
+            let dateFilter = setDateFilter(req.query['startDate']?.toString()??'', req.query['endDate']?.toString()??'')
+            filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) :  filter
             queries.forEach(key => {
                 if (req.query[key]) {
                     filter = Object.assign(filter, setFilter(key, req.query[key]))

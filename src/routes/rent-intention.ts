@@ -10,7 +10,7 @@ import { notifyNewRentIntentionToAdmin, notifyRentIntentionToLandlord } from '..
 import { logger } from '../logs/logger';
 import { Property } from '../models/property';
 import { constants } from '../constants/declared';
-
+import { setDateFilter } from '../utils/date-query-setter';
 
 const RentIntentionRouter = express.Router()
 
@@ -42,6 +42,8 @@ RentIntentionRouter.get('/api/rent-intentions', isLoggedIn, async (req: Request,
         let filter: any = {}
         const queries = Object.keys(req.query)
         if (queries.length > 0) {
+            let dateFilter = setDateFilter(req.query['startDate']?.toString()??'', req.query['endDate']?.toString()??'')
+            filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) :  filter
             queries.forEach(key => {
                 if (req.query[key]) {
                     filter = Object.assign(filter, setFilter(key, req.query[key]))

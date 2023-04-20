@@ -1,9 +1,10 @@
 import express, { Request, Response } from 'express'
 import { isAdmin, isLoggedIn } from '../middleware/auth-middleware';
 import {Log} from '../models/log'
-import {DELETE_OPERATION_FAILED, INVALID_REQUEST, NOT_FOUND, SAVE_OPERATION_FAILED, TAG_ALREADY_EXISTS} from '../constants/error'
-import mongoose, {Types} from 'mongoose';
+import {DELETE_OPERATION_FAILED, NOT_FOUND} from '../constants/error'
+import {Types} from 'mongoose';
 import { logger } from '../logs/logger';
+import { setDateFilter } from '../utils/date-query-setter';
 
 const LogRouter = express.Router()
 /**
@@ -24,7 +25,52 @@ function setFilter(key:string, value:any): any {
 }
 
 
+/**
+ * set the date filter condition
+ * @function setLogDateFilter
+ * @param {string} startDate - The date's lower range limit
+ * @param {string} endDate - The date's upper range limit
+ * @returns {string}
+ */
 
+function setLogDateFilter (startDate: string, endDate: string) {
+    let condition = {}
+    if (startDate && startDate.length > 0 && !endDate) {
+        condition = {
+            timestamp : {
+                $gt: new Date(startDate).toISOString()
+            }
+        }
+    }
+    else if (!startDate && endDate && endDate.length > 0) {
+        condition = {
+            timestamp : {
+                $lt: new Date(endDate).toISOString()
+            }
+        }
+    }
+    else if (startDate && startDate.length > 0 && endDate && endDate.length > 0) {
+        condition = {
+            $and: [
+                {
+                    timestamp: {
+                        $gt: new Date(startDate).toISOString()
+                    }
+                },
+                {
+                    timestamp: {
+                        $lt: new Date(endDate).toISOString()
+                    }
+                }
+            ]
+        }
+    }
+    else {
+        condition = {}
+    }
+
+    return condition
+}
 
 // get all logs (with or without query string)
 LogRouter.get('/api/logs', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
@@ -33,6 +79,8 @@ LogRouter.get('/api/logs', isLoggedIn, isAdmin, async (req: Request, res: Respon
         const queries = Object.keys(req.query)
         if (queries.length > 0) {
             queries.forEach(key => {
+                let dateFilter = setLogDateFilter(req.query['startDate']?.toString()??'', req.query['endDate']?.toString()??'')
+                filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) :  filter
                 if (req.query[key]) {
                     filter = Object.assign(filter, setFilter(key, req.query[key]))
                 }

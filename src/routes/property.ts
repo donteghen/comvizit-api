@@ -19,6 +19,7 @@ import { Like } from "../models/like";
 import { constants } from "../constants/declared";
 import { logger } from "../logs/logger";
 const PropertyRouter = express.Router()
+import { setDateFilter } from '../utils/date-query-setter';
 
 const pageSize: number = Number(process.env.PAGE_SIZE) // number of documents returned per request for the get all properties route
 
@@ -103,6 +104,8 @@ PropertyRouter.get('/api/properties-in-quater/:quaterref', async (req: Request, 
         let pageNum: number = 1
         const queries = Object.keys(req.query)
         if (queries.length > 0) {
+            let dateFilter = setDateFilter(req.query['startDate']?.toString()??'', req.query['endDate']?.toString()??'')
+            filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) :  filter
             queries.forEach(key => {
                 if (req.query[key]) {
                     if (key === 'maxprice' || key === 'minprice') {
@@ -159,6 +162,8 @@ PropertyRouter.get('/api/properties-by-tag/:code', async (req: Request, res: Res
         const queries = Object.keys(req.query)
         let filter: any = {availability:'Available', _id: {$in: tagRefIds}}
         if (queries.length > 0) {
+            let dateFilter = setDateFilter(req.query['startDate']?.toString()??'', req.query['endDate']?.toString()??'')
+            filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) :  filter
             queries.forEach(key => {
                 if (req.query[key]) {
                     if (key === 'page') {
@@ -202,8 +207,9 @@ PropertyRouter.get('/api/properties', isLoggedIn,  isAdmin, async (req: Request,
         let filter: any =  {}
         const queries = Object.keys(req.query)
         if (queries.length > 0) {
+            let dateFilter = setDateFilter(req.query['startDate']?.toString()??'', req.query['endDate']?.toString()??'')
+            filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) :  filter
             queries.forEach(key => {
-
                 if (req.query[key]) {
                     filter = Object.assign(filter, setFilter(key, req.query[key]))
                 }
@@ -248,6 +254,8 @@ PropertyRouter.get('/api/landlord-properties/:id', async (req: Request, res: Res
         let pageNum
         let withPagination = queries?.includes('page')
         if (queries.length > 0) {
+            let dateFilter = setDateFilter(req.query['startDate']?.toString()??'', req.query['endDate']?.toString()??'')
+            filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) :  filter
             queries.forEach(key => {
                 if (req.query[key]) {
                     if (key === 'page') {
@@ -355,6 +363,8 @@ PropertyRouter.get('/api/town-properties/:town', async (req: Request, res: Respo
         let pageNum: number = 1
         const queries = Object.keys(req.query)
         if (queries.length > 0) {
+            let dateFilter = setDateFilter(req.query['startDate']?.toString()??'', req.query['endDate']?.toString()??'')
+            filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) :  filter
             queries.forEach(key => {
                 if (req.query[key]) {
                     if (key === 'page') {
@@ -400,6 +410,8 @@ PropertyRouter.get('/api/district-properties/:districtref', async (req: Request,
         let pageNum: number = 1
         const queries = Object.keys(req.query)
         if (queries.length > 0) {
+            let dateFilter = setDateFilter(req.query['startDate']?.toString()??'', req.query['endDate']?.toString()??'')
+            filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) :  filter
             queries.forEach(key => {
                 if (req.query[key]) {
                     if (key === 'page') {

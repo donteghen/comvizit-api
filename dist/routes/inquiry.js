@@ -20,6 +20,7 @@ const mailer_1 = require("../helper/mailer");
 const mailer_templates_1 = require("../utils/mailer-templates");
 const error_1 = require("../constants/error");
 const logger_1 = require("../logs/logger");
+const date_query_setter_1 = require("../utils/date-query-setter");
 const InquiryRouter = express_1.default.Router();
 exports.InquiryRouter = InquiryRouter;
 // query helper function
@@ -72,6 +73,9 @@ InquiryRouter.get('/api/inquiries', auth_middleware_1.isLoggedIn, auth_middlewar
         const queries = Object.keys(req.query);
         if (queries.length > 0) {
             queries.forEach(key => {
+                var _a, _b, _c, _d;
+                let dateFilter = (0, date_query_setter_1.setDateFilter)((_b = (_a = req.query['startDate']) === null || _a === void 0 ? void 0 : _a.toString()) !== null && _b !== void 0 ? _b : '', (_d = (_c = req.query['endDate']) === null || _c === void 0 ? void 0 : _c.toString()) !== null && _d !== void 0 ? _d : '');
+                filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) : filter;
                 if (req.query[key]) {
                     filter = Object.assign(filter, setFilter(key, req.query[key]));
                 }

@@ -6,7 +6,7 @@ import { mailer } from '../helper/mailer';
 import {notifyNewComplained} from '../utils/mailer-templates'
 import { Types } from 'mongoose';
 import { logger } from '../logs/logger';
-
+import { setDateFilter } from '../utils/date-query-setter';
 
 const ComplainRouter = express.Router()
 
@@ -34,6 +34,7 @@ function setFilter(key:string, value:any): any {
             return {}
     }
 }
+
 
 // ***************************** public enpoints ***********************************************
 
@@ -74,6 +75,8 @@ ComplainRouter.get('/api/complains', isLoggedIn, async (req: Request, res: Respo
         let filter: any = {}
         const queries = Object.keys(req.query)
         if (queries.length > 0) {
+            let dateFilter = setDateFilter(req.query['startDate']?.toString()??'', req.query['endDate']?.toString()??'')
+            filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) :  filter
             queries.forEach(key => {
                 if (req.query[key]) {
                     filter = Object.assign(filter, setFilter(key, req.query[key]))

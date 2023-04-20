@@ -37,6 +37,50 @@ function setFilter(key, value) {
             return {};
     }
 }
+/**
+ * set the date filter condition
+ * @function setLogDateFilter
+ * @param {string} startDate - The date's lower range limit
+ * @param {string} endDate - The date's upper range limit
+ * @returns {string}
+ */
+function setLogDateFilter(startDate, endDate) {
+    let condition = {};
+    if (startDate && startDate.length > 0 && !endDate) {
+        condition = {
+            timestamp: {
+                $gt: new Date(startDate).toISOString()
+            }
+        };
+    }
+    else if (!startDate && endDate && endDate.length > 0) {
+        condition = {
+            timestamp: {
+                $lt: new Date(endDate).toISOString()
+            }
+        };
+    }
+    else if (startDate && startDate.length > 0 && endDate && endDate.length > 0) {
+        condition = {
+            $and: [
+                {
+                    timestamp: {
+                        $gt: new Date(startDate).toISOString()
+                    }
+                },
+                {
+                    timestamp: {
+                        $lt: new Date(endDate).toISOString()
+                    }
+                }
+            ]
+        };
+    }
+    else {
+        condition = {};
+    }
+    return condition;
+}
 // get all logs (with or without query string)
 LogRouter.get('/api/logs', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
@@ -45,6 +89,9 @@ LogRouter.get('/api/logs', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdm
         const queries = Object.keys(req.query);
         if (queries.length > 0) {
             queries.forEach(key => {
+                var _a, _b, _c, _d;
+                let dateFilter = setLogDateFilter((_b = (_a = req.query['startDate']) === null || _a === void 0 ? void 0 : _a.toString()) !== null && _b !== void 0 ? _b : '', (_d = (_c = req.query['endDate']) === null || _c === void 0 ? void 0 : _c.toString()) !== null && _d !== void 0 ? _d : '');
+                filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) : filter;
                 if (req.query[key]) {
                     filter = Object.assign(filter, setFilter(key, req.query[key]));
                 }

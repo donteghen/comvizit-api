@@ -5,6 +5,8 @@ import { FeaturedProperties } from "../models/featured-properties";
 import {PipelineStage, Types} from 'mongoose'
 import { Property } from '../models/property';
 import { logger } from '../logs/logger';
+import { setDateFilter } from '../utils/date-query-setter';
+
 const FeaturedRouter = express.Router()
 
 /**
@@ -58,6 +60,8 @@ FeaturedRouter.get('/api/featured/properties-active',  async (req: Request, res:
         const queries = Object.keys(req.query)
         if (queries.length > 0) {
             queries.forEach(key => {
+                let dateFilter = setDateFilter(req.query['startDate']?.toString()??'', req.query['endDate']?.toString()??'')
+                matchFilter = Object.keys(dateFilter).length > 0 ? Object.assign(matchFilter, dateFilter) :  matchFilter
                 if (key === 'page') {
                     pageNum = Number.parseInt(req.query[key] as string, 10)
                 }

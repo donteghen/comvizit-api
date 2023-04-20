@@ -5,7 +5,7 @@ import { mailer } from '../helper/mailer';
 import {notifyNewInquiry} from '../utils/mailer-templates'
 import { NOT_FOUND } from '../constants/error';
 import { logger } from '../logs/logger';
-
+import { setDateFilter } from '../utils/date-query-setter';
 
 const InquiryRouter = express.Router()
 
@@ -63,6 +63,8 @@ InquiryRouter.get('/api/inquiries', isLoggedIn, isAdmin, async (req: Request, re
         const queries = Object.keys(req.query)
         if (queries.length > 0) {
             queries.forEach(key => {
+                let dateFilter = setDateFilter(req.query['startDate']?.toString()??'', req.query['endDate']?.toString()??'')
+                filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) :  filter
                 if (req.query[key]) {
                     filter = Object.assign(filter, setFilter(key, req.query[key]))
                 }
