@@ -97,7 +97,7 @@ RentIntentionRouter.post('/api/rent-intentions', auth_middleware_1.isLoggedIn, a
             propertyId: new mongoose_1.Types.ObjectId(propertyId),
             landlordId: new mongoose_1.Types.ObjectId(landlordId),
             potentialTenantId: new mongoose_1.Types.ObjectId(req.user.id),
-            status: 'INITIATED',
+            status: declared_1.constants.RENT_INTENTION_STATUS_OPTIONS.INITIATED,
             initiatedAt: {
                 $gt: thrityDaysAgo
             }

@@ -454,6 +454,11 @@ PropertyRouter.get('/api/properties-group-by-town', async (req: Request, res: Re
     try {
         const groupsByTown = await Property.aggregate([
             {
+                $match: {
+                    'availability':'Available'
+                }
+            },
+            {
                 $group: {
                     _id: '$town',
                     count: {$count: {}}
@@ -473,6 +478,11 @@ PropertyRouter.get('/api/properties-group-by-town', async (req: Request, res: Re
 PropertyRouter.get('/api/properties-group-by-district', async (req: Request, res: Response) => {
     try {
         const pipeline: PipelineStage[] = [
+            {
+                $match: {
+                    'availability':'Available'
+                }
+            },
             {
                 $group: {
                     _id: '$district.ref',

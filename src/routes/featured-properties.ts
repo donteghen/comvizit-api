@@ -54,6 +54,11 @@ FeaturedRouter.get('/api/featured/properties-active',  async (req: Request, res:
                     path: "$property"
                 }
             },
+            {
+                $match: {
+                    'property.availability' : 'available'
+                }
+            }
 
         ]
 

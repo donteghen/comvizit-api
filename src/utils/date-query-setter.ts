@@ -3,22 +3,22 @@
  * @function setDateFilter
  * @param {string} startDate - The date's lower range limit
  * @param {string} endDate - The date's upper range limit
- * @returns {string}
+ * @return {any}
  */
 
 export function setDateFilter (startDate: string, endDate: string) {
-    let condition = {}
+    let condition : any = {}
     if (startDate && startDate.length > 0 && !endDate) {
         condition = {
             createdAt : {
-                $gt: new Date(startDate).toISOString()
+                $gt: new Date(startDate)
             }
         }
     }
     else if (!startDate && endDate && endDate.length > 0) {
         condition = {
             createdAt : {
-                $lt: new Date(endDate).toISOString()
+                $lt: new Date(endDate)
             }
         }
     }
@@ -27,12 +27,12 @@ export function setDateFilter (startDate: string, endDate: string) {
             $and: [
                 {
                     createdAt: {
-                        $gt: new Date(startDate).toISOString()
+                        $gt: new Date(startDate)
                     }
                 },
                 {
                     createdAt: {
-                        $lt: new Date(endDate).toISOString()
+                        $lt: new Date(endDate)
                     }
                 }
             ]
@@ -41,6 +41,5 @@ export function setDateFilter (startDate: string, endDate: string) {
     else {
         condition = {}
     }
-
     return condition
 }

@@ -4,7 +4,7 @@
  * @function setDateFilter
  * @param {string} startDate - The date's lower range limit
  * @param {string} endDate - The date's upper range limit
- * @returns {string}
+ * @return {any}
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.setDateFilter = void 0;
@@ -13,14 +13,14 @@ function setDateFilter(startDate, endDate) {
     if (startDate && startDate.length > 0 && !endDate) {
         condition = {
             createdAt: {
-                $gt: new Date(startDate).toISOString()
+                $gt: new Date(startDate)
             }
         };
     }
     else if (!startDate && endDate && endDate.length > 0) {
         condition = {
             createdAt: {
-                $lt: new Date(endDate).toISOString()
+                $lt: new Date(endDate)
             }
         };
     }
@@ -29,12 +29,12 @@ function setDateFilter(startDate, endDate) {
             $and: [
                 {
                     createdAt: {
-                        $gt: new Date(startDate).toISOString()
+                        $gt: new Date(startDate)
                     }
                 },
                 {
                     createdAt: {
-                        $lt: new Date(endDate).toISOString()
+                        $lt: new Date(endDate)
                     }
                 }
             ]

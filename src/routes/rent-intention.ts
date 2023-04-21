@@ -86,7 +86,7 @@ RentIntentionRouter.post('/api/rent-intentions', isLoggedIn, isTenant, async (re
                 propertyId: new Types.ObjectId(propertyId),
                 landlordId: new Types.ObjectId(landlordId),
                 potentialTenantId: new Types.ObjectId(req.user.id),
-                status: 'INITIATED',
+                status: constants.RENT_INTENTION_STATUS_OPTIONS.INITIATED,
                 initiatedAt: {
                     $gt: thrityDaysAgo
                 }

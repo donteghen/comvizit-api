@@ -26,7 +26,6 @@ import { NextFunction } from 'express'
  * @param {string} lang - User's spoken language(s)
  * @param {string} favorites - User's (Tenant) favorite properties list
  * @param {string} likes - User's (Tenant) likes collection
- * @param {string} rentIntensions - User's (Tenant) rentIntension activity list
  */
 const userSchema = new Schema<IUser>({
     fullname: {
@@ -116,9 +115,6 @@ const userSchema = new Schema<IUser>({
         type: [String],
     },
     likes: {
-        type: [String]
-    },
-    rentIntensions: {
         type: [String]
     }
 }, {

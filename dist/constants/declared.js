@@ -32,7 +32,12 @@ exports.constants = {
     RENTAL_HISTORY_STATUS_OPTIONS: {
         'ONGOING': 'ONGOING',
         'TERMINATED': 'TERMINATED'
-    }
+    },
+    BOOKING_PAYMENT_OPTIONS: {
+        'MTN_MOMO': 'MTN_MOMO',
+        'ORANGE_MOMO': 'ORANGE_MOMO',
+        'CASH': 'CASH'
+    },
 };
 exports.messages = {
     'AUTO_CREATE_RENT_INTENTION_COMMENT': {

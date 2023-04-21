@@ -444,6 +444,11 @@ PropertyRouter.get('/api/properties-group-by-town', (req, res) => __awaiter(void
     try {
         const groupsByTown = yield property_1.Property.aggregate([
             {
+                $match: {
+                    'availability': 'Available'
+                }
+            },
+            {
                 $group: {
                     _id: '$town',
                     count: { $count: {} }
@@ -464,6 +469,11 @@ PropertyRouter.get('/api/properties-group-by-district', (req, res) => __awaiter(
     var _18, _19, _20;
     try {
         const pipeline = [
+            {
+                $match: {
+                    'availability': 'Available'
+                }
+            },
             {
                 $group: {
                     _id: '$district.ref',
