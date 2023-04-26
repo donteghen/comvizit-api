@@ -214,3 +214,16 @@ export const FEATURING_EXPIRED: ErrorResponse = {
     message: 'This feature is expired, please start a new one',
     messageFr: 'French This feature is expired, please start a new one'
 }
+export const CHAT_PARAM_INVALID: ErrorResponse = {
+    name: 'CHAT_PARAM_INVALID',
+    code: 1025,
+    message: 'Either the senderId is missing(or invalid) or receiverId is missing(or invalid)',
+    messageFr: 'French Either the senderId is missing(or invalid) or receiverId is missing(or invalid)'
+}
+
+export const CHAT_MESSAGE_PARAM_INVALID: ErrorResponse = {
+    name: 'CHAT_MESSAGE_PARAM_INVALID',
+    code: 1025,
+    message: 'Missing or invalid params were provided for chatId, senderId or content',
+    messageFr: 'French issing or invalid params were provided for chatId, senderId or content'
+}

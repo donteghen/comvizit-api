@@ -12,8 +12,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.app = void 0;
+exports.io = exports.server = void 0;
 const express_1 = __importDefault(require("express"));
+const http_1 = __importDefault(require("http"));
 const logger_1 = require("./logs/logger");
 const express_session_1 = __importDefault(require("express-session"));
 const connectRedis = require('connect-redis');
@@ -21,6 +22,7 @@ const redis_1 = require("redis");
 const passport_1 = __importDefault(require("passport"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const socket_io_1 = require("socket.io");
 // local module imports
 // import {connectDb} from './config/dbconfig'
 const auth_middleware_1 = require("./middleware/auth-middleware");
@@ -53,8 +55,15 @@ redisClient.connect()
 const RedisStore = connectRedis(express_session_1.default);
 // declare and initail parameters
 const app = (0, express_1.default)();
-exports.app = app;
 const SESSION_SECRET = process.env.SESSION_SECRET;
+const server = http_1.default.createServer(app);
+exports.server = server;
+const io = new socket_io_1.Server(server, {
+    cors: {
+        origin: [process.env.CLIENT_URL]
+    }
+});
+exports.io = io;
 // middleware
 app.use((0, express_session_1.default)({
     store: new RedisStore({ client: redisClient }),

@@ -2,7 +2,7 @@
 require('newrelic'); // require new relic to load and startup all preconfigure processes
 import { connectDb } from './config/dbconfig';
 import { logger } from './logs/logger' // bring in the logger to add server start logs for tracing later on.
-import {app} from './server' // Bring in our server config
+import {server} from './server' // Bring in our server config
 import cluster from 'cluster';
 import os from 'os'
 // set the port
@@ -37,11 +37,11 @@ function init( workerId: number ) {
     connectDb().then(() => {
         console.log('The database has been connected successfully')
         console.log('Worker ' + workerId + ': Initializing routes...');
-        app.listen(PORT, () => {
+        server.listen(PORT, () => {
             if (process.env.NODE_ENV === 'production') {
                 logger.info('Server started')
             }
-            console.log(`Worker ${workerId} is listining at: http://loccalhost:${PORT}`)
+            console.log(`Worker ${workerId} is listining at: http://localhost:${PORT}`)
         }).setTimeout(maxTimeout)
     })
     .catch(error => {

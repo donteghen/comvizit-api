@@ -72,6 +72,15 @@ export type BookingSummary = {
     maxDuration: number
 }
 
+export interface IChat {
+    members: Types.Array<string>
+}
+
+export interface IChatMessage {
+    chatId: string,
+    senderId: string,
+    content: string
+}
 export interface IComplain {
     targetId: Types.ObjectId,
     type: string,

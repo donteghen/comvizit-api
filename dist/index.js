@@ -37,11 +37,11 @@ function init(workerId) {
     (0, dbconfig_1.connectDb)().then(() => {
         console.log('The database has been connected successfully');
         console.log('Worker ' + workerId + ': Initializing routes...');
-        server_1.app.listen(PORT, () => {
+        server_1.server.listen(PORT, () => {
             if (process.env.NODE_ENV === 'production') {
                 logger_1.logger.info('Server started');
             }
-            console.log(`Worker ${workerId} is listining at: http://loccalhost:${PORT}`);
+            console.log(`Worker ${workerId} is listining at: http://localhost:${PORT}`);
         }).setTimeout(maxTimeout);
     })
         .catch(error => {

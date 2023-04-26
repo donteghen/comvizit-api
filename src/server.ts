@@ -1,13 +1,14 @@
-import express, {Request, Response} from 'express'
-import { logger } from './logs/logger'
-import session from 'express-session'
-const connectRedis = require('connect-redis')
-import { createClient } from 'redis'
-import passport from 'passport'
-import cors from 'cors'
-import dotenv from 'dotenv'
-
-
+import express, {Request, Response} from 'express' ;
+import http from 'http' ;
+import { logger } from './logs/logger' ;
+import session from 'express-session' ;
+const connectRedis = require('connect-redis') ;
+import { createClient } from 'redis' ;
+import passport from 'passport' ;
+import cors from 'cors' ;
+import dotenv from 'dotenv' ;
+import { Server } from 'socket.io' ;
+import {ClientToServerEventHandlers, ServerToClientEventHandles, InterServerEventHandlers} from './models/socket-interfaces'
 // local module imports
 // import {connectDb} from './config/dbconfig'
 import { passportConfig } from './middleware/auth-middleware'
@@ -45,7 +46,12 @@ const RedisStore = connectRedis(session);
 // declare and initail parameters
 const app = express()
 const SESSION_SECRET = process.env.SESSION_SECRET;
-
+const server = http.createServer(app);
+const io = new Server<ClientToServerEventHandlers, ServerToClientEventHandles, InterServerEventHandlers>(server, {
+  cors: {
+    origin: [process.env.CLIENT_URL]
+  }
+});
 // middleware
 app.use(
  session({
@@ -97,4 +103,5 @@ app.get('/api/', async (req: Request, res: Response) => {
     }
 })
 
-export {app}
+
+export {server, io}

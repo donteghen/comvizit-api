@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FEATURING_EXPIRED = exports.RENTALHISTORY_CURRENTLY_ONGOING = exports.RENTINTENTION_ALREADY_EXISTS = exports.ADDED_ALREADY_TO_FAV_LIST = exports.REVIEW_ALREADY_EXIST = exports.ACCOUNST_IS_ALREADY_VERIFIED = exports.RESET_TOKEN_DEACTIVED = exports.INVALID_RESET_TOKEN = exports.PROPERTY_UNAVAILABLE_FOR_FEATURING = exports.INVALID_PROPERTY_ID_FOR_FEATURING = exports.PROPERTY_IS_ALREADY_FEATURED = exports.INVALID_REQUEST = exports.TAG_ALREADY_EXISTS = exports.NOT_PROPERTY_OWNER = exports.EMAIL_ALREADY_EXITS = exports.AUTH_FAILED = exports.PASSWORD_INCORRECT = exports.LOGIN_FAILED = exports.DELETE_OPERATION_FAILED = exports.USER_UPDATE_OPERATION_FAILED = exports.SAVE_OPERATION_FAILED = exports.NEW_PASSWORD_IS_INVALID = exports.OLD_PASSWORD_IS_INCORRECT = exports.NO_ADMIN = exports.NO_LANDLORD = exports.NO_TENANT = exports.NO_USER = exports.NOT_AUTHORIZED = exports.NOT_FOUND = exports.NOT_SPECIFIED = void 0;
+exports.CHAT_MESSAGE_PARAM_INVALID = exports.CHAT_PARAM_INVALID = exports.FEATURING_EXPIRED = exports.RENTALHISTORY_CURRENTLY_ONGOING = exports.RENTINTENTION_ALREADY_EXISTS = exports.ADDED_ALREADY_TO_FAV_LIST = exports.REVIEW_ALREADY_EXIST = exports.ACCOUNST_IS_ALREADY_VERIFIED = exports.RESET_TOKEN_DEACTIVED = exports.INVALID_RESET_TOKEN = exports.PROPERTY_UNAVAILABLE_FOR_FEATURING = exports.INVALID_PROPERTY_ID_FOR_FEATURING = exports.PROPERTY_IS_ALREADY_FEATURED = exports.INVALID_REQUEST = exports.TAG_ALREADY_EXISTS = exports.NOT_PROPERTY_OWNER = exports.EMAIL_ALREADY_EXITS = exports.AUTH_FAILED = exports.PASSWORD_INCORRECT = exports.LOGIN_FAILED = exports.DELETE_OPERATION_FAILED = exports.USER_UPDATE_OPERATION_FAILED = exports.SAVE_OPERATION_FAILED = exports.NEW_PASSWORD_IS_INVALID = exports.OLD_PASSWORD_IS_INCORRECT = exports.NO_ADMIN = exports.NO_LANDLORD = exports.NO_TENANT = exports.NO_USER = exports.NOT_AUTHORIZED = exports.NOT_FOUND = exports.NOT_SPECIFIED = void 0;
 exports.NOT_SPECIFIED = {
     name: 'NOT SPECIFIED',
     code: 1000,
@@ -183,5 +183,17 @@ exports.FEATURING_EXPIRED = {
     code: 1024,
     message: 'This feature is expired, please start a new one',
     messageFr: 'French This feature is expired, please start a new one'
+};
+exports.CHAT_PARAM_INVALID = {
+    name: 'CHAT_PARAM_INVALID',
+    code: 1025,
+    message: 'Either the senderId is missing(or invalid) or receiverId is missing(or invalid)',
+    messageFr: 'French Either the senderId is missing(or invalid) or receiverId is missing(or invalid)'
+};
+exports.CHAT_MESSAGE_PARAM_INVALID = {
+    name: 'CHAT_MESSAGE_PARAM_INVALID',
+    code: 1025,
+    message: 'Missing or invalid params were provided for chatId, senderId or content',
+    messageFr: 'French issing or invalid params were provided for chatId, senderId or content'
 };
 //# sourceMappingURL=error.js.map
