@@ -6,10 +6,12 @@ export type Heartbeat = {
 }
 export interface ServerToClientEventHandles {
     'is_active': (data: Heartbeat) => void ;
+    'sent_message': (data: IChatMessage) => void ;
 }
 
 export interface ClientToServerEventHandlers {
     'sent_message': (data: IChatMessage, cb: (ack: number) => void) => void ;
+    'receive_message': (data: IChatMessage) => void ;
     'heartbeat' : (data: Heartbeat) => void ;
 }
 
