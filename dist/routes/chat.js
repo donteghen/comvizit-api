@@ -19,6 +19,7 @@ const error_1 = require("../constants/error");
 const logger_1 = require("../logs/logger");
 const mongoose_1 = require("mongoose");
 const date_query_setter_1 = require("../utils/date-query-setter");
+const declared_1 = require("../constants/declared");
 const ChatRouter = express_1.default.Router();
 // query helper function
 function setFilter(key, value) {
@@ -74,10 +75,16 @@ ChatRouter.get('/chats/id', auth_middleware_1.isLoggedIn, (req, res) => __awaite
         if (!req.params.id) {
             throw error_1.INVALID_REQUEST;
         }
-        const chat = yield chat_1.Chat.findOne({
-            _id: new mongoose_1.Types.ObjectId(req.params.id),
-            members: { $in: [req.user.id] },
-        });
+        // check if the user is an admin and if yes then query only by id, else make sure the user is a member of that chat
+        const chat = req.user.role === declared_1.constants.USER_ROLE.ADMIN ?
+            yield chat_1.Chat.findOne({
+                _id: new mongoose_1.Types.ObjectId(req.params.id)
+            })
+            :
+                yield chat_1.Chat.findOne({
+                    _id: new mongoose_1.Types.ObjectId(req.params.id),
+                    members: { $in: [req.user.id] },
+                });
         if (!chat) {
             throw error_1.NOT_FOUND;
         }
@@ -89,7 +96,7 @@ ChatRouter.get('/chats/id', auth_middleware_1.isLoggedIn, (req, res) => __awaite
     }
 }));
 /************************* Admin Restricted Endpoints *************************/
-// get all chats
+// get all chats by admin
 ChatRouter.get('/all-chats', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _g, _h;
     try {

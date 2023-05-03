@@ -5,6 +5,7 @@ import { CHAT_PARAM_INVALID, INVALID_REQUEST, NOT_FOUND } from "../constants/err
 import { logger } from "../logs/logger";
 import { Types } from "mongoose";
 import { setDateFilter } from "../utils/date-query-setter";
+import { constants } from "../constants/declared";
 
 const ChatRouter = express.Router()
 
@@ -61,7 +62,13 @@ ChatRouter.get('/chats/id', isLoggedIn, async (req: Request, res:Response) => {
         if (!req.params.id) {
             throw INVALID_REQUEST;
         }
-        const chat = await Chat.findOne({
+        // check if the user is an admin and if yes then query only by id, else make sure the user is a member of that chat
+        const chat = req.user.role === constants.USER_ROLE.ADMIN ?
+        await Chat.findOne({
+            _id: new Types.ObjectId(req.params.id)
+        })
+        :
+        await Chat.findOne({
             _id: new Types.ObjectId(req.params.id),
             members: { $in: [req.user.id] },
         });
@@ -77,7 +84,7 @@ ChatRouter.get('/chats/id', isLoggedIn, async (req: Request, res:Response) => {
 
 /************************* Admin Restricted Endpoints *************************/
 
-// get all chats
+// get all chats by admin
 ChatRouter.get('/all-chats', isLoggedIn, isAdmin, async (req: Request, res:Response) => {
     try {
         let filter: any = {}
