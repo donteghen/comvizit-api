@@ -67,3 +67,7 @@ ChatMessageRouter.get('/all-chat-messages', isLoggedIn, isAdmin, async (req: Req
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
+
+export {
+    ChatMessageRouter
+}

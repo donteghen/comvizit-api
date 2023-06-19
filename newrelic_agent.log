@@ -2902,3 +2902,586 @@
 {"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":70311,"time":"2023-05-03T04:05:53.462Z","msg":"Agent state changed from connected to started."}
 {"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":70311,"time":"2023-05-03T04:05:54.463Z","msg":"Starting initial 1000ms harvest."}
 {"v":0,"level":50,"name":"newrelic","hostname":"Donalds-Air","pid":70311,"time":"2023-05-03T04:40:56.515Z","msg":"Agent endpoint metric_data returned 503 status. Retaining data for next harvest.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":4789,"time":"2023-06-09T16:35:59.318Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":4789,"time":"2023-06-09T16:35:59.894Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":4789,"time":"2023-06-09T16:35:59.906Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":4789,"time":"2023-06-09T16:36:00.068Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":4789,"time":"2023-06-09T16:36:00.096Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":4789,"time":"2023-06-09T16:36:00.096Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":4789,"time":"2023-06-09T16:36:15.423Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":4789,"time":"2023-06-09T16:36:15.423Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BZyoTarAFHUQADZCg1D4WHtkg1VoAAgBAAAnIQEAABK1AgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":4789,"time":"2023-06-09T16:36:15.423Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":4789,"time":"2023-06-09T16:36:15.429Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":4789,"time":"2023-06-09T16:36:15.435Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":4789,"time":"2023-06-09T16:36:16.440Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":6716,"time":"2023-06-09T18:03:03.121Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":6716,"time":"2023-06-09T18:03:03.547Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":6716,"time":"2023-06-09T18:03:03.556Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":6716,"time":"2023-06-09T18:03:03.635Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":6716,"time":"2023-06-09T18:03:03.648Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":6716,"time":"2023-06-09T18:03:03.648Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":6716,"time":"2023-06-09T18:03:19.500Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":6716,"time":"2023-06-09T18:03:19.501Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BdR7bxKnGEWGADZCg1D4WHtkg2nMAAgBAAAnIQEAABo8AgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":6716,"time":"2023-06-09T18:03:19.501Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":6716,"time":"2023-06-09T18:03:19.505Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":6716,"time":"2023-06-09T18:03:19.511Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":6716,"time":"2023-06-09T18:03:20.543Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":7890,"time":"2023-06-09T18:40:19.422Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":7890,"time":"2023-06-09T18:40:19.671Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":7890,"time":"2023-06-09T18:40:19.679Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":7890,"time":"2023-06-09T18:40:20.024Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":7890,"time":"2023-06-09T18:40:20.056Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":7890,"time":"2023-06-09T18:40:20.056Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":7890,"time":"2023-06-09T18:40:28.246Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":7890,"time":"2023-06-09T18:40:28.247Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BZ1Z2n_Ik-jyADZCg1D4WHtkg3J4AAgBAAAnIQEAAB7SAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":7890,"time":"2023-06-09T18:40:28.247Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":7890,"time":"2023-06-09T18:40:28.252Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":7890,"time":"2023-06-09T18:40:28.257Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":7890,"time":"2023-06-09T18:40:29.259Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":53581,"time":"2023-06-16T03:49:25.192Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":53581,"time":"2023-06-16T03:49:25.573Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":53581,"time":"2023-06-16T03:49:25.582Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":53581,"time":"2023-06-16T03:49:25.659Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":53581,"time":"2023-06-16T03:49:25.682Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":53581,"time":"2023-06-16T03:49:25.682Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":53581,"time":"2023-06-16T03:49:32.995Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":53581,"time":"2023-06-16T03:49:32.996Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BX7tb4-a2LZDADZCg1D4WHtki9wkAAgBAAAnIQEAANFNAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":53581,"time":"2023-06-16T03:49:32.996Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":53581,"time":"2023-06-16T03:49:32.999Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":53581,"time":"2023-06-16T03:49:33.004Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":53581,"time":"2023-06-16T03:49:34.004Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-MacBook-Air.local","pid":3248,"time":"2023-06-16T07:51:00.158Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-MacBook-Air.local","pid":3248,"time":"2023-06-16T07:51:00.879Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-MacBook-Air.local","pid":3248,"time":"2023-06-16T07:51:00.907Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-MacBook-Air.local","pid":3248,"time":"2023-06-16T07:51:01.307Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-MacBook-Air.local","pid":3248,"time":"2023-06-16T07:51:01.421Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-MacBook-Air.local","pid":3248,"time":"2023-06-16T07:51:01.421Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-MacBook-Air.local","pid":3248,"time":"2023-06-16T07:51:20.444Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-MacBook-Air.local","pid":3248,"time":"2023-06-16T07:51:20.445Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BUSfxm2k-YBuADZCg1ASZz5kjBTcAAgBAAAnIQEAAAywAgRQEmsBAwAGOS4xMS4wABlEb25hbGRzLU1hY0Jvb2stQWlyLmxvY2FsAAhjb212aXppdA.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-MacBook-Air.local","pid":3248,"time":"2023-06-16T07:51:20.445Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-MacBook-Air.local","pid":3248,"time":"2023-06-16T07:51:20.453Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-MacBook-Air.local","pid":3248,"time":"2023-06-16T07:51:20.462Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-MacBook-Air.local","pid":3248,"time":"2023-06-16T07:51:21.467Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":19920,"time":"2023-06-17T08:52:08.885Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":19920,"time":"2023-06-17T08:52:09.227Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":19920,"time":"2023-06-17T08:52:09.235Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":19920,"time":"2023-06-17T08:52:09.326Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":19920,"time":"2023-06-17T08:52:09.340Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":19920,"time":"2023-06-17T08:52:09.340Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":19920,"time":"2023-06-17T08:52:17.975Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":19920,"time":"2023-06-17T08:52:17.975Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BUpkxWeEbWkXADZCg1D4WHtkjXSoAAgBAAAnIQEAAE3QAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":19920,"time":"2023-06-17T08:52:17.975Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":19920,"time":"2023-06-17T08:52:17.979Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":19920,"time":"2023-06-17T08:52:17.987Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":19920,"time":"2023-06-17T08:52:18.991Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":31750,"time":"2023-06-18T05:41:47.623Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":31750,"time":"2023-06-18T05:41:48.106Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":31750,"time":"2023-06-18T05:41:48.117Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":31750,"time":"2023-06-18T05:41:48.211Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":31750,"time":"2023-06-18T05:41:48.243Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":31750,"time":"2023-06-18T05:41:48.243Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":31750,"time":"2023-06-18T05:41:55.959Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":31750,"time":"2023-06-18T05:41:55.959Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BSZYPniwn5pSADZCg1D4WHtkjplkAAgBAAAnIQEAAHwGAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":31750,"time":"2023-06-18T05:41:55.959Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":31750,"time":"2023-06-18T05:41:55.964Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":31750,"time":"2023-06-18T05:41:55.969Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":31750,"time":"2023-06-18T05:41:56.973Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":31971,"time":"2023-06-18T05:45:40.102Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":31971,"time":"2023-06-18T05:45:40.365Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":31971,"time":"2023-06-18T05:45:40.374Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":31971,"time":"2023-06-18T05:45:40.458Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":31971,"time":"2023-06-18T05:45:40.469Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":31971,"time":"2023-06-18T05:45:40.469Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":31971,"time":"2023-06-18T05:45:47.965Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":31971,"time":"2023-06-18T05:45:47.965Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BcxJneXzHNUYADZCg1D4WHtkjppUAAgBAAAnIQEAAHzjAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":31971,"time":"2023-06-18T05:45:47.965Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":31971,"time":"2023-06-18T05:45:47.969Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":31971,"time":"2023-06-18T05:45:47.974Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":31971,"time":"2023-06-18T05:45:48.976Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32341,"time":"2023-06-18T05:53:00.987Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32341,"time":"2023-06-18T05:53:01.301Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32341,"time":"2023-06-18T05:53:01.312Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32341,"time":"2023-06-18T05:53:01.416Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32341,"time":"2023-06-18T05:53:01.428Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32341,"time":"2023-06-18T05:53:01.429Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32341,"time":"2023-06-18T05:53:10.148Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32341,"time":"2023-06-18T05:53:10.149Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BV3k6d3ofg8cADZCg1D4WHtkjpw0AAgBAAAnIQEAAH5VAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32341,"time":"2023-06-18T05:53:10.149Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32341,"time":"2023-06-18T05:53:10.154Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32341,"time":"2023-06-18T05:53:10.159Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32341,"time":"2023-06-18T05:53:11.160Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32457,"time":"2023-06-18T05:54:35.863Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32457,"time":"2023-06-18T05:54:36.228Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32457,"time":"2023-06-18T05:54:36.237Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32457,"time":"2023-06-18T05:54:36.394Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32457,"time":"2023-06-18T05:54:36.410Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32457,"time":"2023-06-18T05:54:36.411Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32457,"time":"2023-06-18T05:54:47.093Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32457,"time":"2023-06-18T05:54:47.093Z","msg":"Connected to collector.newrelic.com:443 with agent run ID Bce1VuiBrWxeADZCg1D4WHtkjpxwAAgBAAAnIQEAAH7JAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32457,"time":"2023-06-18T05:54:47.093Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32457,"time":"2023-06-18T05:54:47.096Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32457,"time":"2023-06-18T05:54:47.101Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32457,"time":"2023-06-18T05:54:48.106Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32549,"time":"2023-06-18T05:55:42.554Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32549,"time":"2023-06-18T05:55:42.770Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32549,"time":"2023-06-18T05:55:42.777Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32549,"time":"2023-06-18T05:55:42.861Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32549,"time":"2023-06-18T05:55:42.873Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32549,"time":"2023-06-18T05:55:42.873Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32549,"time":"2023-06-18T05:55:51.903Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32549,"time":"2023-06-18T05:55:51.904Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BZKD4hmfVCJkADZCg1D4WHtkjpysAAgBAAAnIQEAAH8lAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32549,"time":"2023-06-18T05:55:51.904Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32549,"time":"2023-06-18T05:55:51.906Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32549,"time":"2023-06-18T05:55:51.912Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32549,"time":"2023-06-18T05:55:52.916Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32762,"time":"2023-06-18T05:58:47.645Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32762,"time":"2023-06-18T05:58:47.940Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32762,"time":"2023-06-18T05:58:47.965Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32762,"time":"2023-06-18T05:58:48.114Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32762,"time":"2023-06-18T05:58:48.124Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32762,"time":"2023-06-18T05:58:48.124Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32762,"time":"2023-06-18T05:58:55.840Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32762,"time":"2023-06-18T05:58:55.841Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BdJjuizNrsLMADZCg1D4WHtkjp1gAAgBAAAnIQEAAH_6AgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32762,"time":"2023-06-18T05:58:55.841Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32762,"time":"2023-06-18T05:58:55.845Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32762,"time":"2023-06-18T05:58:55.849Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32762,"time":"2023-06-18T05:58:56.852Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32859,"time":"2023-06-18T05:59:50.646Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32859,"time":"2023-06-18T05:59:51.011Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32859,"time":"2023-06-18T05:59:51.018Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32859,"time":"2023-06-18T05:59:51.101Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32859,"time":"2023-06-18T05:59:51.113Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32859,"time":"2023-06-18T05:59:51.113Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32859,"time":"2023-06-18T06:00:00.230Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32859,"time":"2023-06-18T06:00:00.230Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BTL22v6cR-yGADZCg1D4WHtkjp3YAAgBAAAnIQEAAIBbAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32859,"time":"2023-06-18T06:00:00.230Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32859,"time":"2023-06-18T06:00:00.233Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32859,"time":"2023-06-18T06:00:00.237Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":32859,"time":"2023-06-18T06:00:01.242Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":33479,"time":"2023-06-18T06:16:19.796Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":33479,"time":"2023-06-18T06:16:20.048Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":33479,"time":"2023-06-18T06:16:20.055Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":33479,"time":"2023-06-18T06:16:20.145Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":33479,"time":"2023-06-18T06:16:20.161Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":33479,"time":"2023-06-18T06:16:20.161Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":33479,"time":"2023-06-18T06:16:28.736Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":33479,"time":"2023-06-18T06:16:28.737Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BUjoTNb0ldTWADZCg1D4WHtkjqGYAAgBAAAnIQEAAILHAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":33479,"time":"2023-06-18T06:16:28.737Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":33479,"time":"2023-06-18T06:16:28.741Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":33479,"time":"2023-06-18T06:16:28.747Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":33479,"time":"2023-06-18T06:16:29.749Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34149,"time":"2023-06-18T06:31:09.384Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34149,"time":"2023-06-18T06:31:09.606Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34149,"time":"2023-06-18T06:31:09.614Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34149,"time":"2023-06-18T06:31:09.698Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34149,"time":"2023-06-18T06:31:09.710Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34149,"time":"2023-06-18T06:31:09.710Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34233,"time":"2023-06-18T06:32:00.586Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34233,"time":"2023-06-18T06:32:01.133Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34233,"time":"2023-06-18T06:32:01.143Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34233,"time":"2023-06-18T06:32:01.396Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34233,"time":"2023-06-18T06:32:01.415Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34233,"time":"2023-06-18T06:32:01.415Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34233,"time":"2023-06-18T06:32:17.945Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34233,"time":"2023-06-18T06:32:17.945Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BYWUK2relBb9ADZCg1D4WHtkjqVYAAgBAAAnIQEAAIW5AgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34233,"time":"2023-06-18T06:32:17.945Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34233,"time":"2023-06-18T06:32:17.956Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34233,"time":"2023-06-18T06:32:17.960Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34233,"time":"2023-06-18T06:32:18.962Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34400,"time":"2023-06-18T06:34:23.112Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34400,"time":"2023-06-18T06:34:23.365Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34400,"time":"2023-06-18T06:34:23.373Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34400,"time":"2023-06-18T06:34:23.456Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34400,"time":"2023-06-18T06:34:23.466Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34400,"time":"2023-06-18T06:34:23.466Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34400,"time":"2023-06-18T06:34:40.867Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34400,"time":"2023-06-18T06:34:40.868Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BSnAMNu9CynXADZCg1D4WHtkjqXQAAgBAAAnIQEAAIZgAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34400,"time":"2023-06-18T06:34:40.868Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34400,"time":"2023-06-18T06:34:40.871Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34400,"time":"2023-06-18T06:34:40.876Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34400,"time":"2023-06-18T06:34:41.878Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34492,"time":"2023-06-18T06:35:37.558Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34492,"time":"2023-06-18T06:35:37.877Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34492,"time":"2023-06-18T06:35:37.889Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34492,"time":"2023-06-18T06:35:37.992Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34492,"time":"2023-06-18T06:35:38.003Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34492,"time":"2023-06-18T06:35:38.004Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34492,"time":"2023-06-18T06:35:47.695Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34492,"time":"2023-06-18T06:35:47.695Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BXLGjgbapkN5ADZCg1D4WHtkjqYMAAgBAAAnIQEAAIa8AgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34492,"time":"2023-06-18T06:35:47.696Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34492,"time":"2023-06-18T06:35:47.700Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34492,"time":"2023-06-18T06:35:47.705Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34492,"time":"2023-06-18T06:35:48.709Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34776,"time":"2023-06-18T06:40:08.288Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34776,"time":"2023-06-18T06:40:08.570Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34776,"time":"2023-06-18T06:40:08.581Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34776,"time":"2023-06-18T06:40:08.664Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34776,"time":"2023-06-18T06:40:08.679Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34776,"time":"2023-06-18T06:40:08.679Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34776,"time":"2023-06-18T06:40:19.209Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34776,"time":"2023-06-18T06:40:19.209Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BQK9Dvbhg--pADZCg1D4WHtkjqc4AAgBAAAnIQEAAIfYAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34776,"time":"2023-06-18T06:40:19.209Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34776,"time":"2023-06-18T06:40:19.213Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34776,"time":"2023-06-18T06:40:19.220Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34776,"time":"2023-06-18T06:40:20.225Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34886,"time":"2023-06-18T06:41:19.100Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34886,"time":"2023-06-18T06:41:19.353Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34886,"time":"2023-06-18T06:41:19.367Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34886,"time":"2023-06-18T06:41:19.486Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34886,"time":"2023-06-18T06:41:19.496Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34886,"time":"2023-06-18T06:41:19.496Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34886,"time":"2023-06-18T06:41:27.194Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34886,"time":"2023-06-18T06:41:27.195Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BcqDR7-PqJocADZCg1D4WHtkjqd0AAgBAAAnIQEAAIhGAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34886,"time":"2023-06-18T06:41:27.195Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34886,"time":"2023-06-18T06:41:27.198Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34886,"time":"2023-06-18T06:41:27.205Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":34886,"time":"2023-06-18T06:41:28.207Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":54417,"time":"2023-06-19T05:26:01.530Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":54417,"time":"2023-06-19T05:26:02.609Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":54417,"time":"2023-06-19T05:26:02.617Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":54417,"time":"2023-06-19T05:26:02.833Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":54417,"time":"2023-06-19T05:26:02.961Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":54417,"time":"2023-06-19T05:26:02.961Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":54417,"time":"2023-06-19T05:26:20.708Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":54417,"time":"2023-06-19T05:26:20.709Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BbYNCWbTRJFDADZCg1D4WHtkj-dgAAgBAAAnIQEAANSRAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":54417,"time":"2023-06-19T05:26:20.709Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":54417,"time":"2023-06-19T05:26:20.713Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":54417,"time":"2023-06-19T05:26:20.717Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":54417,"time":"2023-06-19T05:26:21.718Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":55170,"time":"2023-06-19T05:40:12.019Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":55170,"time":"2023-06-19T05:40:12.416Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":55170,"time":"2023-06-19T05:40:12.426Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":55170,"time":"2023-06-19T05:40:12.554Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":55170,"time":"2023-06-19T05:40:12.572Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":55170,"time":"2023-06-19T05:40:12.572Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":55170,"time":"2023-06-19T05:40:21.406Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":55170,"time":"2023-06-19T05:40:21.407Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BS6nahOOIRsBADZCg1D4WHtkj-qoAAgBAAAnIQEAANeCAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":55170,"time":"2023-06-19T05:40:21.407Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":55170,"time":"2023-06-19T05:40:21.411Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":55170,"time":"2023-06-19T05:40:21.417Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":55170,"time":"2023-06-19T05:40:22.421Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":56049,"time":"2023-06-19T05:58:36.374Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":56049,"time":"2023-06-19T05:58:36.637Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":56049,"time":"2023-06-19T05:58:36.649Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":56049,"time":"2023-06-19T05:58:36.762Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":56049,"time":"2023-06-19T05:58:36.776Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":56049,"time":"2023-06-19T05:58:36.776Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":56049,"time":"2023-06-19T05:58:45.393Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":56049,"time":"2023-06-19T05:58:45.394Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BTLW4yz2L2AAADZCg1D4WHtkj-7gAAgBAAAnIQEAANrxAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":56049,"time":"2023-06-19T05:58:45.394Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":56049,"time":"2023-06-19T05:58:45.397Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":56049,"time":"2023-06-19T05:58:45.401Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":56049,"time":"2023-06-19T05:58:46.406Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":40,"name":"newrelic","hostname":"Donalds-Air","pid":56049,"time":"2023-06-19T06:07:19.312Z","msg":"Merging 59 of 59 events into SpanEventAggregator for next harvest","component":"event_aggregator"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57135,"time":"2023-06-19T06:24:55.859Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57135,"time":"2023-06-19T06:24:56.272Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57135,"time":"2023-06-19T06:24:56.280Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57135,"time":"2023-06-19T06:24:56.494Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57135,"time":"2023-06-19T06:24:56.507Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57135,"time":"2023-06-19T06:24:56.507Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57135,"time":"2023-06-19T06:25:06.266Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57135,"time":"2023-06-19T06:25:06.267Z","msg":"Connected to collector.newrelic.com:443 with agent run ID Bff7eMOBixDaADZCg1D4WHtkj_U0AAgBAAAnIQEAAN8vAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57135,"time":"2023-06-19T06:25:06.267Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57135,"time":"2023-06-19T06:25:06.274Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57135,"time":"2023-06-19T06:25:06.278Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57135,"time":"2023-06-19T06:25:07.282Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57303,"time":"2023-06-19T06:27:49.421Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57303,"time":"2023-06-19T06:27:49.632Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57303,"time":"2023-06-19T06:27:49.640Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57303,"time":"2023-06-19T06:27:49.719Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57303,"time":"2023-06-19T06:27:49.732Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57303,"time":"2023-06-19T06:27:49.732Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57303,"time":"2023-06-19T06:27:57.456Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57303,"time":"2023-06-19T06:27:57.456Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BVb-9lmj5x2bADZCg1D4WHtkj_WsAAgBAAAnIQEAAN_XAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57303,"time":"2023-06-19T06:27:57.456Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57303,"time":"2023-06-19T06:27:57.459Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57303,"time":"2023-06-19T06:27:57.463Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57303,"time":"2023-06-19T06:27:58.468Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57490,"time":"2023-06-19T06:31:13.357Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57490,"time":"2023-06-19T06:31:13.674Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57490,"time":"2023-06-19T06:31:13.682Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57490,"time":"2023-06-19T06:31:13.771Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57490,"time":"2023-06-19T06:31:13.786Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57490,"time":"2023-06-19T06:31:13.786Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57490,"time":"2023-06-19T06:31:22.714Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57490,"time":"2023-06-19T06:31:22.715Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BYh-CE2caVLjADZCg1D4WHtkj_acAAgBAAAnIQEAAOCSAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57490,"time":"2023-06-19T06:31:22.716Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57490,"time":"2023-06-19T06:31:22.720Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57490,"time":"2023-06-19T06:31:22.749Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":57490,"time":"2023-06-19T06:31:23.749Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":58595,"time":"2023-06-19T06:54:00.829Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":58595,"time":"2023-06-19T06:54:01.449Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":58595,"time":"2023-06-19T06:54:01.457Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":58595,"time":"2023-06-19T06:54:01.890Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":58595,"time":"2023-06-19T06:54:01.903Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":58595,"time":"2023-06-19T06:54:01.903Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":58595,"time":"2023-06-19T06:54:16.366Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":58595,"time":"2023-06-19T06:54:16.366Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BZrf1DuDTO3EADZCg1D4WHtkj_wAAAgBAAAnIQEAAOTjAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":58595,"time":"2023-06-19T06:54:16.366Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":58595,"time":"2023-06-19T06:54:16.375Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":58595,"time":"2023-06-19T06:54:16.383Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":58595,"time":"2023-06-19T06:54:17.386Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":58904,"time":"2023-06-19T07:00:16.961Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":58904,"time":"2023-06-19T07:00:17.352Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":58904,"time":"2023-06-19T07:00:17.360Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":58904,"time":"2023-06-19T07:00:17.486Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":58904,"time":"2023-06-19T07:00:17.501Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":58904,"time":"2023-06-19T07:00:17.502Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":58904,"time":"2023-06-19T07:00:30.940Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":58904,"time":"2023-06-19T07:00:30.941Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BYrxsIDFeyhXADZCg1D4WHtkj_1oAAgBAAAnIQEAAOYYAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":58904,"time":"2023-06-19T07:00:30.941Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":58904,"time":"2023-06-19T07:00:30.946Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":58904,"time":"2023-06-19T07:00:30.951Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":58904,"time":"2023-06-19T07:00:31.957Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59106,"time":"2023-06-19T07:04:37.828Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59106,"time":"2023-06-19T07:04:38.168Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59106,"time":"2023-06-19T07:04:38.176Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59106,"time":"2023-06-19T07:04:38.293Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59106,"time":"2023-06-19T07:04:38.335Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59106,"time":"2023-06-19T07:04:38.335Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59106,"time":"2023-06-19T07:04:47.709Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59106,"time":"2023-06-19T07:04:47.709Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BZLnNsKHixGPADZCg1D4WHtkj_5YAAgBAAAnIQEAAObiAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59106,"time":"2023-06-19T07:04:47.710Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59106,"time":"2023-06-19T07:04:47.712Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59106,"time":"2023-06-19T07:04:47.716Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59106,"time":"2023-06-19T07:04:48.718Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59373,"time":"2023-06-19T07:09:14.981Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59373,"time":"2023-06-19T07:09:15.256Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59373,"time":"2023-06-19T07:09:15.265Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59373,"time":"2023-06-19T07:09:15.392Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59373,"time":"2023-06-19T07:09:15.407Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59373,"time":"2023-06-19T07:09:15.407Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59373,"time":"2023-06-19T07:09:23.339Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59373,"time":"2023-06-19T07:09:23.340Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BbnAR5Ha8VRKADZCg0_HHsdkj_-EAAgBAAAnIQEAAOftAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59373,"time":"2023-06-19T07:09:23.340Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59373,"time":"2023-06-19T07:09:23.343Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59373,"time":"2023-06-19T07:09:23.348Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59373,"time":"2023-06-19T07:09:24.353Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59735,"time":"2023-06-19T07:14:24.789Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59735,"time":"2023-06-19T07:14:25.393Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59735,"time":"2023-06-19T07:14:25.404Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59735,"time":"2023-06-19T07:14:25.491Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59735,"time":"2023-06-19T07:14:25.503Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59735,"time":"2023-06-19T07:14:25.503Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59735,"time":"2023-06-19T07:14:35.883Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59735,"time":"2023-06-19T07:14:35.883Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BQLuBtC96xhQADZCg0_HHsdkkACwAAgBAAAnIQEAAOlXAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59735,"time":"2023-06-19T07:14:35.883Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59735,"time":"2023-06-19T07:14:35.892Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59735,"time":"2023-06-19T07:14:35.897Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59735,"time":"2023-06-19T07:14:36.901Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59831,"time":"2023-06-19T07:15:35.111Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59831,"time":"2023-06-19T07:15:35.499Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59831,"time":"2023-06-19T07:15:35.507Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59831,"time":"2023-06-19T07:15:35.609Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59831,"time":"2023-06-19T07:15:35.619Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59831,"time":"2023-06-19T07:15:35.619Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59831,"time":"2023-06-19T07:15:50.959Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59831,"time":"2023-06-19T07:15:50.959Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BYxDtr3uoBEOADZCg0_HHsdkkADsAAgBAAAnIQEAAOm3AgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59831,"time":"2023-06-19T07:15:50.959Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59831,"time":"2023-06-19T07:15:50.963Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59831,"time":"2023-06-19T07:15:50.968Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59831,"time":"2023-06-19T07:15:51.972Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59981,"time":"2023-06-19T07:18:41.132Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59981,"time":"2023-06-19T07:18:41.547Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59981,"time":"2023-06-19T07:18:41.555Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59981,"time":"2023-06-19T07:18:41.695Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59981,"time":"2023-06-19T07:18:41.704Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59981,"time":"2023-06-19T07:18:41.705Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59981,"time":"2023-06-19T07:19:01.118Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59981,"time":"2023-06-19T07:19:01.119Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BQVU9Cih0vgHADZCg0_HHsdkkAHcAAgBAAAnIQEAAOpNAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59981,"time":"2023-06-19T07:19:01.119Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59981,"time":"2023-06-19T07:19:01.123Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59981,"time":"2023-06-19T07:19:01.129Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":59981,"time":"2023-06-19T07:19:02.130Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":60128,"time":"2023-06-19T07:21:58.320Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":60128,"time":"2023-06-19T07:21:58.579Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":60128,"time":"2023-06-19T07:21:58.588Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":60128,"time":"2023-06-19T07:21:58.678Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":60128,"time":"2023-06-19T07:21:58.688Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":60128,"time":"2023-06-19T07:21:58.689Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":60128,"time":"2023-06-19T07:22:14.694Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":60128,"time":"2023-06-19T07:22:14.696Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BZ0GP23gZdB2ADZCg0_HHsdkkAKQAAgBAAAnIQEAAOrgAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":60128,"time":"2023-06-19T07:22:14.697Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":60128,"time":"2023-06-19T07:22:14.700Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":60128,"time":"2023-06-19T07:22:14.710Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":60128,"time":"2023-06-19T07:22:15.714Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":60394,"time":"2023-06-19T07:26:47.820Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":60394,"time":"2023-06-19T07:26:48.062Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":60394,"time":"2023-06-19T07:26:48.069Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":60394,"time":"2023-06-19T07:26:48.144Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":60394,"time":"2023-06-19T07:26:48.153Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":60394,"time":"2023-06-19T07:26:48.154Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":60394,"time":"2023-06-19T07:26:59.583Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":60394,"time":"2023-06-19T07:26:59.583Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BdqIdJyHg0uDADZCg0_HHsdkkAOAAAgBAAAnIQEAAOvqAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":60394,"time":"2023-06-19T07:26:59.583Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":60394,"time":"2023-06-19T07:26:59.587Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":60394,"time":"2023-06-19T07:26:59.592Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":60394,"time":"2023-06-19T07:27:00.595Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":61624,"time":"2023-06-19T07:42:06.738Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":61624,"time":"2023-06-19T07:42:06.982Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":61624,"time":"2023-06-19T07:42:06.993Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":61624,"time":"2023-06-19T07:42:07.087Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":61624,"time":"2023-06-19T07:42:07.100Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":61624,"time":"2023-06-19T07:42:07.100Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":61624,"time":"2023-06-19T07:42:16.371Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":61624,"time":"2023-06-19T07:42:16.372Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BUsuSMuFs7wbADZCg0_HHsdkkAdAAAgBAAAnIQEAAPC4AgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":61624,"time":"2023-06-19T07:42:16.372Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":61624,"time":"2023-06-19T07:42:16.375Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":61624,"time":"2023-06-19T07:42:16.380Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":61624,"time":"2023-06-19T07:42:17.382Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":61890,"time":"2023-06-19T07:46:24.675Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":61890,"time":"2023-06-19T07:46:24.955Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":61890,"time":"2023-06-19T07:46:24.963Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":61890,"time":"2023-06-19T07:46:25.084Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":61890,"time":"2023-06-19T07:46:25.100Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":61890,"time":"2023-06-19T07:46:25.100Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":61890,"time":"2023-06-19T07:46:32.455Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":61890,"time":"2023-06-19T07:46:32.455Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BVZaK4zzZmg7ADZCg0_HHsdkkAgwAAgBAAAnIQEAAPHCAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":61890,"time":"2023-06-19T07:46:32.455Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":61890,"time":"2023-06-19T07:46:32.467Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":61890,"time":"2023-06-19T07:46:32.474Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":61890,"time":"2023-06-19T07:46:33.476Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62007,"time":"2023-06-19T07:48:11.060Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62007,"time":"2023-06-19T07:48:11.442Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62007,"time":"2023-06-19T07:48:11.454Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62007,"time":"2023-06-19T07:48:11.652Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62007,"time":"2023-06-19T07:48:11.662Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62007,"time":"2023-06-19T07:48:11.662Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62007,"time":"2023-06-19T07:48:21.843Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62007,"time":"2023-06-19T07:48:21.844Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BVgOCAfgEAdZADZCg0_HHsdkkAioAAgBAAAnIQEAAPI3AgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62007,"time":"2023-06-19T07:48:21.844Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62007,"time":"2023-06-19T07:48:21.847Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62007,"time":"2023-06-19T07:48:21.852Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62007,"time":"2023-06-19T07:48:22.857Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62096,"time":"2023-06-19T07:49:39.943Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62096,"time":"2023-06-19T07:49:40.192Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62096,"time":"2023-06-19T07:49:40.235Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62096,"time":"2023-06-19T07:49:40.360Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62096,"time":"2023-06-19T07:49:40.370Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62096,"time":"2023-06-19T07:49:40.370Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62096,"time":"2023-06-19T07:49:49.491Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62096,"time":"2023-06-19T07:49:49.491Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BYJrLCTtvkO4ADZCg0_HHsdkkAjkAAgBAAAnIQEAAPKQAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62096,"time":"2023-06-19T07:49:49.491Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62096,"time":"2023-06-19T07:49:49.494Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62096,"time":"2023-06-19T07:49:49.498Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62096,"time":"2023-06-19T07:49:50.497Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62252,"time":"2023-06-19T07:53:11.733Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62252,"time":"2023-06-19T07:53:12.172Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62252,"time":"2023-06-19T07:53:12.181Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62252,"time":"2023-06-19T07:53:12.446Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62252,"time":"2023-06-19T07:53:12.491Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62252,"time":"2023-06-19T07:53:12.491Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62252,"time":"2023-06-19T07:53:21.054Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62252,"time":"2023-06-19T07:53:21.055Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BdkNCerko6dcADZCg0_HHsdkkAnUAAgBAAAnIQEAAPMsAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62252,"time":"2023-06-19T07:53:21.055Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62252,"time":"2023-06-19T07:53:21.059Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62252,"time":"2023-06-19T07:53:21.065Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62252,"time":"2023-06-19T07:53:22.066Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62533,"time":"2023-06-19T07:57:06.812Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62533,"time":"2023-06-19T07:57:07.274Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62533,"time":"2023-06-19T07:57:07.281Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62533,"time":"2023-06-19T07:57:07.485Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62533,"time":"2023-06-19T07:57:07.500Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62533,"time":"2023-06-19T07:57:07.500Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62533,"time":"2023-06-19T07:57:18.142Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62533,"time":"2023-06-19T07:57:18.142Z","msg":"Connected to collector.newrelic.com:443 with agent run ID Bb7CdBfN6mfGADZCg0_HHsdkkArEAAgBAAAnIQEAAPRFAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62533,"time":"2023-06-19T07:57:18.142Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62533,"time":"2023-06-19T07:57:18.145Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62533,"time":"2023-06-19T07:57:18.149Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62533,"time":"2023-06-19T07:57:19.153Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62768,"time":"2023-06-19T08:00:38.810Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62768,"time":"2023-06-19T08:00:39.037Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62768,"time":"2023-06-19T08:00:39.049Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62768,"time":"2023-06-19T08:00:39.180Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62768,"time":"2023-06-19T08:00:39.194Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62768,"time":"2023-06-19T08:00:39.194Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62768,"time":"2023-06-19T08:00:46.046Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62768,"time":"2023-06-19T08:00:46.046Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BdPG4u7_u72xADZCg0_HHsdkkAt4AAgBAAAnIQEAAPUwAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62768,"time":"2023-06-19T08:00:46.046Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62768,"time":"2023-06-19T08:00:46.049Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62768,"time":"2023-06-19T08:00:46.053Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":62768,"time":"2023-06-19T08:00:47.054Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63099,"time":"2023-06-19T08:05:55.662Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63099,"time":"2023-06-19T08:05:55.884Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63099,"time":"2023-06-19T08:05:55.892Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63099,"time":"2023-06-19T08:05:55.973Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63099,"time":"2023-06-19T08:05:55.989Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63099,"time":"2023-06-19T08:05:55.990Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63099,"time":"2023-06-19T08:06:03.007Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63099,"time":"2023-06-19T08:06:03.008Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BdLo7sKMKTukADZCg0_HHsdkkAzgAAgBAAAnIQEAAPZ7AgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63099,"time":"2023-06-19T08:06:03.008Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63099,"time":"2023-06-19T08:06:03.012Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63099,"time":"2023-06-19T08:06:03.017Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63099,"time":"2023-06-19T08:06:04.019Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63319,"time":"2023-06-19T08:08:17.242Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63319,"time":"2023-06-19T08:08:17.487Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63319,"time":"2023-06-19T08:08:17.496Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63319,"time":"2023-06-19T08:08:17.639Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63319,"time":"2023-06-19T08:08:17.654Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63319,"time":"2023-06-19T08:08:17.654Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63319,"time":"2023-06-19T08:08:24.806Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63319,"time":"2023-06-19T08:08:24.807Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BfgFkl6X3A3aADZCg0_HHsdkkA1YAAgBAAAnIQEAAPdXAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63319,"time":"2023-06-19T08:08:24.807Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63319,"time":"2023-06-19T08:08:24.811Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63319,"time":"2023-06-19T08:08:24.816Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63319,"time":"2023-06-19T08:08:25.819Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63472,"time":"2023-06-19T08:10:00.124Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63472,"time":"2023-06-19T08:10:00.456Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63472,"time":"2023-06-19T08:10:00.464Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63472,"time":"2023-06-19T08:10:00.546Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63472,"time":"2023-06-19T08:10:00.556Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63472,"time":"2023-06-19T08:10:00.556Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63472,"time":"2023-06-19T08:10:07.714Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63472,"time":"2023-06-19T08:10:07.715Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BfRtoSuCuSxSADZCg0_HHsdkkA3QAAgBAAAnIQEAAPfwAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63472,"time":"2023-06-19T08:10:07.715Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63472,"time":"2023-06-19T08:10:07.717Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63472,"time":"2023-06-19T08:10:07.721Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63472,"time":"2023-06-19T08:10:08.726Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63760,"time":"2023-06-19T08:14:05.133Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63760,"time":"2023-06-19T08:14:05.515Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63760,"time":"2023-06-19T08:14:05.525Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63760,"time":"2023-06-19T08:14:05.624Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63760,"time":"2023-06-19T08:14:05.633Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63760,"time":"2023-06-19T08:14:05.634Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63760,"time":"2023-06-19T08:14:15.314Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63760,"time":"2023-06-19T08:14:15.315Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BWiWTDj3elt9ADZCg0_HHsdkkA7AAAgBAAAnIQEAAPkQAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63760,"time":"2023-06-19T08:14:15.315Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63760,"time":"2023-06-19T08:14:15.320Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63760,"time":"2023-06-19T08:14:15.326Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63760,"time":"2023-06-19T08:14:16.335Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63887,"time":"2023-06-19T08:16:11.301Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63887,"time":"2023-06-19T08:16:11.624Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63887,"time":"2023-06-19T08:16:11.633Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63887,"time":"2023-06-19T08:16:11.719Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63887,"time":"2023-06-19T08:16:11.730Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63887,"time":"2023-06-19T08:16:11.731Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63887,"time":"2023-06-19T08:16:20.465Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63887,"time":"2023-06-19T08:16:20.466Z","msg":"Connected to collector.newrelic.com:443 with agent run ID BaTSAEjvq8aNADZCg0_HHsdkkA84AAgBAAAnIQEAAPmPAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63887,"time":"2023-06-19T08:16:20.466Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63887,"time":"2023-06-19T08:16:20.471Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63887,"time":"2023-06-19T08:16:20.475Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":63887,"time":"2023-06-19T08:16:21.476Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":64098,"time":"2023-06-19T08:19:55.899Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":64098,"time":"2023-06-19T08:19:56.526Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":64098,"time":"2023-06-19T08:19:56.538Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":64098,"time":"2023-06-19T08:19:56.656Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":64098,"time":"2023-06-19T08:19:56.666Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":64098,"time":"2023-06-19T08:19:56.667Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":64098,"time":"2023-06-19T08:20:06.078Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":64098,"time":"2023-06-19T08:20:06.079Z","msg":"Connected to collector.newrelic.com:443 with agent run ID Bf1pZBPOrI59ADZCg0_HHsdkkBAoAAgBAAAnIQEAAPpiAgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":64098,"time":"2023-06-19T08:20:06.079Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":64098,"time":"2023-06-19T08:20:06.083Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":64098,"time":"2023-06-19T08:20:06.090Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":64098,"time":"2023-06-19T08:20:07.091Z","msg":"Starting initial 1000ms harvest."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":64189,"time":"2023-06-19T08:21:17.855Z","msg":"Using New Relic for Node.js. Agent version: 9.11.0; Node version: v14.17.0."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":64189,"time":"2023-06-19T08:21:18.092Z","msg":"Using LegacyContextManager"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":64189,"time":"2023-06-19T08:21:18.101Z","msg":"Adding destroy hook to clean up unresolved promises.","component":"async_hooks"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":64189,"time":"2023-06-19T08:21:18.216Z","msg":"Agent state changed from stopped to starting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":64189,"time":"2023-06-19T08:21:18.226Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":64189,"time":"2023-06-19T08:21:18.226Z","msg":"Agent state changed from starting to connecting."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":64189,"time":"2023-06-19T08:21:28.913Z","msg":"Agent state changed from connecting to connected."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":64189,"time":"2023-06-19T08:21:28.913Z","msg":"Connected to collector.newrelic.com:443 with agent run ID Be5uTgTsWKeAADZCg0_HHsdkkBBkAAgBAAAnIQEAAPq9AgRQEmsBAwAGOS4xMS4wAAtEb25hbGRzLUFpcgAIY29tdml6aXQ.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":64189,"time":"2023-06-19T08:21:28.913Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/3555971/applications/1343384321","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":64189,"time":"2023-06-19T08:21:28.917Z","msg":"Valid event_harvest_config received. Updating harvest cycles. {\"report_period_ms\":5000,\"harvest_limits\":{\"error_event_data\":8,\"log_event_data\":833,\"analytic_event_data\":833,\"custom_event_data\":250}}"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":64189,"time":"2023-06-19T08:21:28.922Z","msg":"Agent state changed from connected to started."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Donalds-Air","pid":64189,"time":"2023-06-19T08:21:29.926Z","msg":"Starting initial 1000ms harvest."}

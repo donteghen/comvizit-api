@@ -105,3 +105,7 @@ ChatRouter.get('/all-chats', isLoggedIn, isAdmin, async (req: Request, res:Respo
         res.status(400).send({ok:false, error: error.message, code: error.code??1000})
     }
 })
+
+export {
+    ChatRouter
+}

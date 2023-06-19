@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ChatMessageRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const chatmessage_1 = require("../models/chatmessage");
 const auth_middleware_1 = require("../middleware/auth-middleware");
@@ -19,6 +20,7 @@ const error_1 = require("../constants/error");
 const logger_1 = require("../logs/logger");
 const date_query_setter_1 = require("../utils/date-query-setter");
 const ChatMessageRouter = express_1.default.Router();
+exports.ChatMessageRouter = ChatMessageRouter;
 // query helper function
 function setFilter(key, value) {
     switch (key) {

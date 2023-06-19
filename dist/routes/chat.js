@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ChatRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const chat_1 = require("../models/chat");
 const auth_middleware_1 = require("../middleware/auth-middleware");
@@ -21,6 +22,7 @@ const mongoose_1 = require("mongoose");
 const date_query_setter_1 = require("../utils/date-query-setter");
 const declared_1 = require("../constants/declared");
 const ChatRouter = express_1.default.Router();
+exports.ChatRouter = ChatRouter;
 // query helper function
 function setFilter(key, value) {
     switch (key) {

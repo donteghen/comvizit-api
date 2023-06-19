@@ -1,25 +1,23 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.io = void 0;
 const server_1 = require("./server");
+Object.defineProperty(exports, "io", { enumerable: true, get: function () { return server_1.io; } });
+const heartBeat_1 = require("./listeners/heartBeat");
+const incomingMessage_1 = require("./listeners/incomingMessage");
 server_1.io.on("connection", (socket) => {
+    console.log(`new connection`, socket);
+    socket.emit('welcome', 'hi there & welcome');
     // handle heartbeat event handler
-    socket.on('heartbeat', (data) => {
-        // do stuff
-        // emit the active status of the sender
-        server_1.io.emit('is_active', (data));
+    socket.on('heartbeat', function (data) {
+        (0, heartBeat_1.onHeartBeat)(socket, data);
     });
-    // sent_message event handler
-    socket.on('sent_message', (data, cb) => {
-        console.log("New message arrived : line 21", data);
-        server_1.io.emit('sent_message', data);
-        cb({
-            ok: true
-        });
-    });
+    // recieve an outgoing_message event handler
+    socket.on('outgoing_message', incomingMessage_1.onOutgoingMessage);
     // disconnection event handler
-    socket.on('disconnect', () => {
+    socket.on('disconnect', (reason) => {
         // add logger
-        console.log('Server Socket disconnected');
+        console.log(`socket ${socket.id} disconnected due to ${reason}`);
     });
 });
 //# sourceMappingURL=socketio.js.map
