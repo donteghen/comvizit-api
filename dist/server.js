@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.server = void 0;
+exports.io = exports.server = void 0;
 const express_1 = __importDefault(require("express"));
 const http_1 = __importDefault(require("http"));
 const logger_1 = require("./logs/logger");
@@ -45,7 +45,7 @@ const chatmessage_1 = require("./routes/chatmessage");
 const log_1 = require("./routes/log");
 const cron_1 = __importDefault(require("./services/cron"));
 const heartBeat_1 = require("./listeners/heartBeat");
-const incomingMessage_1 = require("./listeners/incomingMessage");
+const outgoingMessage_1 = require("./listeners/outgoingMessage");
 // global settings
 dotenv_1.default.config();
 (0, auth_middleware_1.passportConfig)();
@@ -70,6 +70,7 @@ const io = new socket_io_1.Server(server, {
         credentials: true
     }
 });
+exports.io = io;
 app.use((0, express_session_1.default)({
     store: new RedisStore({ client: redisClient }),
     secret: SESSION_SECRET,
@@ -124,7 +125,7 @@ io.on("connection", (socket) => {
         (0, heartBeat_1.onHeartBeat)(socket, data);
     });
     // recieve an outgoing_message event handler
-    socket.on('outgoing_message', incomingMessage_1.onOutgoingMessage);
+    socket.on('outgoing_message', outgoingMessage_1.onOutgoingMessage);
     // disconnection event handler
     socket.on('disconnect', (reason) => {
         // add logger

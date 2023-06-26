@@ -37,7 +37,7 @@ import { Chat } from './models/chat';
 import { ChatMessage } from './models/chatmessage';
 import { User } from './models/user';
 import {onHeartBeat} from './listeners/heartBeat';
-import {onOutgoingMessage} from './listeners/incomingMessage';
+import {onOutgoingMessage} from './listeners/outgoingMessage';
 
 // global settings
 dotenv.config() ;
@@ -134,5 +134,5 @@ io.on("connection", (socket) => {
 });
 
 export {
-  server
+  server, io
 }
