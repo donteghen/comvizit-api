@@ -2,13 +2,12 @@ import { IChatMessage } from "./interfaces";
 import { Socket } from "socket.io";
 
 export type Heartbeat = {
-    senderId: string,
-    chatId: string
+    senderId: string
 }
 export interface ServerToClientEventHandles {
-    'is_active': (socket: Socket, data: Heartbeat) => void ;
-    'outgoing_message': (socket: Socket, data: IChatMessage, ) => void ;
-    'incoming_message': (socket: Socket, data: IChatMessage) => void ;
+    'is_active': (data: Heartbeat) => void ;
+    'outgoing_message': (data: IChatMessage, ) => void ;
+    'incoming_message': (data: IChatMessage) => void ;
     'disconnect': () => void;
 }
 

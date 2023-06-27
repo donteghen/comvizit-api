@@ -31,13 +31,14 @@ import { LogRouter } from './routes/log' ;
 import cronScheduler from './services/cron' ;
 
 // socket and chat related dependecies
-import { IChatMessage } from "./models/interfaces";
+import { IChatMessage, IChat } from "./models/interfaces";
 import { Heartbeat } from './models/socket-interfaces';
 import { Chat } from './models/chat';
 import { ChatMessage } from './models/chatmessage';
 import { User } from './models/user';
 import {onHeartBeat} from './listeners/heartBeat';
 import {onOutgoingMessage} from './listeners/outgoingMessage';
+import { Types } from 'mongoose';
 
 // global settings
 dotenv.config() ;
@@ -61,9 +62,15 @@ const io = new Server(server, {
     origin: "http://localhost:3000",
     allowedHeaders: ['Content-Type', 'Origin', 'Authorization'],
     credentials:true
-  }
+  },
 });
-
+io.use(async function (socket, next) {
+  const userExists = socket.handshake?.auth.userId ? await User.findById(new Types.ObjectId(socket.handshake.auth.userId)) : null ;
+  if (!userExists || !userExists.approved || !userExists.isVerified) {
+    next(new Error('Illegal connection. Connection unauthenticated!'))
+  }
+  next();
+})
 app.use(
  session({
    store: new RedisStore({ client: redisClient }),
@@ -110,21 +117,28 @@ cronScheduler();
 app.get('/api/', async (req: Request, res: Response) => {
     try {
       logger.info('Someone landed at the route /api/');
-        res.send('Wlecome to the comvizit api');
+        res.send('Welcome to the comvizit api');
     } catch (error) {
         res.status(400).send(error.message);
     }
 })
 
-io.on("connection", (socket) => {
-  socket.emit('welcome', 'hi there & welcome')
+io.on("connection", async (socket) => {
+  // get all chatId linked to this socket user and add the socket to all rooms
+  const socketUserRooms : (IChat & {_id: Types.ObjectId})[] | null = await Chat.find({ members: { $in: socket.handshake.auth.userId } });
+  if (socketUserRooms.length < 1) {
+    socket.disconnect(true);
+  }
+  else {
+    socketUserRooms.forEach(room => {
+      socket.join(room._id.toString());
+    })
+  }
   // handle heartbeat event handler
-  socket.on('heartbeat', function (data: Heartbeat) {
-      onHeartBeat(socket, data)
-  })
+  socket.on('heartbeat', (data) => onHeartBeat(socket, data));
 
   // recieve an outgoing_message event handler
-  socket.on('outgoing_message', onOutgoingMessage)
+  socket.on('outgoing_message', onOutgoingMessage);
 
   // disconnection event handler
   socket.on('disconnect', (reason) => {
