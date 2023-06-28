@@ -33,8 +33,8 @@ function setFilter(key, value) {
     }
 }
 // add a message
-ChatMessageRouter.post('/chat-messages', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+ChatMessageRouter.post('/api/chat-messages', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
         const { chatId, senderId, content } = req.body;
         if (!chatId || !senderId || !content) {
@@ -54,13 +54,13 @@ ChatMessageRouter.post('/chat-messages', auth_middleware_1.isLoggedIn, (req, res
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_b = error.code) !== null && _b !== void 0 ? _b : 1000 });
+        res.status(400).send({ ok: false, error });
     }
 }));
 /**************************************** Admin Restricted Endpoints */
 // get all messages in the admin
-ChatMessageRouter.get('/all-chat-messages', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c, _d;
+ChatMessageRouter.get('/api/all-chat-messages', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _b;
     try {
         let filter = {};
         const queries = Object.keys(req.query);
@@ -78,8 +78,8 @@ ChatMessageRouter.get('/all-chat-messages', auth_middleware_1.isLoggedIn, auth_m
         res.send({ ok: true, data: chatMessages });
     }
     catch (error) {
-        logger_1.logger.error(`An error occured while getting the chatmessages in the admin due to : ${(_c = error === null || error === void 0 ? void 0 : error.message) !== null && _c !== void 0 ? _c : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_d = error.code) !== null && _d !== void 0 ? _d : 1000 });
+        logger_1.logger.error(`An error occured while getting the chatmessages in the admin due to : ${(_b = error === null || error === void 0 ? void 0 : error.message) !== null && _b !== void 0 ? _b : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 //# sourceMappingURL=chatmessage.js.map

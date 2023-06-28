@@ -43,7 +43,7 @@ FavoriteRouter.get('/api/fav-property-list', isLoggedIn, isTenant, async (req: R
         res.send({ok:true, data: favProperties})
     } catch (error) {
         logger.error(`An Error while querying favorite list due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -83,7 +83,7 @@ FavoriteRouter.patch('/api/fav-property-list/add-favorite', isLoggedIn, isTenant
         res.send({ok:true})
     } catch (error) {
         logger.error(`An Error occured while adding a favorite property to fav collection due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -111,7 +111,7 @@ FavoriteRouter.patch('/api/fav-property-list/remove-favorite', isLoggedIn, isTen
         res.send({ok:true, data: updatedUser})
     } catch (error) {
         logger.error(`An Error occured while removing a favorite property from fav collection due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -131,7 +131,7 @@ FavoriteRouter.patch('/api/fav-property-list/clear-favorite-list', isLoggedIn, i
         res.send({ok:true, data: updatedUser})
     } catch (error) {
         logger.error(`An Error occured while clearing a fav collection due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 

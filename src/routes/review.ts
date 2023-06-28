@@ -61,7 +61,7 @@ ReviewRouter.post('/api/reviews/create', isLoggedIn, async (req: Request, res: R
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -86,7 +86,7 @@ ReviewRouter.post('/api/reviews-rating-count', async (req: Request, res: Respons
         res.send({ok: true, data: {averageRating}, reviews})
     } catch (error) {
         logger.error(`An Error occured while fetching  review count for the review of type: ${req.body.type}  with refId: ${req.body.refId} due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -108,7 +108,7 @@ ReviewRouter.get('/api/reviews', async (req: Request, res: Response) => {
         res.send({ok: true, data: reviews})
     } catch (error) {
         logger.error(`An Error occured while querying all reviews due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -122,7 +122,7 @@ ReviewRouter.get('/api/reviews/:id',  async (req: Request, res: Response) => {
         res.send({ok: true, data: review})
     } catch (error) {
         logger.error(`An Error occured while querying the details of the review with id: ${req.params.id} due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -154,7 +154,7 @@ ReviewRouter.patch('/api/reviews/:id/status-update', isLoggedIn, isAdmin, async 
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
-        res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -168,7 +168,7 @@ ReviewRouter.delete('/api/reviews/:id/delete', isLoggedIn, isAdmin, async (req: 
         res.send({ok: true})
     } catch (error) {
         logger.error(`An Error occured while deleting the review with id: ${req.params.id} due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 

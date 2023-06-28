@@ -22,10 +22,15 @@ function setFilter(key:string, value:any): any {
 }
 
 // create a chat
-ChatRouter.post('/chats', isLoggedIn, async (req: Request, res:Response) => {
+ChatRouter.post('/api/chats', isLoggedIn, async (req: Request, res:Response) => {
     try {
         if (!req.body.senderId || !req.body.receiverId) {
             throw CHAT_PARAM_INVALID
+        }
+        // check if chat already exists between the tenant and landlord
+        const existingChat = await Chat.findOne({members: { $all: [req.body.senderId, req.body.receiverId] }});
+        if (existingChat) {
+            return res.send({ok: true, data: existingChat});
         }
         const newChat = new Chat({
             members: [req.body.senderId, req.body.receiverId]
@@ -38,12 +43,12 @@ ChatRouter.post('/chats', isLoggedIn, async (req: Request, res:Response) => {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
   })
 
 // get all chat by a user
-ChatRouter.get('/chats', isLoggedIn, async (req: Request, res:Response) => {
+ChatRouter.get('/api/chats', isLoggedIn, async (req: Request, res:Response) => {
     try {
         const userChats = await Chat.find({
             members: { $in: [req.user.id] },
@@ -51,13 +56,13 @@ ChatRouter.get('/chats', isLoggedIn, async (req: Request, res:Response) => {
         res.send({ok: true, data: userChats})
     } catch (error) {
         logger.error(`An error occured while getting the chat list for the user with id: ${req.user.id} due to : ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
 
 // get a single chat
-ChatRouter.get('/chats/id', isLoggedIn, async (req: Request, res:Response) => {
+ChatRouter.get('/api/chats/id', isLoggedIn, async (req: Request, res:Response) => {
     try {
         if (!req.params.id) {
             throw INVALID_REQUEST;
@@ -78,14 +83,14 @@ ChatRouter.get('/chats/id', isLoggedIn, async (req: Request, res:Response) => {
         res.send({ok: true, data: chat})
     } catch (error) {
         logger.error(`An error occured while getting the chat detail for the chat with id: ${req.params.id} due to : ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
 /************************* Admin Restricted Endpoints *************************/
 
 // get all chats by admin
-ChatRouter.get('/all-chats', isLoggedIn, isAdmin, async (req: Request, res:Response) => {
+ChatRouter.get('/api/all-chats', isLoggedIn, isAdmin, async (req: Request, res:Response) => {
     try {
         let filter: any = {}
         const queries = Object.keys(req.query)
@@ -102,7 +107,7 @@ ChatRouter.get('/all-chats', isLoggedIn, isAdmin, async (req: Request, res:Respo
         res.send({ok: true, data: chats})
     } catch (error) {
         logger.error(`An error occured while getting a chat list due to : ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 

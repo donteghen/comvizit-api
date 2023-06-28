@@ -55,7 +55,7 @@ function setFilter(key, value) {
 // ***************************** Shared enpoints ***********************************************
 // get rental history list
 RentalHistoryRouter.get('/api/rental-histories', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f;
+    var _a, _b, _c, _d, _e;
     try {
         let filter = {};
         const queries = Object.keys(req.query);
@@ -73,12 +73,12 @@ RentalHistoryRouter.get('/api/rental-histories', auth_middleware_1.isLoggedIn, (
     }
     catch (error) {
         logger_1.logger.error(`An Error occured while querying rental-history list due to ${(_e = error === null || error === void 0 ? void 0 : error.message) !== null && _e !== void 0 ? _e : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_f = error.code) !== null && _f !== void 0 ? _f : 1000 });
+        res.status(400).send({ ok: false, error });
     }
 }));
 // get rental history detail
 RentalHistoryRouter.get('/api/rental-histories/:id/detail', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _g, _h;
+    var _f;
     try {
         if (!req.params.id) {
             throw error_1.INVALID_REQUEST;
@@ -90,8 +90,8 @@ RentalHistoryRouter.get('/api/rental-histories/:id/detail', auth_middleware_1.is
         res.send({ ok: true, data: rentalHistory[0] });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while querying the details of the rental-history with id: ${req.params.id} due to ${(_g = error === null || error === void 0 ? void 0 : error.message) !== null && _g !== void 0 ? _g : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_h = error.code) !== null && _h !== void 0 ? _h : 1000 });
+        logger_1.logger.error(`An Error occured while querying the details of the rental-history with id: ${req.params.id} due to ${(_f = error === null || error === void 0 ? void 0 : error.message) !== null && _f !== void 0 ? _f : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 // ***************************** tenant restricted enpoints ***********************************************
@@ -99,7 +99,7 @@ RentalHistoryRouter.get('/api/rental-histories/:id/detail', auth_middleware_1.is
 // ***************************** Admin restricted enpoints ***********************************************
 // create a new rental histroy
 RentalHistoryRouter.post('/api/rental-histories', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _j, _k;
+    var _g;
     console.log(req.query.lang);
     const lang = req.query.lang ? req.query.lang : 'en';
     const { propertyId, landlordId, tenantId, startDate, rentIntentionId } = req.body;
@@ -187,7 +187,7 @@ RentalHistoryRouter.post('/api/rental-histories', auth_middleware_1.isLoggedIn, 
         res.send({ ok: true });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while creating a new rental-history for rent-intention with id: ${req.body.rentIntentionId} due to ${(_j = error === null || error === void 0 ? void 0 : error.message) !== null && _j !== void 0 ? _j : 'Unknown Source'}`);
+        logger_1.logger.error(`An Error occured while creating a new rental-history for rent-intention with id: ${req.body.rentIntentionId} due to ${(_g = error === null || error === void 0 ? void 0 : error.message) !== null && _g !== void 0 ? _g : 'Unknown Source'}`);
         // check if a rentIntention was created and delete it
         if (isNewIntentionCreated) {
             // add a logger
@@ -202,12 +202,12 @@ RentalHistoryRouter.post('/api/rental-histories', auth_middleware_1.isLoggedIn, 
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_k = error.code) !== null && _k !== void 0 ? _k : 1000 });
+        res.status(400).send({ ok: false, error });
     }
 }));
 // terminate a rental history (by updating the status and endDate)
 RentalHistoryRouter.patch('/api/rental-histories/:id/terminate', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _l, _m;
+    var _h;
     try {
         // get the corresponding rent-intension by id
         const rentalHistory = yield rental_history_1.RentalHistory.findById(req.params.id);
@@ -232,12 +232,12 @@ RentalHistoryRouter.patch('/api/rental-histories/:id/terminate', auth_middleware
         res.send({ ok: true });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while terminating the rental-history with id: ${req.body.rentIntentionId} due to ${(_l = error === null || error === void 0 ? void 0 : error.message) !== null && _l !== void 0 ? _l : 'Unknown Source'}`);
+        logger_1.logger.error(`An Error occured while terminating the rental-history with id: ${req.body.rentIntentionId} due to ${(_h = error === null || error === void 0 ? void 0 : error.message) !== null && _h !== void 0 ? _h : 'Unknown Source'}`);
         if (error.name === 'ValidationError') {
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_m = error.code) !== null && _m !== void 0 ? _m : 1000 });
+        res.status(400).send({ ok: false, error });
     }
 }));
 //# sourceMappingURL=rental-history.js.map

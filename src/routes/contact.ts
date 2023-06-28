@@ -47,7 +47,7 @@ ContactRouter.post('/api/contacts', async (req: Request, res: Response) => {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -71,7 +71,7 @@ ContactRouter.get('/api/contacts', isLoggedIn, isAdmin, async (req: Request, res
         res.send({ok: true, data: contacts})
     } catch (error) {
         logger.error(`An error occured querying contactme list due to : ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -85,7 +85,7 @@ ContactRouter.get('/api/contacts/:id', isLoggedIn, isAdmin, async (req: Request,
         res.send({ok: true, data: contact})
     } catch (error) {
         logger.error(`An error occured while querying the contactme details with id: ${req.params.id} due to : ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -107,7 +107,7 @@ ContactRouter.patch('/api/contacts/:id/reply', isLoggedIn, isAdmin, async (req: 
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
-        res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -125,7 +125,7 @@ ContactRouter.delete('/api/contacts/:id/delete', isLoggedIn, isAdmin, async (req
         res.send({ok: true})
     } catch (error) {
         logger.error(`An error occured while deleting the contactme message with id: ${req.params.id} due to : ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 

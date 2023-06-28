@@ -33,7 +33,7 @@ LikeRouter.get('/api/properties/:id/likes/count', async (req: Request, res: Resp
         res.send({ok: true, data: {count: propertyLikeCount}})
     } catch (error) {
         logger.error(`An Error occured while getting the likes count for the property with id: ${req.params.id} due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 // ***************************** tenant enpoints ***********************************************
@@ -84,7 +84,7 @@ LikeRouter.post('/api/properties/:id/likes/increment', isLoggedIn, isTenant, asy
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -98,7 +98,7 @@ LikeRouter.get('/api/likes/count', isLoggedIn, isAdmin, async (req: Request, res
         res.send({ok: true, data: {count: likeCount}})
     } catch (error) {
         logger.error(`An Error occured while getting the likes collection count by an admin due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 

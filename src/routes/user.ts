@@ -62,7 +62,7 @@ UserRouter.get('/api/users/landlords/:id/card', async (req: Request, res: Respon
     } catch (error) {
         // console.log('this is the user router => /api/users/landlords/:id/card: line 61', error)
         logger.error(`An Error occured while getting the landlord\'s card details of the landlord with id: ${req.params.id} due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok: false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok: false, error})
     }
 })
 
@@ -97,7 +97,7 @@ UserRouter.patch('/api/users/all/:id/verify', async (req: Request, res: Response
         res.send({ok:true})
     } catch (error) {
         logger.error(`An Error occured while verifying a newly created account by the user with id: ${req.params.id} due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -125,7 +125,7 @@ UserRouter.post('/api/user/reset-password',  async (req: Request, res: Response)
     res.send({ok:true})
     } catch (error) {
         logger.error(`An Error occured while attempting a password reset by the user with email: ${req.body.email} due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 
 })
@@ -167,7 +167,7 @@ UserRouter.post('/api/user/confirm-reset-password', async (req: Request, res: Re
         res.send({ok:true})
     } catch (error) {
         logger.error(`An Error occured while confirming a password reset by the user with email: ${req.query.user} due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -229,7 +229,7 @@ UserRouter.post('/api/user/profile/change-password', isLoggedIn, async (req: Req
         res.send({ok:true, data: updatedUser})
     } catch (error) {
         logger.error(`An Error occured while attepting password change by the user with email: ${req.user.email} and id: ${req.user.id} due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -393,7 +393,7 @@ UserRouter.get('/api/users/landlords', isLoggedIn, isAdmin, async (req: Request,
         const landlordUsers = await User.find(filter)
         res.send({ok:true, data: landlordUsers})
     } catch (error) {
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -414,7 +414,7 @@ UserRouter.get('/api/users/admins', isLoggedIn, isAdmin, async (req: Request, re
         const adminUsers = await User.find(filter)
         res.send({ok:true, data: adminUsers})
     } catch (error) {
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -436,7 +436,7 @@ UserRouter.get('/api/users/all', isLoggedIn, isAdmin, async (req: Request, res: 
         const users = await User.find(filter)
         res.send({ok:true, data: users})
     } catch (error) {
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 

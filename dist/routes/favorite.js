@@ -25,7 +25,7 @@ exports.FavoriteRouter = FavoriteRouter;
 // ***************************** tenant enpoints ***********************************************
 // get a tenant's favorite property list
 FavoriteRouter.get('/api/fav-property-list', auth_middleware_1.isLoggedIn, auth_middleware_1.isTenant, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+    var _a;
     try {
         let favProperties = [];
         const favIdList = req.user.favorites;
@@ -55,12 +55,12 @@ FavoriteRouter.get('/api/fav-property-list', auth_middleware_1.isLoggedIn, auth_
     }
     catch (error) {
         logger_1.logger.error(`An Error while querying favorite list due to ${(_a = error === null || error === void 0 ? void 0 : error.message) !== null && _a !== void 0 ? _a : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_b = error.code) !== null && _b !== void 0 ? _b : 1000 });
+        res.status(400).send({ ok: false, error });
     }
 }));
 // Add a property to tenant's favorite property list
 FavoriteRouter.patch('/api/fav-property-list/add-favorite', auth_middleware_1.isLoggedIn, auth_middleware_1.isTenant, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c, _d;
+    var _b;
     try {
         const propertyId = req.body.id;
         if (!propertyId) {
@@ -93,13 +93,13 @@ FavoriteRouter.patch('/api/fav-property-list/add-favorite', auth_middleware_1.is
         res.send({ ok: true });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while adding a favorite property to fav collection due to ${(_c = error === null || error === void 0 ? void 0 : error.message) !== null && _c !== void 0 ? _c : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_d = error.code) !== null && _d !== void 0 ? _d : 1000 });
+        logger_1.logger.error(`An Error occured while adding a favorite property to fav collection due to ${(_b = error === null || error === void 0 ? void 0 : error.message) !== null && _b !== void 0 ? _b : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 // Remove a property from tenant's favorite property list
 FavoriteRouter.patch('/api/fav-property-list/remove-favorite', auth_middleware_1.isLoggedIn, auth_middleware_1.isTenant, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _e, _f;
+    var _c;
     try {
         const favId = req.body.id;
         if (!favId) {
@@ -122,13 +122,13 @@ FavoriteRouter.patch('/api/fav-property-list/remove-favorite', auth_middleware_1
         res.send({ ok: true, data: updatedUser });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while removing a favorite property from fav collection due to ${(_e = error === null || error === void 0 ? void 0 : error.message) !== null && _e !== void 0 ? _e : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_f = error.code) !== null && _f !== void 0 ? _f : 1000 });
+        logger_1.logger.error(`An Error occured while removing a favorite property from fav collection due to ${(_c = error === null || error === void 0 ? void 0 : error.message) !== null && _c !== void 0 ? _c : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 // Clear tenant's favorite property list
 FavoriteRouter.patch('/api/fav-property-list/clear-favorite-list', auth_middleware_1.isLoggedIn, auth_middleware_1.isTenant, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _g, _h;
+    var _d;
     try {
         // delete all current tenant's favorite property list
         yield favorite_1.Favorite.deleteMany({
@@ -141,8 +141,8 @@ FavoriteRouter.patch('/api/fav-property-list/clear-favorite-list', auth_middlewa
         res.send({ ok: true, data: updatedUser });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while clearing a fav collection due to ${(_g = error === null || error === void 0 ? void 0 : error.message) !== null && _g !== void 0 ? _g : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_h = error.code) !== null && _h !== void 0 ? _h : 1000 });
+        logger_1.logger.error(`An Error occured while clearing a fav collection due to ${(_d = error === null || error === void 0 ? void 0 : error.message) !== null && _d !== void 0 ? _d : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 //# sourceMappingURL=favorite.js.map

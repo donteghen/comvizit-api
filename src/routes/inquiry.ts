@@ -50,7 +50,7 @@ InquiryRouter.post('/api/inquiries', async (req: Request, res: Response) => {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -74,7 +74,7 @@ InquiryRouter.get('/api/inquiries', isLoggedIn, isAdmin, async (req: Request, re
         res.send({ok: true, data: inquiries})
     } catch (error) {
         logger.error(`An Error occured while querying inquiry collection due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -88,7 +88,7 @@ InquiryRouter.get('/api/inquiries/:id', isLoggedIn, isAdmin, async (req: Request
         res.send({ok: true, data: inquiry})
     } catch (error) {
         logger.error(`An Error occured while getting the details of the inquiry with id: ${req.params.id} due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -111,7 +111,7 @@ InquiryRouter.patch('/api/inquiries/:id/reply', isLoggedIn, isAdmin, async (req:
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
-        res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -125,7 +125,7 @@ InquiryRouter.delete('/api/inquiries/:id/delete', isLoggedIn, isAdmin, async (re
         res.send({ok: true})
     } catch (error) {
         logger.error(`An Error occured while deleting the inquiry with id: ${req.params.id} due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 

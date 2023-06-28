@@ -145,7 +145,7 @@ PropertyRouter.get('/api/properties-in-quater/:quaterref', async (req: Request, 
         res.send({ok: true, data: {properties, currPage: pageNum, totalPages, resultCount}})
     } catch (error) {
         logger.error(`An Error occured while getting all properties in the quater with quaterref: ${req.params.quaterref} and id: ${req.user.id} due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -198,7 +198,7 @@ PropertyRouter.get('/api/properties-by-tag/:code', async (req: Request, res: Res
         res.send({ok: true, data: {properties, currPage: pageNum, totalPages, resultCount}})
     } catch (error) {
         logger.error(`An Error occured while getting all properties by tag code for the tag with code: ${req.params.code} due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 // get all properties by admin
@@ -236,7 +236,7 @@ PropertyRouter.get('/api/properties', isLoggedIn,  isAdmin, async (req: Request,
         res.send({ok: true, data: properties})
     } catch (error) {
         logger.error(`An Error occured while getting all properties by admin due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -303,7 +303,7 @@ PropertyRouter.get('/api/landlord-properties/:id', async (req: Request, res: Res
     } catch (error) {
         // console.log(error)
         logger.error(`An Error occured while getting all properties owned by the landlord with id: ${req.params.id} due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -315,7 +315,7 @@ PropertyRouter.get('/api/search-property-categories/:quaterRef', async (req: Req
         res.send({ok: true, data: quaters})
     } catch (error) {
         logger.error(`An Error occured while querying the search, categorize and count property catogories for quater with quaterref: ${req.params.quaterRef} due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -351,7 +351,7 @@ PropertyRouter.get('/api/search-quaters/:quaterRef', async (req: Request, res: R
         res.send({ok: true, data: quaters})
     } catch (error) {
         logger.error(`An Error occured while index-searching and group properties by quaterref for the quaterref: ${req.params.quaterRef} due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -398,7 +398,7 @@ PropertyRouter.get('/api/town-properties/:town', async (req: Request, res: Respo
         res.send({ok: true, data: {properties, currPage: pageNum, totalPages, resultCount}})
     } catch (error) {
         logger.error(`An Error occured while attempting to get all properties in the town named: ${req.params.town} due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -445,7 +445,7 @@ PropertyRouter.get('/api/district-properties/:districtref', async (req: Request,
         res.send({ok: true, data: {properties, currPage: pageNum, totalPages, resultCount}})
     } catch (error) {
         logger.error(`An Error occured while attempting to get all properties in the district named: ${req.params.districtref} due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -468,7 +468,7 @@ PropertyRouter.get('/api/properties-group-by-town', async (req: Request, res: Re
         res.send({ok: true, data: groupsByTown})
     } catch (error) {
         logger.error(`An Error occured while grouping  and counting properties by town due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -502,7 +502,7 @@ PropertyRouter.get('/api/properties-group-by-district', async (req: Request, res
         res.send({ok: true, data: groupsByDistrictRef})
     } catch (error) {
         logger.error(`An Error occured while grouping  and counting properties by town due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -513,7 +513,7 @@ PropertyRouter.get('/api/count-properties-per-town', async (req: Request, res: R
         res.send({ok: true, data: towncountlist})
     } catch (error) {
         logger.error(`An Error occured while getting property count for popular towns due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -555,7 +555,7 @@ PropertyRouter.get('/api/properties/:id', async (req: Request, res: Response) =>
         res.send({ok:true, data: properties[0]})
     } catch (error) {
         logger.error(`An Error occured while getting the details of the property with id: ${req.params.id} due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -630,7 +630,7 @@ PropertyRouter.get('/api/property/:propertyId/related-properties/:quaterref', as
         res.send({ok:true, data: {relatedProperties, relationship}})
     } catch (error) {
         logger.error(`An Error occured while getting related properties (related by quater, or tag code) for the property with id: ${req.params.propertyId} in quater with quaterref: ${req.params.quaterref} due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -660,7 +660,7 @@ PropertyRouter.post('/api/properties', isLoggedIn, isAdmin, async (req: Request,
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -709,7 +709,7 @@ PropertyRouter.patch('/api/properties/:id/availability/update', isLoggedIn, asyn
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -737,7 +737,7 @@ PropertyRouter.patch('/api/properties/:id/update', isLoggedIn, isAdmin, async (r
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -762,7 +762,7 @@ PropertyRouter.patch('/api/properties/:id/update-media',  isLoggedIn, isAdmin,  
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -809,7 +809,7 @@ PropertyRouter.delete('/api/properties/:id/delete', isLoggedIn, isAdmin, async (
         res.status(201).send({ok: true})
     } catch (error) {
         logger.error(`An Error occured while attempting to delete the property with id : ${req.params.id}  due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 

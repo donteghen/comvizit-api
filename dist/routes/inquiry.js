@@ -39,7 +39,7 @@ function setFilter(key, value) {
 // ***************************** public enpoints ***********************************************
 // create new inquiry
 InquiryRouter.post('/api/inquiries', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+    var _a;
     try {
         const { fullname, email, phone, subject, message } = req.body;
         const newInquiry = new inquiry_1.Inquiry({
@@ -61,13 +61,13 @@ InquiryRouter.post('/api/inquiries', (req, res) => __awaiter(void 0, void 0, voi
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_b = error.code) !== null && _b !== void 0 ? _b : 1000 });
+        res.status(400).send({ ok: false, error });
     }
 }));
 // ***************************** admin restricted endpoints ***********************************************
 // get all inquiries (with or without query string)
 InquiryRouter.get('/api/inquiries', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c, _d;
+    var _b;
     try {
         let filter = {};
         const queries = Object.keys(req.query);
@@ -85,13 +85,13 @@ InquiryRouter.get('/api/inquiries', auth_middleware_1.isLoggedIn, auth_middlewar
         res.send({ ok: true, data: inquiries });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while querying inquiry collection due to ${(_c = error === null || error === void 0 ? void 0 : error.message) !== null && _c !== void 0 ? _c : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_d = error.code) !== null && _d !== void 0 ? _d : 1000 });
+        logger_1.logger.error(`An Error occured while querying inquiry collection due to ${(_b = error === null || error === void 0 ? void 0 : error.message) !== null && _b !== void 0 ? _b : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 // get single inquiry by id
 InquiryRouter.get('/api/inquiries/:id', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _e, _f;
+    var _c;
     try {
         const inquiry = yield inquiry_1.Inquiry.findById(req.params.id);
         if (!inquiry) {
@@ -100,13 +100,13 @@ InquiryRouter.get('/api/inquiries/:id', auth_middleware_1.isLoggedIn, auth_middl
         res.send({ ok: true, data: inquiry });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while getting the details of the inquiry with id: ${req.params.id} due to ${(_e = error === null || error === void 0 ? void 0 : error.message) !== null && _e !== void 0 ? _e : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_f = error.code) !== null && _f !== void 0 ? _f : 1000 });
+        logger_1.logger.error(`An Error occured while getting the details of the inquiry with id: ${req.params.id} due to ${(_c = error === null || error === void 0 ? void 0 : error.message) !== null && _c !== void 0 ? _c : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 // make inquiry as replied
 InquiryRouter.patch('/api/inquiries/:id/reply', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _g, _h;
+    var _d;
     try {
         const inquiry = yield inquiry_1.Inquiry.findById(req.params.id);
         if (!inquiry) {
@@ -118,17 +118,17 @@ InquiryRouter.patch('/api/inquiries/:id/reply', auth_middleware_1.isLoggedIn, au
         res.send({ ok: true, data: updateInquiry });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while updating the replied status of the inquiry with id: ${req.params.id} due to ${(_g = error === null || error === void 0 ? void 0 : error.message) !== null && _g !== void 0 ? _g : 'Unknown Source'}`);
+        logger_1.logger.error(`An Error occured while updating the replied status of the inquiry with id: ${req.params.id} due to ${(_d = error === null || error === void 0 ? void 0 : error.message) !== null && _d !== void 0 ? _d : 'Unknown Source'}`);
         if (error.name === 'ValidationError') {
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_h = error.code) !== null && _h !== void 0 ? _h : 1000 });
+        res.status(400).send({ ok: false, error });
     }
 }));
 // delete inquiries
 InquiryRouter.delete('/api/inquiries/:id/delete', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _j, _k;
+    var _e;
     try {
         const inquiry = yield inquiry_1.Inquiry.findByIdAndDelete(req.params.id);
         if (!inquiry) {
@@ -137,8 +137,8 @@ InquiryRouter.delete('/api/inquiries/:id/delete', auth_middleware_1.isLoggedIn, 
         res.send({ ok: true });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while deleting the inquiry with id: ${req.params.id} due to ${(_j = error === null || error === void 0 ? void 0 : error.message) !== null && _j !== void 0 ? _j : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_k = error.code) !== null && _k !== void 0 ? _k : 1000 });
+        logger_1.logger.error(`An Error occured while deleting the inquiry with id: ${req.params.id} due to ${(_e = error === null || error === void 0 ? void 0 : error.message) !== null && _e !== void 0 ? _e : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 //# sourceMappingURL=inquiry.js.map

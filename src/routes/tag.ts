@@ -67,7 +67,7 @@ TagRouter.post('/api/tags/add', isLoggedIn, isAdmin, async (req: Request, res: R
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -89,7 +89,7 @@ TagRouter.get('/api/tags', async (req: Request, res: Response) => {
         res.send({ok: true, data: tags})
     } catch (error) {
         logger.error(`An Error occured while querying tag list due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -103,7 +103,7 @@ TagRouter.get('/api/tags/:id',  async (req: Request, res: Response) => {
         res.send({ok: true, data: tag})
     } catch (error) {
         logger.error(`An Error occured while querying the details of the tag with id: ${req.params.id} due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -136,7 +136,7 @@ TagRouter.patch('/api/tags/:id/update', isLoggedIn, isAdmin, async (req: Request
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
-        res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -150,7 +150,7 @@ TagRouter.delete('/api/tags/:id/delete', isLoggedIn, isAdmin, async (req: Reques
         res.send({ok: true})
     } catch (error) {
         logger.error(`An Error occured while deleting the tag with id: ${req.params.id} due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 

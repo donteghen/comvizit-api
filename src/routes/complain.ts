@@ -63,7 +63,7 @@ ComplainRouter.post('/api/complains', isLoggedIn, isTenant, async (req: Request,
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -87,7 +87,7 @@ ComplainRouter.get('/api/complains', isLoggedIn, async (req: Request, res: Respo
         res.send({ok: true, data: complains})
     } catch (error) {
         logger.error(`An error occured while querying complain list due to : ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -123,7 +123,7 @@ ComplainRouter.patch('/api/complains/:id/process', isLoggedIn, isAdmin, async (r
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
-        res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 

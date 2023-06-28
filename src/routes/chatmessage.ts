@@ -21,7 +21,7 @@ function setFilter(key:string, value:any): any {
 }
 
 // add a message
-ChatMessageRouter.post('/chat-messages', isLoggedIn, async (req: Request, res: Response) => {
+ChatMessageRouter.post('/api/chat-messages', isLoggedIn, async (req: Request, res: Response) => {
     try {
         const { chatId, senderId, content } = req.body;
         if (!chatId || !senderId || !content) {
@@ -40,14 +40,14 @@ ChatMessageRouter.post('/chat-messages', isLoggedIn, async (req: Request, res: R
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
 /**************************************** Admin Restricted Endpoints */
 
 // get all messages in the admin
-ChatMessageRouter.get('/all-chat-messages', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
+ChatMessageRouter.get('/api/all-chat-messages', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
         let filter: any = {}
         const queries = Object.keys(req.query)
@@ -64,7 +64,7 @@ ChatMessageRouter.get('/all-chat-messages', isLoggedIn, isAdmin, async (req: Req
         res.send({ok: true, data: chatMessages})
     } catch (error) {
         logger.error(`An error occured while getting the chatmessages in the admin due to : ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 

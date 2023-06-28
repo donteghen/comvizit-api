@@ -103,7 +103,7 @@ function priceSetter(reqParams, queryArray, priceQuery) {
 // ***************************** public enpoints ***********************************************
 // get all properties in quater
 PropertyRouter.get('/api/properties-in-quater/:quaterref', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f;
+    var _a, _b, _c, _d, _e;
     try {
         let filter = { availability: 'Available' };
         let sorting = { updated: -1 };
@@ -149,12 +149,12 @@ PropertyRouter.get('/api/properties-in-quater/:quaterref', (req, res) => __await
     }
     catch (error) {
         logger_1.logger.error(`An Error occured while getting all properties in the quater with quaterref: ${req.params.quaterref} and id: ${req.user.id} due to ${(_e = error === null || error === void 0 ? void 0 : error.message) !== null && _e !== void 0 ? _e : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_f = error.code) !== null && _f !== void 0 ? _f : 1000 });
+        res.status(400).send({ ok: false, error });
     }
 }));
 // get all properties by tag
 PropertyRouter.get('/api/properties-by-tag/:code', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _g, _h, _j, _k, _l, _m;
+    var _f, _g, _h, _j, _k;
     try {
         if (!req.params.code) {
             throw error_1.INVALID_REQUEST;
@@ -166,7 +166,7 @@ PropertyRouter.get('/api/properties-by-tag/:code', (req, res) => __awaiter(void 
         const queries = Object.keys(req.query);
         let filter = { availability: 'Available', _id: { $in: tagRefIds } };
         if (queries.length > 0) {
-            let dateFilter = (0, date_query_setter_1.setDateFilter)((_h = (_g = req.query['startDate']) === null || _g === void 0 ? void 0 : _g.toString()) !== null && _h !== void 0 ? _h : '', (_k = (_j = req.query['endDate']) === null || _j === void 0 ? void 0 : _j.toString()) !== null && _k !== void 0 ? _k : '');
+            let dateFilter = (0, date_query_setter_1.setDateFilter)((_g = (_f = req.query['startDate']) === null || _f === void 0 ? void 0 : _f.toString()) !== null && _g !== void 0 ? _g : '', (_j = (_h = req.query['endDate']) === null || _h === void 0 ? void 0 : _h.toString()) !== null && _j !== void 0 ? _j : '');
             filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) : filter;
             queries.forEach(key => {
                 if (req.query[key]) {
@@ -197,18 +197,18 @@ PropertyRouter.get('/api/properties-by-tag/:code', (req, res) => __awaiter(void 
         res.send({ ok: true, data: { properties, currPage: pageNum, totalPages, resultCount } });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while getting all properties by tag code for the tag with code: ${req.params.code} due to ${(_l = error === null || error === void 0 ? void 0 : error.message) !== null && _l !== void 0 ? _l : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_m = error.code) !== null && _m !== void 0 ? _m : 1000 });
+        logger_1.logger.error(`An Error occured while getting all properties by tag code for the tag with code: ${req.params.code} due to ${(_k = error === null || error === void 0 ? void 0 : error.message) !== null && _k !== void 0 ? _k : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 // get all properties by admin
 PropertyRouter.get('/api/properties', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _o, _p, _q, _r, _s, _t;
+    var _l, _m, _o, _p, _q;
     try {
         let filter = {};
         const queries = Object.keys(req.query);
         if (queries.length > 0) {
-            let dateFilter = (0, date_query_setter_1.setDateFilter)((_p = (_o = req.query['startDate']) === null || _o === void 0 ? void 0 : _o.toString()) !== null && _p !== void 0 ? _p : '', (_r = (_q = req.query['endDate']) === null || _q === void 0 ? void 0 : _q.toString()) !== null && _r !== void 0 ? _r : '');
+            let dateFilter = (0, date_query_setter_1.setDateFilter)((_m = (_l = req.query['startDate']) === null || _l === void 0 ? void 0 : _l.toString()) !== null && _m !== void 0 ? _m : '', (_p = (_o = req.query['endDate']) === null || _o === void 0 ? void 0 : _o.toString()) !== null && _p !== void 0 ? _p : '');
             filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) : filter;
             queries.forEach(key => {
                 if (req.query[key]) {
@@ -236,13 +236,13 @@ PropertyRouter.get('/api/properties', auth_middleware_1.isLoggedIn, auth_middlew
         res.send({ ok: true, data: properties });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while getting all properties by admin due to ${(_s = error === null || error === void 0 ? void 0 : error.message) !== null && _s !== void 0 ? _s : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_t = error.code) !== null && _t !== void 0 ? _t : 1000 });
+        logger_1.logger.error(`An Error occured while getting all properties by admin due to ${(_q = error === null || error === void 0 ? void 0 : error.message) !== null && _q !== void 0 ? _q : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 // get all landlords properties
 PropertyRouter.get('/api/landlord-properties/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _u, _v, _w, _x, _y, _z;
+    var _r, _s, _t, _u, _v;
     try {
         // console.log(req.params.id)
         let pipeline = [];
@@ -254,7 +254,7 @@ PropertyRouter.get('/api/landlord-properties/:id', (req, res) => __awaiter(void 
         let pageNum;
         let withPagination = queries === null || queries === void 0 ? void 0 : queries.includes('page');
         if (queries.length > 0) {
-            let dateFilter = (0, date_query_setter_1.setDateFilter)((_v = (_u = req.query['startDate']) === null || _u === void 0 ? void 0 : _u.toString()) !== null && _v !== void 0 ? _v : '', (_x = (_w = req.query['endDate']) === null || _w === void 0 ? void 0 : _w.toString()) !== null && _x !== void 0 ? _x : '');
+            let dateFilter = (0, date_query_setter_1.setDateFilter)((_s = (_r = req.query['startDate']) === null || _r === void 0 ? void 0 : _r.toString()) !== null && _s !== void 0 ? _s : '', (_u = (_t = req.query['endDate']) === null || _t === void 0 ? void 0 : _t.toString()) !== null && _u !== void 0 ? _u : '');
             filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) : filter;
             queries.forEach(key => {
                 if (req.query[key]) {
@@ -297,26 +297,26 @@ PropertyRouter.get('/api/landlord-properties/:id', (req, res) => __awaiter(void 
     }
     catch (error) {
         // console.log(error)
-        logger_1.logger.error(`An Error occured while getting all properties owned by the landlord with id: ${req.params.id} due to ${(_y = error === null || error === void 0 ? void 0 : error.message) !== null && _y !== void 0 ? _y : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_z = error.code) !== null && _z !== void 0 ? _z : 1000 });
+        logger_1.logger.error(`An Error occured while getting all properties owned by the landlord with id: ${req.params.id} due to ${(_v = error === null || error === void 0 ? void 0 : error.message) !== null && _v !== void 0 ? _v : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 // search using quaterref index for property's quater.ref and return various category counts
 PropertyRouter.get('/api/search-property-categories/:quaterRef', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _0, _1;
+    var _w;
     try {
         const catAggregator = (0, queryMaker_1.categoryAggregator)(req.params.quaterRef);
         const quaters = yield property_1.Property.aggregate(catAggregator);
         res.send({ ok: true, data: quaters });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while querying the search, categorize and count property catogories for quater with quaterref: ${req.params.quaterRef} due to ${(_0 = error === null || error === void 0 ? void 0 : error.message) !== null && _0 !== void 0 ? _0 : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_1 = error.code) !== null && _1 !== void 0 ? _1 : 1000 });
+        logger_1.logger.error(`An Error occured while querying the search, categorize and count property catogories for quater with quaterref: ${req.params.quaterRef} due to ${(_w = error === null || error === void 0 ? void 0 : error.message) !== null && _w !== void 0 ? _w : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 // search with autocomplete index for quater and return matching quater name & ref
 PropertyRouter.get('/api/search-quaters/:quaterRef', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _2, _3;
+    var _x;
     try {
         const quaters = yield property_1.Property.aggregate([
             {
@@ -344,20 +344,20 @@ PropertyRouter.get('/api/search-quaters/:quaterRef', (req, res) => __awaiter(voi
         res.send({ ok: true, data: quaters });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while index-searching and group properties by quaterref for the quaterref: ${req.params.quaterRef} due to ${(_2 = error === null || error === void 0 ? void 0 : error.message) !== null && _2 !== void 0 ? _2 : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_3 = error.code) !== null && _3 !== void 0 ? _3 : 1000 });
+        logger_1.logger.error(`An Error occured while index-searching and group properties by quaterref for the quaterref: ${req.params.quaterRef} due to ${(_x = error === null || error === void 0 ? void 0 : error.message) !== null && _x !== void 0 ? _x : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 // get properties in a town
 PropertyRouter.get('/api/town-properties/:town', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _4, _5, _6, _7, _8, _9;
+    var _y, _z, _0, _1, _2;
     try {
         let filter = { availability: 'Available' };
         let sorting = { createdAt: -1 };
         let pageNum = 1;
         const queries = Object.keys(req.query);
         if (queries.length > 0) {
-            let dateFilter = (0, date_query_setter_1.setDateFilter)((_5 = (_4 = req.query['startDate']) === null || _4 === void 0 ? void 0 : _4.toString()) !== null && _5 !== void 0 ? _5 : '', (_7 = (_6 = req.query['endDate']) === null || _6 === void 0 ? void 0 : _6.toString()) !== null && _7 !== void 0 ? _7 : '');
+            let dateFilter = (0, date_query_setter_1.setDateFilter)((_z = (_y = req.query['startDate']) === null || _y === void 0 ? void 0 : _y.toString()) !== null && _z !== void 0 ? _z : '', (_1 = (_0 = req.query['endDate']) === null || _0 === void 0 ? void 0 : _0.toString()) !== null && _1 !== void 0 ? _1 : '');
             filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) : filter;
             queries.forEach(key => {
                 if (req.query[key]) {
@@ -389,20 +389,20 @@ PropertyRouter.get('/api/town-properties/:town', (req, res) => __awaiter(void 0,
         res.send({ ok: true, data: { properties, currPage: pageNum, totalPages, resultCount } });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while attempting to get all properties in the town named: ${req.params.town} due to ${(_8 = error === null || error === void 0 ? void 0 : error.message) !== null && _8 !== void 0 ? _8 : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_9 = error.code) !== null && _9 !== void 0 ? _9 : 1000 });
+        logger_1.logger.error(`An Error occured while attempting to get all properties in the town named: ${req.params.town} due to ${(_2 = error === null || error === void 0 ? void 0 : error.message) !== null && _2 !== void 0 ? _2 : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 // get properties in a district
 PropertyRouter.get('/api/district-properties/:districtref', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _10, _11, _12, _13, _14, _15;
+    var _3, _4, _5, _6, _7;
     try {
         let filter = { availability: 'Available' };
         let sorting = { createdAt: -1 };
         let pageNum = 1;
         const queries = Object.keys(req.query);
         if (queries.length > 0) {
-            let dateFilter = (0, date_query_setter_1.setDateFilter)((_11 = (_10 = req.query['startDate']) === null || _10 === void 0 ? void 0 : _10.toString()) !== null && _11 !== void 0 ? _11 : '', (_13 = (_12 = req.query['endDate']) === null || _12 === void 0 ? void 0 : _12.toString()) !== null && _13 !== void 0 ? _13 : '');
+            let dateFilter = (0, date_query_setter_1.setDateFilter)((_4 = (_3 = req.query['startDate']) === null || _3 === void 0 ? void 0 : _3.toString()) !== null && _4 !== void 0 ? _4 : '', (_6 = (_5 = req.query['endDate']) === null || _5 === void 0 ? void 0 : _5.toString()) !== null && _6 !== void 0 ? _6 : '');
             filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) : filter;
             queries.forEach(key => {
                 if (req.query[key]) {
@@ -434,13 +434,13 @@ PropertyRouter.get('/api/district-properties/:districtref', (req, res) => __awai
         res.send({ ok: true, data: { properties, currPage: pageNum, totalPages, resultCount } });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while attempting to get all properties in the district named: ${req.params.districtref} due to ${(_14 = error === null || error === void 0 ? void 0 : error.message) !== null && _14 !== void 0 ? _14 : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_15 = error.code) !== null && _15 !== void 0 ? _15 : 1000 });
+        logger_1.logger.error(`An Error occured while attempting to get all properties in the district named: ${req.params.districtref} due to ${(_7 = error === null || error === void 0 ? void 0 : error.message) !== null && _7 !== void 0 ? _7 : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 // get properties groups by town and their count
 PropertyRouter.get('/api/properties-group-by-town', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _16, _17;
+    var _8;
     try {
         const groupsByTown = yield property_1.Property.aggregate([
             {
@@ -458,15 +458,15 @@ PropertyRouter.get('/api/properties-group-by-town', (req, res) => __awaiter(void
         res.send({ ok: true, data: groupsByTown });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while grouping  and counting properties by town due to ${(_16 = error === null || error === void 0 ? void 0 : error.message) !== null && _16 !== void 0 ? _16 : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_17 = error.code) !== null && _17 !== void 0 ? _17 : 1000 });
+        logger_1.logger.error(`An Error occured while grouping  and counting properties by town due to ${(_8 = error === null || error === void 0 ? void 0 : error.message) !== null && _8 !== void 0 ? _8 : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 /**
  * get properties in a town and group them by district ref and their count
  */
 PropertyRouter.get('/api/properties-group-by-district', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _18, _19, _20;
+    var _9, _10;
     try {
         const pipeline = [
             {
@@ -484,7 +484,7 @@ PropertyRouter.get('/api/properties-group-by-district', (req, res) => __awaiter(
         if (req.query.town) {
             pipeline.unshift({
                 $match: {
-                    town: (_18 = req.query.town) === null || _18 === void 0 ? void 0 : _18.toString()
+                    town: (_9 = req.query.town) === null || _9 === void 0 ? void 0 : _9.toString()
                 }
             });
         }
@@ -492,25 +492,25 @@ PropertyRouter.get('/api/properties-group-by-district', (req, res) => __awaiter(
         res.send({ ok: true, data: groupsByDistrictRef });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while grouping  and counting properties by town due to ${(_19 = error === null || error === void 0 ? void 0 : error.message) !== null && _19 !== void 0 ? _19 : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_20 = error.code) !== null && _20 !== void 0 ? _20 : 1000 });
+        logger_1.logger.error(`An Error occured while grouping  and counting properties by town due to ${(_10 = error === null || error === void 0 ? void 0 : error.message) !== null && _10 !== void 0 ? _10 : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 // get property count for popular towns
 PropertyRouter.get('/api/count-properties-per-town', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _21, _22;
+    var _11;
     try {
         const towncountlist = yield property_1.Property.aggregate((0, queryMaker_1.townAggregator)());
         res.send({ ok: true, data: towncountlist });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while getting property count for popular towns due to ${(_21 = error === null || error === void 0 ? void 0 : error.message) !== null && _21 !== void 0 ? _21 : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_22 = error.code) !== null && _22 !== void 0 ? _22 : 1000 });
+        logger_1.logger.error(`An Error occured while getting property count for popular towns due to ${(_11 = error === null || error === void 0 ? void 0 : error.message) !== null && _11 !== void 0 ? _11 : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 // get single properties by id
 PropertyRouter.get('/api/properties/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _23, _24;
+    var _12;
     try {
         const pipeline = [
             {
@@ -547,13 +547,13 @@ PropertyRouter.get('/api/properties/:id', (req, res) => __awaiter(void 0, void 0
         res.send({ ok: true, data: properties[0] });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while getting the details of the property with id: ${req.params.id} due to ${(_23 = error === null || error === void 0 ? void 0 : error.message) !== null && _23 !== void 0 ? _23 : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_24 = error.code) !== null && _24 !== void 0 ? _24 : 1000 });
+        logger_1.logger.error(`An Error occured while getting the details of the property with id: ${req.params.id} due to ${(_12 = error === null || error === void 0 ? void 0 : error.message) !== null && _12 !== void 0 ? _12 : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 // get properties in same quater (Related prperties in same quater)
 PropertyRouter.get('/api/property/:propertyId/related-properties/:quaterref', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _25, _26;
+    var _13;
     try {
         let relatedProperties;
         let relationship = 'Quater';
@@ -624,32 +624,32 @@ PropertyRouter.get('/api/property/:propertyId/related-properties/:quaterref', (r
         res.send({ ok: true, data: { relatedProperties, relationship } });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while getting related properties (related by quater, or tag code) for the property with id: ${req.params.propertyId} in quater with quaterref: ${req.params.quaterref} due to ${(_25 = error === null || error === void 0 ? void 0 : error.message) !== null && _25 !== void 0 ? _25 : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_26 = error.code) !== null && _26 !== void 0 ? _26 : 1000 });
+        logger_1.logger.error(`An Error occured while getting related properties (related by quater, or tag code) for the property with id: ${req.params.propertyId} in quater with quaterref: ${req.params.quaterref} due to ${(_13 = error === null || error === void 0 ? void 0 : error.message) !== null && _13 !== void 0 ? _13 : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 // ***************************** Tenant Only endpoints ***********************************************
 // ***************************** admin endpoints ***********************************************
 // create new property
 PropertyRouter.post('/api/properties', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _27, _28;
+    var _14;
     try {
         const newProperty = new property_1.Property(Object.assign(Object.assign({}, req.body), { ownerId: new mongoose_1.Types.ObjectId(req.body.ownerId) }));
         const property = yield newProperty.save();
         res.status(201).send({ ok: true, data: property });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while creating a new property due to ${(_27 = error === null || error === void 0 ? void 0 : error.message) !== null && _27 !== void 0 ? _27 : 'Unknown Source'}`);
+        logger_1.logger.error(`An Error occured while creating a new property due to ${(_14 = error === null || error === void 0 ? void 0 : error.message) !== null && _14 !== void 0 ? _14 : 'Unknown Source'}`);
         if (error.name === 'ValidationError') {
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_28 = error.code) !== null && _28 !== void 0 ? _28 : 1000 });
+        res.status(400).send({ ok: false, error });
     }
 }));
 // update property availability status
 PropertyRouter.patch('/api/properties/:id/availability/update', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _29, _30;
+    var _15;
     try {
         let propertyOwner;
         // make sure an availability status was passed within the request body
@@ -687,17 +687,17 @@ PropertyRouter.patch('/api/properties/:id/availability/update', auth_middleware_
         res.status(200).send({ ok: true });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while updating the availability status of the property with id : ${req.params.id}  due to ${(_29 = error === null || error === void 0 ? void 0 : error.message) !== null && _29 !== void 0 ? _29 : 'Unknown Source'}`);
+        logger_1.logger.error(`An Error occured while updating the availability status of the property with id : ${req.params.id}  due to ${(_15 = error === null || error === void 0 ? void 0 : error.message) !== null && _15 !== void 0 ? _15 : 'Unknown Source'}`);
         if (error.name === 'ValidationError') {
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_30 = error.code) !== null && _30 !== void 0 ? _30 : 1000 });
+        res.status(400).send({ ok: false, error });
     }
 }));
 // update property
 PropertyRouter.patch('/api/properties/:id/update', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _31, _32;
+    var _16;
     try {
         const update = {};
         Object.keys(req.body).forEach(key => {
@@ -713,17 +713,17 @@ PropertyRouter.patch('/api/properties/:id/update', auth_middleware_1.isLoggedIn,
         res.status(200).send({ ok: true });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while updating the property with id : ${req.params.id}  due to ${(_31 = error === null || error === void 0 ? void 0 : error.message) !== null && _31 !== void 0 ? _31 : 'Unknown Source'}`);
+        logger_1.logger.error(`An Error occured while updating the property with id : ${req.params.id}  due to ${(_16 = error === null || error === void 0 ? void 0 : error.message) !== null && _16 !== void 0 ? _16 : 'Unknown Source'}`);
         if (error.name === 'ValidationError') {
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_32 = error.code) !== null && _32 !== void 0 ? _32 : 1000 });
+        res.status(400).send({ ok: false, error });
     }
 }));
 // update property media
 PropertyRouter.patch('/api/properties/:id/update-media', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _33, _34;
+    var _17;
     try {
         const { photos, videos, virtualTours } = req.body.media;
         const property = yield property_1.Property.findById(req.params.id);
@@ -737,17 +737,17 @@ PropertyRouter.patch('/api/properties/:id/update-media', auth_middleware_1.isLog
         res.status(200).send({ ok: true, data: updatedProperty });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while updating the media contents of the property with id : ${req.params.id}  due to ${(_33 = error === null || error === void 0 ? void 0 : error.message) !== null && _33 !== void 0 ? _33 : 'Unknown Source'}`);
+        logger_1.logger.error(`An Error occured while updating the media contents of the property with id : ${req.params.id}  due to ${(_17 = error === null || error === void 0 ? void 0 : error.message) !== null && _17 !== void 0 ? _17 : 'Unknown Source'}`);
         if (error.name === 'ValidationError') {
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_34 = error.code) !== null && _34 !== void 0 ? _34 : 1000 });
+        res.status(400).send({ ok: false, error });
     }
 }));
 // delete property
 PropertyRouter.delete('/api/properties/:id/delete', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _35, _36, _37;
+    var _18, _19;
     try {
         const deletedproperty = yield property_1.Property.findByIdAndDelete(req.params.id);
         if (!deletedproperty) {
@@ -777,7 +777,7 @@ PropertyRouter.delete('/api/properties/:id/delete', auth_middleware_1.isLoggedIn
         // delete related likes
         yield like_1.Like.deleteMany({
             _id: {
-                $in: (_35 = deletedproperty.likes) === null || _35 === void 0 ? void 0 : _35.map(id => new mongoose_1.Types.ObjectId(id))
+                $in: (_18 = deletedproperty.likes) === null || _18 === void 0 ? void 0 : _18.map(id => new mongoose_1.Types.ObjectId(id))
             }
         });
         // delete rentIntensions
@@ -785,8 +785,8 @@ PropertyRouter.delete('/api/properties/:id/delete', auth_middleware_1.isLoggedIn
         res.status(201).send({ ok: true });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while attempting to delete the property with id : ${req.params.id}  due to ${(_36 = error === null || error === void 0 ? void 0 : error.message) !== null && _36 !== void 0 ? _36 : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_37 = error.code) !== null && _37 !== void 0 ? _37 : 1000 });
+        logger_1.logger.error(`An Error occured while attempting to delete the property with id : ${req.params.id}  due to ${(_19 = error === null || error === void 0 ? void 0 : error.message) !== null && _19 !== void 0 ? _19 : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 //# sourceMappingURL=property.js.map

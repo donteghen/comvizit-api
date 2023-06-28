@@ -44,7 +44,7 @@ const pageSize = Number(process.env.PAGE_SIZE); // number of documents returned 
 // ***************************** public enpoints ***********************************************
 // get all featured properties (with or without query string)
 FeaturedRouter.get('/api/featured/properties-active', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+    var _a;
     try {
         let matchFilter = { status: 'Active' };
         // let sorting:any = {createdAt: -1}
@@ -133,12 +133,12 @@ FeaturedRouter.get('/api/featured/properties-active', (req, res) => __awaiter(vo
     }
     catch (error) {
         logger_1.logger.error(`An Error occured while querying active featured properties due to ${(_a = error === null || error === void 0 ? void 0 : error.message) !== null && _a !== void 0 ? _a : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_b = error.code) !== null && _b !== void 0 ? _b : 1000 });
+        res.status(400).send({ ok: false, error });
     }
 }));
 // get a singlefeatured property by Id
 FeaturedRouter.get('/api/featured/properties/:propertyId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c, _d;
+    var _b;
     try {
         const featuredProperty = yield featured_properties_1.FeaturedProperties.findById(req.params.propertyId);
         if (!featuredProperty) {
@@ -147,14 +147,14 @@ FeaturedRouter.get('/api/featured/properties/:propertyId', (req, res) => __await
         res.send({ ok: true, data: featuredProperty });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while querying the property featuring details with id: ${req.params.propertyId} due to ${(_c = error === null || error === void 0 ? void 0 : error.message) !== null && _c !== void 0 ? _c : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_d = error.code) !== null && _d !== void 0 ? _d : 1000 });
+        logger_1.logger.error(`An Error occured while querying the property featuring details with id: ${req.params.propertyId} due to ${(_b = error === null || error === void 0 ? void 0 : error.message) !== null && _b !== void 0 ? _b : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 // ***************************** admin restricted endpoints ***********************************************
 // create new featured property
 FeaturedRouter.post('/api/featured/properties/create', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _e, _f;
+    var _c;
     try {
         const { propertyId, duration } = req.body;
         const relatedProperty = yield property_1.Property.findById(propertyId);
@@ -179,17 +179,17 @@ FeaturedRouter.post('/api/featured/properties/create', auth_middleware_1.isLogge
         res.send({ ok: true, data: featuredProperty });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while creating a new property featring for property : ${req.body.propertyId} due to ${(_e = error === null || error === void 0 ? void 0 : error.message) !== null && _e !== void 0 ? _e : 'Unknown Source'}`);
+        logger_1.logger.error(`An Error occured while creating a new property featring for property : ${req.body.propertyId} due to ${(_c = error === null || error === void 0 ? void 0 : error.message) !== null && _c !== void 0 ? _c : 'Unknown Source'}`);
         if (error.name === 'ValidationError') {
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_f = error.code) !== null && _f !== void 0 ? _f : 1000 });
+        res.status(400).send({ ok: false, error });
     }
 }));
 // update featured property's status
 FeaturedRouter.patch('/api/featured/properties/:propertyId/status/update', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _g, _h;
+    var _d;
     try {
         if (req.body.status) {
             const featuredProperty = yield featured_properties_1.FeaturedProperties.findById(req.params.propertyId);
@@ -211,17 +211,17 @@ FeaturedRouter.patch('/api/featured/properties/:propertyId/status/update', auth_
         }
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while updating a property featring with id: ${req.params.propertyId} due to${(_g = error === null || error === void 0 ? void 0 : error.message) !== null && _g !== void 0 ? _g : 'Unknown Source'}`);
+        logger_1.logger.error(`An Error occured while updating a property featring with id: ${req.params.propertyId} due to${(_d = error === null || error === void 0 ? void 0 : error.message) !== null && _d !== void 0 ? _d : 'Unknown Source'}`);
         if (error.name === 'ValidationError') {
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_h = error.code) !== null && _h !== void 0 ? _h : 1000 });
+        res.status(400).send({ ok: false, error });
     }
 }));
 // delete a featured property by id
 FeaturedRouter.delete('/api/featured/properties/:propertyId/delete', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _j, _k;
+    var _e;
     try {
         const featuredProperty = yield featured_properties_1.FeaturedProperties.findByIdAndDelete(req.params.propertyId);
         if (!featuredProperty) {
@@ -233,13 +233,13 @@ FeaturedRouter.delete('/api/featured/properties/:propertyId/delete', auth_middle
         res.send({ ok: true });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while deleting a property featring with id: ${req.params.propertyId} due to${(_j = error === null || error === void 0 ? void 0 : error.message) !== null && _j !== void 0 ? _j : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_k = error.code) !== null && _k !== void 0 ? _k : 1000 });
+        logger_1.logger.error(`An Error occured while deleting a property featring with id: ${req.params.propertyId} due to${(_e = error === null || error === void 0 ? void 0 : error.message) !== null && _e !== void 0 ? _e : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 // get all featured properties (with or without query string)
 FeaturedRouter.get('/api/featured/properties', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _l, _m;
+    var _f;
     try {
         let matchFilter = {};
         const pipeline = [{ $sort: { createAt: -1 } }];
@@ -284,8 +284,8 @@ FeaturedRouter.get('/api/featured/properties', auth_middleware_1.isLoggedIn, aut
         res.send({ ok: true, data: featuredProperties });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while querying all featured properties by an admin due to ${(_l = error === null || error === void 0 ? void 0 : error.message) !== null && _l !== void 0 ? _l : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_m = error.code) !== null && _m !== void 0 ? _m : 1000 });
+        logger_1.logger.error(`An Error occured while querying all featured properties by an admin due to ${(_f = error === null || error === void 0 ? void 0 : error.message) !== null && _f !== void 0 ? _f : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 //# sourceMappingURL=featured-properties.js.map

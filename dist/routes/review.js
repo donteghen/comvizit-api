@@ -50,7 +50,7 @@ function setFilter(key, value) {
 // ***************************** public enpoints ***********************************************
 // create a new review
 ReviewRouter.post('/api/reviews/create', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+    var _a;
     try {
         const { type, rating, comment, refId, status } = req.body;
         const author = new mongoose_1.Types.ObjectId(req.user.id);
@@ -74,12 +74,12 @@ ReviewRouter.post('/api/reviews/create', auth_middleware_1.isLoggedIn, (req, res
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_b = error.code) !== null && _b !== void 0 ? _b : 1000 });
+        res.status(400).send({ ok: false, error });
     }
 }));
 // fetch reviews and respond with the calculated average rating
 ReviewRouter.post('/api/reviews-rating-count', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c, _d;
+    var _b;
     try {
         let averageRating = 0;
         if (!req.body.refId || !req.body.type) {
@@ -97,18 +97,18 @@ ReviewRouter.post('/api/reviews-rating-count', (req, res) => __awaiter(void 0, v
         res.send({ ok: true, data: { averageRating }, reviews });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while fetching  review count for the review of type: ${req.body.type}  with refId: ${req.body.refId} due to ${(_c = error === null || error === void 0 ? void 0 : error.message) !== null && _c !== void 0 ? _c : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_d = error.code) !== null && _d !== void 0 ? _d : 1000 });
+        logger_1.logger.error(`An Error occured while fetching  review count for the review of type: ${req.body.type}  with refId: ${req.body.refId} due to ${(_b = error === null || error === void 0 ? void 0 : error.message) !== null && _b !== void 0 ? _b : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 // get all reviews (with or without query string)
 ReviewRouter.get('/api/reviews', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _e, _f, _g, _h, _j, _k;
+    var _c, _d, _e, _f, _g;
     try {
         let filter = {};
         const queries = Object.keys(req.query);
         if (queries.length > 0) {
-            let dateFilter = (0, date_query_setter_1.setDateFilter)((_f = (_e = req.query['startDate']) === null || _e === void 0 ? void 0 : _e.toString()) !== null && _f !== void 0 ? _f : '', (_h = (_g = req.query['endDate']) === null || _g === void 0 ? void 0 : _g.toString()) !== null && _h !== void 0 ? _h : '');
+            let dateFilter = (0, date_query_setter_1.setDateFilter)((_d = (_c = req.query['startDate']) === null || _c === void 0 ? void 0 : _c.toString()) !== null && _d !== void 0 ? _d : '', (_f = (_e = req.query['endDate']) === null || _e === void 0 ? void 0 : _e.toString()) !== null && _f !== void 0 ? _f : '');
             filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) : filter;
             queries.forEach(key => {
                 if (req.query[key]) {
@@ -120,13 +120,13 @@ ReviewRouter.get('/api/reviews', (req, res) => __awaiter(void 0, void 0, void 0,
         res.send({ ok: true, data: reviews });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while querying all reviews due to ${(_j = error === null || error === void 0 ? void 0 : error.message) !== null && _j !== void 0 ? _j : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_k = error.code) !== null && _k !== void 0 ? _k : 1000 });
+        logger_1.logger.error(`An Error occured while querying all reviews due to ${(_g = error === null || error === void 0 ? void 0 : error.message) !== null && _g !== void 0 ? _g : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 // get a single review by id
 ReviewRouter.get('/api/reviews/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _l, _m;
+    var _h;
     try {
         const review = yield review_1.Review.findById(req.params.id).populate('author', ['fullname', 'avatar', 'address.town']).exec();
         if (!review) {
@@ -135,14 +135,14 @@ ReviewRouter.get('/api/reviews/:id', (req, res) => __awaiter(void 0, void 0, voi
         res.send({ ok: true, data: review });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while querying the details of the review with id: ${req.params.id} due to ${(_l = error === null || error === void 0 ? void 0 : error.message) !== null && _l !== void 0 ? _l : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_m = error.code) !== null && _m !== void 0 ? _m : 1000 });
+        logger_1.logger.error(`An Error occured while querying the details of the review with id: ${req.params.id} due to ${(_h = error === null || error === void 0 ? void 0 : error.message) !== null && _h !== void 0 ? _h : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 // ***************************** admin enpoints ***********************************************
 // update review's status
 ReviewRouter.patch('/api/reviews/:id/status-update', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _o, _p;
+    var _j;
     try {
         if (req.body.status) {
             const review = yield review_1.Review.findById(req.params.id);
@@ -161,17 +161,17 @@ ReviewRouter.patch('/api/reviews/:id/status-update', auth_middleware_1.isLoggedI
         }
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while update the status of the review with id: ${req.params.id} due to ${(_o = error === null || error === void 0 ? void 0 : error.message) !== null && _o !== void 0 ? _o : 'Unknown Source'}`);
+        logger_1.logger.error(`An Error occured while update the status of the review with id: ${req.params.id} due to ${(_j = error === null || error === void 0 ? void 0 : error.message) !== null && _j !== void 0 ? _j : 'Unknown Source'}`);
         if (error.name === 'ValidationError') {
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_p = error.code) !== null && _p !== void 0 ? _p : 1000 });
+        res.status(400).send({ ok: false, error });
     }
 }));
 // delete a review by id
 ReviewRouter.delete('/api/reviews/:id/delete', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _q, _r;
+    var _k;
     try {
         const review = yield review_1.Review.findByIdAndDelete(req.params.id);
         if (!review) {
@@ -180,8 +180,8 @@ ReviewRouter.delete('/api/reviews/:id/delete', auth_middleware_1.isLoggedIn, aut
         res.send({ ok: true });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while deleting the review with id: ${req.params.id} due to ${(_q = error === null || error === void 0 ? void 0 : error.message) !== null && _q !== void 0 ? _q : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_r = error.code) !== null && _r !== void 0 ? _r : 1000 });
+        logger_1.logger.error(`An Error occured while deleting the review with id: ${req.params.id} due to ${(_k = error === null || error === void 0 ? void 0 : error.message) !== null && _k !== void 0 ? _k : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 //# sourceMappingURL=review.js.map

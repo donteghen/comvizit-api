@@ -39,7 +39,7 @@ function setFilter(key, value) {
 // ***************************** public enpoints ***********************************************
 // create new contact
 ContactRouter.post('/api/contacts', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+    var _a;
     try {
         const { fullname, email, phone } = req.body;
         const newContact = new contact_1.Contact({
@@ -59,18 +59,18 @@ ContactRouter.post('/api/contacts', (req, res) => __awaiter(void 0, void 0, void
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_b = error.code) !== null && _b !== void 0 ? _b : 1000 });
+        res.status(400).send({ ok: false, error });
     }
 }));
 // ***************************** admin restricted endpoints ***********************************************
 // get all contact (with or without query string)
 ContactRouter.get('/api/contacts', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c, _d, _e, _f, _g, _h;
+    var _b, _c, _d, _e, _f;
     try {
         let filter = {};
         const queries = Object.keys(req.query);
         if (queries.length > 0) {
-            let dateFilter = (0, date_query_setter_1.setDateFilter)((_d = (_c = req.query['startDate']) === null || _c === void 0 ? void 0 : _c.toString()) !== null && _d !== void 0 ? _d : '', (_f = (_e = req.query['endDate']) === null || _e === void 0 ? void 0 : _e.toString()) !== null && _f !== void 0 ? _f : '');
+            let dateFilter = (0, date_query_setter_1.setDateFilter)((_c = (_b = req.query['startDate']) === null || _b === void 0 ? void 0 : _b.toString()) !== null && _c !== void 0 ? _c : '', (_e = (_d = req.query['endDate']) === null || _d === void 0 ? void 0 : _d.toString()) !== null && _e !== void 0 ? _e : '');
             filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) : filter;
             queries.forEach(key => {
                 if (req.query[key]) {
@@ -82,13 +82,13 @@ ContactRouter.get('/api/contacts', auth_middleware_1.isLoggedIn, auth_middleware
         res.send({ ok: true, data: contacts });
     }
     catch (error) {
-        logger_1.logger.error(`An error occured querying contactme list due to : ${(_g = error === null || error === void 0 ? void 0 : error.message) !== null && _g !== void 0 ? _g : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_h = error.code) !== null && _h !== void 0 ? _h : 1000 });
+        logger_1.logger.error(`An error occured querying contactme list due to : ${(_f = error === null || error === void 0 ? void 0 : error.message) !== null && _f !== void 0 ? _f : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 // get single contact by id
 ContactRouter.get('/api/contacts/:id', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _j, _k;
+    var _g;
     try {
         const contact = yield contact_1.Contact.findById(req.params.id);
         if (!contact) {
@@ -97,13 +97,13 @@ ContactRouter.get('/api/contacts/:id', auth_middleware_1.isLoggedIn, auth_middle
         res.send({ ok: true, data: contact });
     }
     catch (error) {
-        logger_1.logger.error(`An error occured while querying the contactme details with id: ${req.params.id} due to : ${(_j = error === null || error === void 0 ? void 0 : error.message) !== null && _j !== void 0 ? _j : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_k = error.code) !== null && _k !== void 0 ? _k : 1000 });
+        logger_1.logger.error(`An error occured while querying the contactme details with id: ${req.params.id} due to : ${(_g = error === null || error === void 0 ? void 0 : error.message) !== null && _g !== void 0 ? _g : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 // make contact as replied
 ContactRouter.patch('/api/contacts/:id/reply', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _l, _m;
+    var _h;
     try {
         const contact = yield contact_1.Contact.findById(req.params.id);
         if (!contact) {
@@ -115,17 +115,17 @@ ContactRouter.patch('/api/contacts/:id/reply', auth_middleware_1.isLoggedIn, aut
         res.send({ ok: true, data: updateContact });
     }
     catch (error) {
-        logger_1.logger.error(`An error occured while updating the replied status of the contactme with id: ${req.params.id} due to : ${(_l = error === null || error === void 0 ? void 0 : error.message) !== null && _l !== void 0 ? _l : 'Unknown Source'}`);
+        logger_1.logger.error(`An error occured while updating the replied status of the contactme with id: ${req.params.id} due to : ${(_h = error === null || error === void 0 ? void 0 : error.message) !== null && _h !== void 0 ? _h : 'Unknown Source'}`);
         if (error.name === 'ValidationError') {
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_m = error.code) !== null && _m !== void 0 ? _m : 1000 });
+        res.status(400).send({ ok: false, error });
     }
 }));
 // delete contact
 ContactRouter.delete('/api/contacts/:id/delete', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _o, _p;
+    var _j;
     try {
         const contact = yield contact_1.Contact.findById(req.params.id);
         if (!contact) {
@@ -138,8 +138,8 @@ ContactRouter.delete('/api/contacts/:id/delete', auth_middleware_1.isLoggedIn, a
         res.send({ ok: true });
     }
     catch (error) {
-        logger_1.logger.error(`An error occured while deleting the contactme message with id: ${req.params.id} due to : ${(_o = error === null || error === void 0 ? void 0 : error.message) !== null && _o !== void 0 ? _o : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_p = error.code) !== null && _p !== void 0 ? _p : 1000 });
+        logger_1.logger.error(`An error occured while deleting the contactme message with id: ${req.params.id} due to : ${(_j = error === null || error === void 0 ? void 0 : error.message) !== null && _j !== void 0 ? _j : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 //# sourceMappingURL=contact.js.map

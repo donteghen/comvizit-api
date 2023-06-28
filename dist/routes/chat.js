@@ -35,11 +35,16 @@ function setFilter(key, value) {
     }
 }
 // create a chat
-ChatRouter.post('/chats', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+ChatRouter.post('/api/chats', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
         if (!req.body.senderId || !req.body.receiverId) {
             throw error_1.CHAT_PARAM_INVALID;
+        }
+        // check if chat already exists between the tenant and landlord
+        const existingChat = yield chat_1.Chat.findOne({ members: { $all: [req.body.senderId, req.body.receiverId] } });
+        if (existingChat) {
+            return res.send({ ok: true, data: existingChat });
         }
         const newChat = new chat_1.Chat({
             members: [req.body.senderId, req.body.receiverId]
@@ -53,12 +58,12 @@ ChatRouter.post('/chats', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_b = error.code) !== null && _b !== void 0 ? _b : 1000 });
+        res.status(400).send({ ok: false, error });
     }
 }));
 // get all chat by a user
-ChatRouter.get('/chats', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c, _d;
+ChatRouter.get('/api/chats', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _b;
     try {
         const userChats = yield chat_1.Chat.find({
             members: { $in: [req.user.id] },
@@ -66,13 +71,13 @@ ChatRouter.get('/chats', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(v
         res.send({ ok: true, data: userChats });
     }
     catch (error) {
-        logger_1.logger.error(`An error occured while getting the chat list for the user with id: ${req.user.id} due to : ${(_c = error === null || error === void 0 ? void 0 : error.message) !== null && _c !== void 0 ? _c : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_d = error.code) !== null && _d !== void 0 ? _d : 1000 });
+        logger_1.logger.error(`An error occured while getting the chat list for the user with id: ${req.user.id} due to : ${(_b = error === null || error === void 0 ? void 0 : error.message) !== null && _b !== void 0 ? _b : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 // get a single chat
-ChatRouter.get('/chats/id', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _e, _f;
+ChatRouter.get('/api/chats/id', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _c;
     try {
         if (!req.params.id) {
             throw error_1.INVALID_REQUEST;
@@ -93,14 +98,14 @@ ChatRouter.get('/chats/id', auth_middleware_1.isLoggedIn, (req, res) => __awaite
         res.send({ ok: true, data: chat });
     }
     catch (error) {
-        logger_1.logger.error(`An error occured while getting the chat detail for the chat with id: ${req.params.id} due to : ${(_e = error === null || error === void 0 ? void 0 : error.message) !== null && _e !== void 0 ? _e : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_f = error.code) !== null && _f !== void 0 ? _f : 1000 });
+        logger_1.logger.error(`An error occured while getting the chat detail for the chat with id: ${req.params.id} due to : ${(_c = error === null || error === void 0 ? void 0 : error.message) !== null && _c !== void 0 ? _c : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 /************************* Admin Restricted Endpoints *************************/
 // get all chats by admin
-ChatRouter.get('/all-chats', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _g, _h;
+ChatRouter.get('/api/all-chats', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _d;
     try {
         let filter = {};
         const queries = Object.keys(req.query);
@@ -119,8 +124,8 @@ ChatRouter.get('/all-chats', auth_middleware_1.isLoggedIn, auth_middleware_1.isA
         res.send({ ok: true, data: chats });
     }
     catch (error) {
-        logger_1.logger.error(`An error occured while getting a chat list due to : ${(_g = error === null || error === void 0 ? void 0 : error.message) !== null && _g !== void 0 ? _g : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_h = error.code) !== null && _h !== void 0 ? _h : 1000 });
+        logger_1.logger.error(`An error occured while getting a chat list due to : ${(_d = error === null || error === void 0 ? void 0 : error.message) !== null && _d !== void 0 ? _d : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 //# sourceMappingURL=chat.js.map

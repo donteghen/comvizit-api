@@ -51,7 +51,7 @@ function setFilter(key, value) {
 // ***************************** public enpoints ***********************************************
 // create new complain
 ComplainRouter.post('/api/complains', auth_middleware_1.isLoggedIn, auth_middleware_1.isTenant, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+    var _a;
     try {
         const { type, targetId, subject, message } = req.body;
         const newComplain = new complain_1.Complain({
@@ -73,18 +73,18 @@ ComplainRouter.post('/api/complains', auth_middleware_1.isLoggedIn, auth_middlew
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error.message, code: (_b = error.code) !== null && _b !== void 0 ? _b : 1000 });
+        res.status(400).send({ ok: false, error });
     }
 }));
 // ***************************** admin restricted endpoints ***********************************************
 // get all complains (with or without query string)
 ComplainRouter.get('/api/complains', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c, _d, _e, _f, _g, _h;
+    var _b, _c, _d, _e, _f;
     try {
         let filter = {};
         const queries = Object.keys(req.query);
         if (queries.length > 0) {
-            let dateFilter = (0, date_query_setter_1.setDateFilter)((_d = (_c = req.query['startDate']) === null || _c === void 0 ? void 0 : _c.toString()) !== null && _d !== void 0 ? _d : '', (_f = (_e = req.query['endDate']) === null || _e === void 0 ? void 0 : _e.toString()) !== null && _f !== void 0 ? _f : '');
+            let dateFilter = (0, date_query_setter_1.setDateFilter)((_c = (_b = req.query['startDate']) === null || _b === void 0 ? void 0 : _b.toString()) !== null && _c !== void 0 ? _c : '', (_e = (_d = req.query['endDate']) === null || _d === void 0 ? void 0 : _d.toString()) !== null && _e !== void 0 ? _e : '');
             filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) : filter;
             queries.forEach(key => {
                 if (req.query[key]) {
@@ -96,13 +96,13 @@ ComplainRouter.get('/api/complains', auth_middleware_1.isLoggedIn, (req, res) =>
         res.send({ ok: true, data: complains });
     }
     catch (error) {
-        logger_1.logger.error(`An error occured while querying complain list due to : ${(_g = error === null || error === void 0 ? void 0 : error.message) !== null && _g !== void 0 ? _g : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_h = error.code) !== null && _h !== void 0 ? _h : 1000 });
+        logger_1.logger.error(`An error occured while querying complain list due to : ${(_f = error === null || error === void 0 ? void 0 : error.message) !== null && _f !== void 0 ? _f : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 // get single complain by id
 ComplainRouter.get('/api/complains/:id', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _j;
+    var _g;
     try {
         const complain = yield complain_1.Complain.findById(req.params.id);
         if (!complain) {
@@ -111,13 +111,13 @@ ComplainRouter.get('/api/complains/:id', auth_middleware_1.isLoggedIn, auth_midd
         res.send({ ok: true, data: complain });
     }
     catch (error) {
-        logger_1.logger.error(`An error occured while querying complain detail by id: ${req.params.id} due to : ${(_j = error === null || error === void 0 ? void 0 : error.message) !== null && _j !== void 0 ? _j : 'Unknown Source'}`);
+        logger_1.logger.error(`An error occured while querying complain detail by id: ${req.params.id} due to : ${(_g = error === null || error === void 0 ? void 0 : error.message) !== null && _g !== void 0 ? _g : 'Unknown Source'}`);
         res.status(400).send({ ok: false, error: error.message });
     }
 }));
 // make complain as processed
 ComplainRouter.patch('/api/complains/:id/process', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _k, _l;
+    var _h;
     try {
         const complain = yield complain_1.Complain.findById(req.params.id);
         if (!complain) {
@@ -129,17 +129,17 @@ ComplainRouter.patch('/api/complains/:id/process', auth_middleware_1.isLoggedIn,
         res.send({ ok: true, data: updateComplain });
     }
     catch (error) {
-        logger_1.logger.error(`An error occured while updating the complain with id: ${req.params.id} due to : ${(_k = error === null || error === void 0 ? void 0 : error.message) !== null && _k !== void 0 ? _k : 'Unknown Source'}`);
+        logger_1.logger.error(`An error occured while updating the complain with id: ${req.params.id} due to : ${(_h = error === null || error === void 0 ? void 0 : error.message) !== null && _h !== void 0 ? _h : 'Unknown Source'}`);
         if (error.name === 'ValidationError') {
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}` });
             return;
         }
-        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_l = error.code) !== null && _l !== void 0 ? _l : 1000 });
+        res.status(400).send({ ok: false, error });
     }
 }));
 // delete a complain by id
 ComplainRouter.delete('/api/complains/:id/delete', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _m;
+    var _j;
     try {
         const complain = yield complain_1.Complain.findById(req.params.id);
         if (!complain) {
@@ -152,7 +152,7 @@ ComplainRouter.delete('/api/complains/:id/delete', auth_middleware_1.isLoggedIn,
         res.send({ ok: true });
     }
     catch (error) {
-        logger_1.logger.error(`An error occured while deleting the complain with id: ${req.params.id} due to : ${(_m = error === null || error === void 0 ? void 0 : error.message) !== null && _m !== void 0 ? _m : 'Unknown Source'}`);
+        logger_1.logger.error(`An error occured while deleting the complain with id: ${req.params.id} due to : ${(_j = error === null || error === void 0 ? void 0 : error.message) !== null && _j !== void 0 ? _j : 'Unknown Source'}`);
         res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message });
     }
 }));

@@ -83,7 +83,7 @@ function setLogDateFilter(startDate, endDate) {
 }
 // get all logs (with or without query string)
 LogRouter.get('/api/logs', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+    var _a;
     try {
         let filter = {};
         const queries = Object.keys(req.query);
@@ -102,12 +102,12 @@ LogRouter.get('/api/logs', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdm
     }
     catch (error) {
         logger_1.logger.error(`An Error occured while querying log list due to ${(_a = error === null || error === void 0 ? void 0 : error.message) !== null && _a !== void 0 ? _a : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_b = error.code) !== null && _b !== void 0 ? _b : 1000 });
+        res.status(400).send({ ok: false, error });
     }
 }));
 // get a single log by id
 LogRouter.get('/api/logs/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c, _d;
+    var _b;
     try {
         const log = yield log_1.Log.findById(req.params.id);
         if (!log) {
@@ -116,13 +116,13 @@ LogRouter.get('/api/logs/:id', (req, res) => __awaiter(void 0, void 0, void 0, f
         res.send({ ok: true, data: log });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while querying the details of the log with id: ${req.params.id} due to ${(_c = error === null || error === void 0 ? void 0 : error.message) !== null && _c !== void 0 ? _c : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error.message, code: (_d = error.code) !== null && _d !== void 0 ? _d : 1000 });
+        logger_1.logger.error(`An Error occured while querying the details of the log with id: ${req.params.id} due to ${(_b = error === null || error === void 0 ? void 0 : error.message) !== null && _b !== void 0 ? _b : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 // delete a single log record by id
 LogRouter.delete('/api/logs/:id/delete', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _e, _f;
+    var _c;
     try {
         const log = yield log_1.Log.findByIdAndDelete(req.params.id);
         if (!log) {
@@ -131,8 +131,8 @@ LogRouter.delete('/api/logs/:id/delete', auth_middleware_1.isLoggedIn, auth_midd
         res.send({ ok: true });
     }
     catch (error) {
-        logger_1.logger.error(`An Error occured while deleting the log with id: ${req.params.id} due to ${(_e = error === null || error === void 0 ? void 0 : error.message) !== null && _e !== void 0 ? _e : 'Unknown Source'}`);
-        res.status(400).send({ ok: false, error: error === null || error === void 0 ? void 0 : error.message, code: (_f = error.code) !== null && _f !== void 0 ? _f : 1000 });
+        logger_1.logger.error(`An Error occured while deleting the log with id: ${req.params.id} due to ${(_c = error === null || error === void 0 ? void 0 : error.message) !== null && _c !== void 0 ? _c : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
     }
 }));
 //# sourceMappingURL=log.js.map

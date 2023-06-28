@@ -90,7 +90,7 @@ LogRouter.get('/api/logs', isLoggedIn, isAdmin, async (req: Request, res: Respon
         res.send({ok: true, data: logs})
     } catch (error) {
         logger.error(`An Error occured while querying log list due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -104,7 +104,7 @@ LogRouter.get('/api/logs/:id',  async (req: Request, res: Response) => {
         res.send({ok: true, data: log})
     } catch (error) {
         logger.error(`An Error occured while querying the details of the log with id: ${req.params.id} due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -119,7 +119,7 @@ LogRouter.delete('/api/logs/:id/delete', isLoggedIn, isAdmin, async (req: Reques
         res.send({ok: true})
     } catch (error) {
         logger.error(`An Error occured while deleting the log with id: ${req.params.id} due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 

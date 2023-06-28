@@ -63,7 +63,7 @@ RentalHistoryRouter.get('/api/rental-histories', isLoggedIn, async (req: Request
 
     } catch (error) {
         logger.error(`An Error occured while querying rental-history list due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -80,7 +80,7 @@ RentalHistoryRouter.get('/api/rental-histories/:id/detail', isLoggedIn, async (r
         res.send({ok: true, data: rentalHistory[0]})
     } catch (error) {
         logger.error(`An Error occured while querying the details of the rental-history with id: ${req.params.id} due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -205,7 +205,7 @@ RentalHistoryRouter.post('/api/rental-histories', isLoggedIn, isAdmin, async (re
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -241,7 +241,7 @@ RentalHistoryRouter.patch('/api/rental-histories/:id/terminate', isLoggedIn, isA
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 

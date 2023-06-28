@@ -132,7 +132,7 @@ FeaturedRouter.get('/api/featured/properties-active',  async (req: Request, res:
 
     } catch (error) {
         logger.error(`An Error occured while querying active featured properties due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -146,7 +146,7 @@ FeaturedRouter.get('/api/featured/properties/:propertyId',  async (req: Request,
         res.send({ok: true, data: featuredProperty})
     } catch (error) {
         logger.error(`An Error occured while querying the property featuring details with id: ${req.params.propertyId} due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -182,7 +182,7 @@ FeaturedRouter.post('/api/featured/properties/create', isLoggedIn, isAdmin, asyn
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -213,7 +213,7 @@ FeaturedRouter.patch('/api/featured/properties/:propertyId/status/update', isLog
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
             return
         }
-        res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -230,7 +230,7 @@ FeaturedRouter.delete('/api/featured/properties/:propertyId/delete', isLoggedIn,
         res.send({ok: true})
     } catch (error) {
         logger.error(`An Error occured while deleting a property featring with id: ${req.params.propertyId} due to${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error:error?.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
@@ -287,7 +287,7 @@ FeaturedRouter.get('/api/featured/properties', isLoggedIn, isAdmin, async (req: 
 
     } catch (error) {
         logger.error(`An Error occured while querying all featured properties by an admin due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error: error.message, code: error.code??1000})
+        res.status(400).send({ok:false, error})
     }
 })
 
