@@ -6,9 +6,14 @@ import { IChat } from "./interfaces";
  * @param {Array<String>} members - The list of all members within a chat
  */
 const ChatSchema = new Schema<IChat>({
-    members: {
-      type: [String],
+    tenant: {
+      type: String,
+      required: true
     },
+    landlord: {
+      type: String,
+      required: true
+    }
   },
   {
     timestamps: true,

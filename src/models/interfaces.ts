@@ -73,7 +73,8 @@ export type BookingSummary = {
 }
 
 export interface IChat {
-    members: Types.Array<string>
+    tenant: string,
+    landlord: string
 }
 
 export interface IChatMessage {

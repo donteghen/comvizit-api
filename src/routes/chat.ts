@@ -3,19 +3,20 @@ import { Chat } from "../models/chat";
 import { isAdmin, isLoggedIn } from "../middleware/auth-middleware";
 import { CHAT_PARAM_INVALID, INVALID_REQUEST, NOT_FOUND } from "../constants/error";
 import { logger } from "../logs/logger";
-import { Types } from "mongoose";
+import { PipelineStage, Types } from "mongoose";
 import { setDateFilter } from "../utils/date-query-setter";
 import { constants } from "../constants/declared";
+import { User } from "../models/user";
 
 const ChatRouter = express.Router()
 
 // query helper function
 function setFilter(key:string, value:any): any {
     switch (key) {
-        case 'receiverId':
-            return { 'members': { $in: [value] } }
-        case 'senderId':
-            return { 'members': { $in: [value] } }
+        case 'tenant':
+            return { tenant:  value}
+        case 'landlord':
+            return { landlord:  value}
         default:
             return {}
     }
@@ -24,16 +25,20 @@ function setFilter(key:string, value:any): any {
 // create a chat
 ChatRouter.post('/api/chats', isLoggedIn, async (req: Request, res:Response) => {
     try {
-        if (!req.body.senderId || !req.body.receiverId) {
+        if (!req.body.tenant || !req.body.landlord) {
             throw CHAT_PARAM_INVALID
         }
         // check if chat already exists between the tenant and landlord
-        const existingChat = await Chat.findOne({members: { $all: [req.body.senderId, req.body.receiverId] }});
+        const existingChat = await Chat.findOne({
+            tenant: req.body.tenant,
+            landlord: req.body.landlord
+        });
         if (existingChat) {
             return res.send({ok: true, data: existingChat});
         }
         const newChat = new Chat({
-            members: [req.body.senderId, req.body.receiverId]
+            tenant: req.body.tenant,
+            landlord: req.body.landlord
         });
         const result = await newChat.save();
         res.send({ok: true, data: result});
@@ -50,11 +55,66 @@ ChatRouter.post('/api/chats', isLoggedIn, async (req: Request, res:Response) => 
 // get all chat by a user
 ChatRouter.get('/api/chats', isLoggedIn, async (req: Request, res:Response) => {
     try {
-        const userChats = await Chat.find({
-            members: { $in: [req.user.id] },
-        }).sort({createdAt: -1}) ;
+        let pipeline : [PipelineStage] | any
+        if (req.user.role === constants.USER_ROLE.TENANT) {
+            pipeline = [
+                {
+                    $match: {
+                        tenant: req.user.id
+                    }
+                },
+                {
+                    $addFields: {
+                        tenantId: { $toObjectId: "$tenant" }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: 'tenantId',
+                        foreignField: '_id',
+                        as: 'tenant'
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$tenant',
+                    }
+                }
+            ]
+        }
+        else {
+            pipeline = [
+                {
+                    $match: {
+                        landlord: req.user.id
+                    }
+                },
+                {
+                    $addFields: {
+                        landlordId: { $toObjectId: "$tenant" }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: 'landlordId',
+                        foreignField: '_id',
+                        as: 'landlord'
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$landlordId',
+                    }
+                }
+            ]
+        }
+        
+        let userChats: any[]  = await Chat.aggregate(pipeline).sort({createdAt: -1}) ;
         res.send({ok: true, data: userChats})
     } catch (error) {
+        console.log(error)
         logger.error(`An error occured while getting the chat list for the user with id: ${req.user.id} due to : ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error})
     }
@@ -69,14 +129,12 @@ ChatRouter.get('/api/chats/id', isLoggedIn, async (req: Request, res:Response) =
         }
         // check if the user is an admin and if yes then query only by id, else make sure the user is a member of that chat
         const chat = req.user.role === constants.USER_ROLE.ADMIN ?
-        await Chat.findOne({
-            _id: new Types.ObjectId(req.params.id)
-        })
+        await Chat.findOne({_id: new Types.ObjectId(req.params.id)})
         :
-        await Chat.findOne({
-            _id: new Types.ObjectId(req.params.id),
-            members: { $in: [req.user.id] },
-        });
+        req.user.role === constants.USER_ROLE.TENANT ?
+        await Chat.findOne({ _id: new Types.ObjectId(req.params.id), tenant: req.user.id})
+        :
+        await Chat.findOne({ _id: new Types.ObjectId(req.params.id), landlord: req.user.id});
         if (!chat) {
             throw NOT_FOUND
         }

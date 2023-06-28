@@ -8,9 +8,14 @@ const mongoose_1 = require("mongoose");
  * @param {Array<String>} members - The list of all members within a chat
  */
 const ChatSchema = new mongoose_1.Schema({
-    members: {
-        type: [String],
+    tenant: {
+        type: String,
+        required: true
     },
+    landlord: {
+        type: String,
+        required: true
+    }
 }, {
     timestamps: true,
 });
