@@ -65,6 +65,33 @@ ChatRouter.get('/api/chats', isLoggedIn, async (req: Request, res:Response) => {
                 },
                 {
                     $addFields: {
+                        landlordId: { $toObjectId: "$landlord" }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: 'landlordId',
+                        foreignField: '_id',
+                        as: 'landlord'
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$landlord',
+                    }
+                }
+            ]
+        }
+        else {
+            pipeline = [
+                {
+                    $match: {
+                        landlord: req.user.id
+                    }
+                },
+                {
+                    $addFields: {
                         tenantId: { $toObjectId: "$tenant" }
                     }
                 },
@@ -83,34 +110,7 @@ ChatRouter.get('/api/chats', isLoggedIn, async (req: Request, res:Response) => {
                 }
             ]
         }
-        else {
-            pipeline = [
-                {
-                    $match: {
-                        landlord: req.user.id
-                    }
-                },
-                {
-                    $addFields: {
-                        landlordId: { $toObjectId: "$tenant" }
-                    }
-                },
-                {
-                    $lookup: {
-                        from: 'users',
-                        localField: 'landlordId',
-                        foreignField: '_id',
-                        as: 'landlord'
-                    }
-                },
-                {
-                    $unwind: {
-                        path: '$landlordId',
-                    }
-                }
-            ]
-        }
-        
+
         let userChats: any[]  = await Chat.aggregate(pipeline).sort({createdAt: -1}) ;
         res.send({ok: true, data: userChats})
     } catch (error) {

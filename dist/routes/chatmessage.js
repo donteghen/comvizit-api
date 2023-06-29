@@ -57,10 +57,23 @@ ChatMessageRouter.post('/api/chat-messages', auth_middleware_1.isLoggedIn, (req,
         res.status(400).send({ ok: false, error });
     }
 }));
+// get all chat messages
+ChatMessageRouter.get('/api/chat-messages', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _b;
+    try {
+        const chatId = req.body.chatId;
+        const chatMessages = yield chatmessage_1.ChatMessage.find({ chatId }).sort({ createdAt: -1 });
+        res.send({ ok: true, data: chatMessages });
+    }
+    catch (error) {
+        logger_1.logger.error(`An error occured while getting the chatmessages for chat id: ${req.body.chatId} due to ${(_b = error === null || error === void 0 ? void 0 : error.message) !== null && _b !== void 0 ? _b : 'Unknown Source'}`);
+        res.status(400).send({ ok: false, error });
+    }
+}));
 /**************************************** Admin Restricted Endpoints */
 // get all messages in the admin
 ChatMessageRouter.get('/api/all-chat-messages', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _b;
+    var _c;
     try {
         let filter = {};
         const queries = Object.keys(req.query);
@@ -78,7 +91,7 @@ ChatMessageRouter.get('/api/all-chat-messages', auth_middleware_1.isLoggedIn, au
         res.send({ ok: true, data: chatMessages });
     }
     catch (error) {
-        logger_1.logger.error(`An error occured while getting the chatmessages in the admin due to : ${(_b = error === null || error === void 0 ? void 0 : error.message) !== null && _b !== void 0 ? _b : 'Unknown Source'}`);
+        logger_1.logger.error(`An error occured while getting the chatmessages in the admin due to : ${(_c = error === null || error === void 0 ? void 0 : error.message) !== null && _c !== void 0 ? _c : 'Unknown Source'}`);
         res.status(400).send({ ok: false, error });
     }
 }));

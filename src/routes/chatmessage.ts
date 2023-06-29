@@ -44,6 +44,18 @@ ChatMessageRouter.post('/api/chat-messages', isLoggedIn, async (req: Request, re
     }
 })
 
+
+// get all chat messages
+ChatMessageRouter.get('/api/chat-messages', isLoggedIn, async (req: Request, res: Response) => {
+    try {
+        const chatId = req.body.chatId
+        const chatMessages = await ChatMessage.find({chatId}).sort({createdAt: -1}) ;
+        res.send({ok: true, data: chatMessages});
+    } catch (error) {
+        logger.error(`An error occured while getting the chatmessages for chat id: ${req.body.chatId} due to ${error?.message??'Unknown Source'}`)
+        res.status(400).send({ok:false, error})
+    }
+})
 /**************************************** Admin Restricted Endpoints */
 
 // get all messages in the admin
