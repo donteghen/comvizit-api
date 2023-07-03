@@ -1,6 +1,7 @@
 import {Schema, model} from 'mongoose'
 
 import { IComplain } from './interfaces'
+import { NextFunction } from 'express';
 
 /**
  * Complain schema, represents the document property definition for a complain
@@ -45,12 +46,31 @@ const complainSchema = new Schema<IComplain>({
         type: Number,
         required: true,
         default: Date.now()
-    }
+    },
+    unique_id: {
+        type: Number,
+        required: true,
+        unique: true
+    },
 }, {
     virtuals: true,
     timestamps: true
 })
 
+complainSchema.pre('validate', async function (next: NextFunction) {
+    try {
+        let doc = this;
+        // check if it is a document
+        if (doc.isNew) {
+            const collectionCount = await Complain.countDocuments();
+            doc.unique_id = collectionCount + 1
+        }
+        next()
+
+    } catch (error) {
+        next(error)
+    }
+})
 const Complain = model<IComplain>('Complains', complainSchema)
 
 export {Complain}

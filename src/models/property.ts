@@ -1,5 +1,6 @@
 import {Schema, model} from 'mongoose'
 import { IProperty, PropertyVirtual, PropertyVideo } from './interfaces'
+import { NextFunction } from 'express';
 
 
 /**
@@ -48,6 +49,11 @@ import { IProperty, PropertyVirtual, PropertyVideo } from './interfaces'
  */
 
 const propertySchema = new Schema<IProperty>({
+    unique_id: {
+        type: Number,
+        required: true,
+        unique: true
+    },
     ownerId: {
         type: Schema.Types.ObjectId,
         required: true,
@@ -263,7 +269,19 @@ const propertySchema = new Schema<IProperty>({
     timestamps: true
 })
 
-
+propertySchema.pre('validate', async function (next: NextFunction) {
+    try {
+        let doc = this;
+        // check if it is a document
+        if (doc.isNew) {
+            const collectionCount = await Property.countDocuments();
+            doc.unique_id = collectionCount + 1
+        }
+        next()
+    } catch (error) {
+        next(error)
+    }
+})
 const Property = model<IProperty>('Properties', propertySchema)
 
 export {Property}

@@ -127,10 +127,41 @@ const userSchema = new mongoose_1.Schema({
     },
     likes: {
         type: [String]
-    }
+    },
+    unique_id: {
+        type: Number,
+        required: true,
+        unique: true
+    },
+    isOnline: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
+    lastOnlineDate: {
+        type: Date,
+        required: true,
+        default: Date.now
+    },
 }, {
     virtuals: true,
     timestamps: true
+});
+userSchema.pre('validate', function (next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            let doc = this;
+            // check if it is a document
+            if (doc.isNew) {
+                const collectionCount = yield User.countDocuments();
+                doc.unique_id = collectionCount + 1;
+            }
+            next();
+        }
+        catch (error) {
+            next(error);
+        }
+    });
 });
 userSchema.pre('save', function (next) {
     return __awaiter(this, void 0, void 0, function* () {

@@ -1,6 +1,7 @@
 import {Schema, model} from 'mongoose'
 
 import { IInquiry } from './interfaces'
+import { NextFunction } from 'express';
 
 
 /**
@@ -44,12 +45,31 @@ const inquirySchema = new Schema<IInquiry>({
         type: Number,
         required: true,
         default: Date.now()
-    }
+    },
+    unique_id: {
+        type: Number,
+        required: true,
+        unique: true
+    },
 }, {
     virtuals: true,
     timestamps: true
 })
 
+inquirySchema.pre('validate', async function (next: NextFunction) {
+    try {
+        let doc = this;
+        // check if it is a document
+        if (doc.isNew) {
+            const collectionCount = await Inquiry.countDocuments();
+            doc.unique_id = collectionCount + 1
+        }
+        next()
+
+    } catch (error) {
+        next(error)
+    }
+})
 const Inquiry = model<IInquiry>('Inquiries', inquirySchema)
 
 export {Inquiry}

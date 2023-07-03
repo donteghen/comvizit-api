@@ -87,12 +87,12 @@ ChatRouter.get('/api/chats', auth_middleware_1.isLoggedIn, (req, res) => __await
                         from: 'users',
                         localField: 'landlordId',
                         foreignField: '_id',
-                        as: 'landlord'
+                        as: 'user'
                     }
                 },
                 {
                     $unwind: {
-                        path: '$landlord',
+                        path: '$user',
                     }
                 }
             ];
@@ -114,12 +114,12 @@ ChatRouter.get('/api/chats', auth_middleware_1.isLoggedIn, (req, res) => __await
                         from: 'users',
                         localField: 'tenantId',
                         foreignField: '_id',
-                        as: 'tenant'
+                        as: 'user'
                     }
                 },
                 {
                     $unwind: {
-                        path: '$tenant',
+                        path: '$user',
                     }
                 }
             ];

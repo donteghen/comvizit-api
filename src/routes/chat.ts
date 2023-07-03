@@ -73,12 +73,12 @@ ChatRouter.get('/api/chats', isLoggedIn, async (req: Request, res:Response) => {
                         from: 'users',
                         localField: 'landlordId',
                         foreignField: '_id',
-                        as: 'landlord'
+                        as: 'user'
                     }
                 },
                 {
                     $unwind: {
-                        path: '$landlord',
+                        path: '$user',
                     }
                 }
             ]
@@ -100,12 +100,12 @@ ChatRouter.get('/api/chats', isLoggedIn, async (req: Request, res:Response) => {
                         from: 'users',
                         localField: 'tenantId',
                         foreignField: '_id',
-                        as: 'tenant'
+                        as: 'user'
                     }
                 },
                 {
                     $unwind: {
-                        path: '$tenant',
+                        path: '$user',
                     }
                 }
             ]

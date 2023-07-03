@@ -1,6 +1,7 @@
 import {Schema, model} from 'mongoose'
 
 import { ITag } from './interfaces'
+import { NextFunction } from 'express';
 
 /**
  * Tag schema, defines the Tag document properties
@@ -46,11 +47,30 @@ const tagSchema = new Schema<ITag>({
         required: true,
         default: Date.now()
     },
+    unique_id: {
+        type: Number,
+        required: true,
+        unique: true
+    },
 }, {
     virtuals: true,
     timestamps: true
 })
 
+tagSchema.pre('validate', async function (next: NextFunction) {
+    try {
+        let doc = this;
+        // check if it is a document
+        if (doc.isNew) {
+            const collectionCount = await Tag.countDocuments();
+            doc.unique_id = collectionCount + 1
+        }
+        next()
+
+    } catch (error) {
+        next(error)
+    }
+})
 const Tag = model<ITag>('Tags', tagSchema)
 
 export {Tag}

@@ -1,13 +1,26 @@
-
+import { Types } from 'mongoose';
+import { User } from '../models/user';
 import { Heartbeat } from '../models/socket-interfaces';
+import { logger } from '../logs/logger';
 
 
-function onHeartBeat (socket: any, data: Heartbeat) {
-    console.log('This a heartbeat data', data)
-    // do stuff
+async function onHeartBeat (data: Heartbeat) {
+    console.log('Updating the online status for user with Id', data.senderId)
 
-    // broadcast this socket status to all clients
-    socket.emit('is_active', data)
+    // update the socket user's online status
+    try {
+        const user = await User.findOne({_id: new Types.ObjectId(data.senderId)});
+    if (!user.isOnline) {
+        const now = Date.now()
+        user.isOnline = true,
+        user.lastOnlineDate = new Date(now),
+        user.updated = now
+    }
+    await user.save()
+    } catch (error) {
+        logger.error(`User update failed on heartbeat event due to : ${error??"Unrecognized reasons"}`)
+        return
+    }
 }
 
 export {

@@ -1,5 +1,6 @@
 import {Schema, model} from 'mongoose'
 import { ILike } from './interfaces'
+import { NextFunction } from 'express';
 
 
 /**
@@ -17,12 +18,31 @@ const likeSchema = new Schema<ILike>({
     likerId: {
         type: Schema.Types.ObjectId,
         required: true
-    }
+    },
+    unique_id: {
+        type: Number,
+        required: true,
+        unique: true
+    },
 }, {
     virtuals: true,
     timestamps: true
 })
 
+likeSchema.pre('validate', async function (next: NextFunction) {
+    try {
+        let doc = this;
+        // check if it is a document
+        if (doc.isNew) {
+            const collectionCount = await Like.countDocuments();
+            doc.unique_id = collectionCount + 1
+        }
+        next()
+
+    } catch (error) {
+        next(error)
+    }
+})
 const Like = model<ILike>('Likes', likeSchema)
 
 export {Like}

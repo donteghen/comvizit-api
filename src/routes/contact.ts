@@ -42,6 +42,7 @@ ContactRouter.post('/api/contacts', async (req: Request, res: Response) => {
 
         res.send({ok: true, data: contact})
     } catch (error) {
+        console.log(error)
         logger.error(`An error occured while creating a new contactme message due to : ${error?.message??'Unknown Source'}`)
         if (error.name === 'ValidationError') {
             res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})

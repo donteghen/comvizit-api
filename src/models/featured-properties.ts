@@ -1,6 +1,7 @@
 import {Schema, model} from 'mongoose'
 
 import { IFeaturedProperties } from './interfaces'
+import { NextFunction } from 'express';
 
 /**
  * FeaturedProperty schema, represents the document property definition for Fetatured Properties
@@ -30,12 +31,31 @@ const featuredPropertySchema = new Schema<IFeaturedProperties>({
         required: true,
         enum: ['Active', 'Inactive'],
         default: 'Active'
-    }
+    },
+    unique_id: {
+        type: Number,
+        required: true,
+        unique: true
+    },
 }, {
     virtuals: true,
     timestamps: true
 })
 
+featuredPropertySchema.pre('validate', async function (next: NextFunction) {
+    try {
+        let doc = this;
+        // check if it is a document
+        if (doc.isNew) {
+            const collectionCount = await FeaturedProperties.countDocuments();
+            doc.unique_id = collectionCount + 1
+        }
+        next()
+
+    } catch (error) {
+        next(error)
+    }
+})
 const FeaturedProperties = model<IFeaturedProperties>('FeaturedProperties', featuredPropertySchema)
 
 export {FeaturedProperties}

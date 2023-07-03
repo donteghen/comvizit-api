@@ -74,13 +74,15 @@ export type BookingSummary = {
 
 export interface IChat {
     tenant: string,
-    landlord: string
+    landlord: string,
+    unique_id: number
 }
 
 export interface IChatMessage {
     chatId: string,
     senderId: string,
-    content: string
+    content: string,
+    unique_id: number
 }
 export interface IComplain {
     targetId: Types.ObjectId,
@@ -89,7 +91,8 @@ export interface IComplain {
     subject: string,
     message: string,
     processed: boolean,
-    updated: number
+    updated: number,
+    unique_id: number
 }
 
 export interface IContact extends Document {
@@ -97,7 +100,8 @@ export interface IContact extends Document {
     email: string,
     phone: string,
     replied: boolean,
-    updated: number
+    updated: number,
+    unique_id: number
 }
 
 export interface IInquiry extends Document {
@@ -107,7 +111,8 @@ export interface IInquiry extends Document {
     message: string,
     replied: boolean,
     subject: string,
-    updated: number
+    updated: number,
+    unique_id: number
 }
 
 export interface IProperty extends Document {
@@ -140,7 +145,8 @@ export interface IProperty extends Document {
     rentUtilities: RentUtilities,
     likes?:string[],
     rentIntensions?: string[],
-    featuring: boolean
+    featuring: boolean,
+    unique_id: number
 }
 
 export interface IUser extends Document {
@@ -159,14 +165,18 @@ export interface IUser extends Document {
     role: string,
     favorites?: string[],
     likes?:string[],
-    rentIntensions?: string[]
+    rentIntensions?: string[],
+    unique_id: number,
+    isOnline: boolean,
+    lastOnlineDate: Date
 }
 
 export interface IFeaturedProperties extends Document {
     propertyId: Types.ObjectId,
     duration: number,
     startedAt: number,
-    status: string
+    status: string,
+    unique_id: number
 }
 
 export interface ITag extends Document {
@@ -176,13 +186,15 @@ export interface ITag extends Document {
     status: string,
     refId: Types.ObjectId,
     createdDate: number,
-    updated: number
+    updated: number,
+    unique_id: number
 }
 
 export interface IToken extends Document {
     owner: Types.ObjectId,
     secret: string,
-    generatedAt: number
+    generatedAt: number,
+    unique_id: number
 }
 
 export interface IReview extends Document {
@@ -192,16 +204,19 @@ export interface IReview extends Document {
     rating: number,
     comment: string,
     status: string,
-    refId: string
+    refId: string,
+    unique_id: number
 }
 export interface IFavorite extends Document {
     propertyId: Types.ObjectId,
-    userId: Types.ObjectId
+    userId: Types.ObjectId,
+    unique_id: number
 }
 
 export interface ILike extends Document {
     propertyId: Types.ObjectId,
-    likerId: Types.ObjectId
+    likerId: Types.ObjectId,
+    unique_id: number
 }
 
 export interface IRentIntention extends Document {
@@ -210,7 +225,8 @@ export interface IRentIntention extends Document {
     potentialTenantId: Types.ObjectId,
     comment: string,
     status: string,
-    initiatedAt: number
+    initiatedAt: number,
+    unique_id: number
 }
 
 export interface IRentalHistory extends Document {
@@ -220,7 +236,8 @@ export interface IRentalHistory extends Document {
     startDate: number,
     endDate: number,
     status: string,
-    rentIntentionId: Types.ObjectId
+    rentIntentionId: Types.ObjectId,
+    unique_id: number
 }
 
 export interface ILog extends Document {

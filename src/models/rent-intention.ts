@@ -1,5 +1,6 @@
 import {Schema, model} from 'mongoose'
 import { IRentIntention } from './interfaces'
+import { NextFunction } from 'express';
 
 
 /**
@@ -14,6 +15,11 @@ import { IRentIntention } from './interfaces'
  */
 
 const rentIntentionSchema = new Schema<IRentIntention>({
+    unique_id: {
+        type: Number,
+        required: true,
+        unique: true
+    },
     propertyId: {
         type: Schema.Types.ObjectId,
         required: true
@@ -45,6 +51,20 @@ const rentIntentionSchema = new Schema<IRentIntention>({
     timestamps: true
 })
 
+rentIntentionSchema.pre('validate', async function (next: NextFunction) {
+    try {
+        let doc = this;
+        // check if it is a document
+        if (doc.isNew) {
+            const collectionCount = await RentIntention.countDocuments();
+            doc.unique_id = collectionCount + 1
+        }
+        next()
+
+    } catch (error) {
+        next(error)
+    }
+})
 const RentIntention = model<IRentIntention>('RentIntentions', rentIntentionSchema)
 
 export {RentIntention}

@@ -1,6 +1,6 @@
 import {Schema, model} from 'mongoose'
-
 import { IContact } from './interfaces'
+import { NextFunction } from 'express'
 
 
 /**
@@ -26,6 +26,11 @@ const contactSchema = new Schema<IContact>({
         type: String,
         required: true
     },
+    unique_id: {
+        type: Number,
+        required: true,
+        unique: true
+    },
     replied: {
         type: Boolean,
         required: true,
@@ -41,6 +46,20 @@ const contactSchema = new Schema<IContact>({
     timestamps: true
 })
 
+contactSchema.pre('validate', async function (next: NextFunction) {
+    try {
+        let doc = this;
+        // check if it is a document
+        if (doc.isNew) {
+            const collectionCount = await Contact.countDocuments();
+            doc.unique_id = collectionCount + 1
+        }
+        next()
+
+    } catch (error) {
+        next(error)
+    }
+})
 const Contact = model<IContact>('Contacts', contactSchema)
 
 export {Contact}

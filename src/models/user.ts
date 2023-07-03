@@ -116,12 +116,42 @@ const userSchema = new Schema<IUser>({
     },
     likes: {
         type: [String]
-    }
+    },
+    unique_id: {
+        type: Number,
+        required: true,
+        unique: true
+    },
+    isOnline: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
+    lastOnlineDate: {
+        type: Date,
+        required: true,
+        default: Date.now
+    },
+
 }, {
     virtuals: true,
     timestamps: true
 })
 
+userSchema.pre('validate', async function (next: NextFunction) {
+    try {
+        let doc = this;
+        // check if it is a document
+        if (doc.isNew) {
+            const collectionCount = await User.countDocuments();
+            doc.unique_id = collectionCount + 1
+        }
+        next()
+
+    } catch (error) {
+        next(error)
+    }
+})
 
 userSchema.pre('save', async function (next: NextFunction){
     const user: IUser = this
@@ -132,6 +162,7 @@ userSchema.pre('save', async function (next: NextFunction){
     }
     next()
 })
+
 
 const User = model<IUser>('Users', userSchema)
 export {User}

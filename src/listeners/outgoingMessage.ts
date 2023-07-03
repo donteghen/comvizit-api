@@ -1,14 +1,18 @@
-import { IChatMessage } from '../models/interfaces';
+import { IChatMessage,  } from '../models/interfaces';
 import {io} from '../server';
+import { ChatMessage } from '../models/chatmessage';
 
 
-function onOutgoingMessage(data: IChatMessage) {
-    console.log("New message to be sent with the following data: ")
-    io.in(data.chatId).emit('incoming_message', data)
+async function onOutgoingMessage(data: IChatMessage) {
     // save the message
-
+    const newMessage = new ChatMessage({
+        chatId: data.chatId,
+        senderId: data.senderId,
+        content: data.content,
+    });
+    await newMessage.save();
     // emit the save message to all members of this room.
-    // io.emit('incoming_message', data)
+    io.in(data.chatId).emit('incoming_message', data);
 }
 
 

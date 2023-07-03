@@ -39,6 +39,7 @@ import { User } from './models/user';
 import {onHeartBeat} from './listeners/heartBeat';
 import {onOutgoingMessage} from './listeners/outgoingMessage';
 import { Types } from 'mongoose';
+import { constants } from './constants/declared';
 
 // global settings
 dotenv.config() ;
@@ -125,25 +126,43 @@ app.get('/api/', async (req: Request, res: Response) => {
 
 io.on("connection", async (socket) => {
   // get all chatId linked to this socket user and add the socket to all rooms
-  const socketUserRooms : (IChat & {_id: Types.ObjectId})[] | null = await Chat.find({ members: { $in: socket.handshake.auth.userId } });
-  if (socketUserRooms.length < 1) {
-    socket.disconnect(true);
+  const socketUserRole = socket.handshake.auth.user?.role
+  let socketUserRooms : any[] | null
+  if (socketUserRole === constants.USER_ROLE.TENANT) {
+    socketUserRooms = await Chat.find({ landlord: socket.handshake.auth.user?.id} )
+  }else if (socketUserRole === constants.USER_ROLE.LANDLORD) {
+    socketUserRooms = await Chat.find({ tenant: socket.handshake.auth.user?.id} )
   }
-  else {
+
+  if (socketUserRooms && socketUserRooms?.length > 0) {
     socketUserRooms.forEach(room => {
       socket.join(room._id.toString());
     })
   }
+
+
   // handle heartbeat event handler
-  socket.on('heartbeat', (data) => onHeartBeat(socket, data));
+  socket.on('heartbeat', onHeartBeat);
 
   // recieve an outgoing_message event handler
   socket.on('outgoing_message', onOutgoingMessage);
 
   // disconnection event handler
-  socket.on('disconnect', (reason) => {
-      // add logger
-      console.log(`socket ${socket.id} disconnected due to ${reason}`);
+  socket.on('disconnect', async (reason) => {
+    try {
+      const now = Date.now()
+      const update = {
+      isOnline: true,
+      lastOnlineDate: new Date(now),
+      update: now
+    }
+    // update the socket user's document
+      await User.findOneAndUpdate({_id: new Types.ObjectId(socket.handshake.auth.user?.id)}, update, {new:true})
+    } catch (error) {
+      console.log(`User update failed on socket disconnect event due to : ${error??"Unrecognized reasons"}`)
+      logger.error(`User update failed on socket disconnect event due to : ${error??"Unrecognized reasons"}`)
+      return
+    }
   })
 });
 

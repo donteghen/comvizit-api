@@ -1,5 +1,4 @@
 import {Schema, model, Types} from 'mongoose'
-
 import { ILog } from './interfaces'
 
 /**

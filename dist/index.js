@@ -3,12 +3,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-require('newrelic'); // require new relic to load and startup all preconfigure processes
+// require('newrelic'); // require new relic to load and startup all preconfigure processes
 const dbconfig_1 = require("./config/dbconfig");
 const logger_1 = require("./logs/logger"); // bring in the logger to add server start logs for tracing later on.
 const server_1 = require("./server"); // Bring in our server config
 const cluster_1 = __importDefault(require("cluster"));
 const os_1 = __importDefault(require("os"));
+// import {initialize} from 'mongoose-auto-increment'
 // set the port
 const PORT = process.env.PORT;
 const maxTimeout = 1200000;

@@ -12,10 +12,57 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.closeDb = exports.clearDb = exports.connectDb = void 0;
 const mongoose_1 = require("mongoose");
 const logger_1 = require("../logs/logger");
+const prodEnv = process.env.NODE_ENV === 'production';
 const connectDb = () => __awaiter(void 0, void 0, void 0, function* () {
     mongoose_1.connection.on('error', (error) => {
-        var _a;
-        logger_1.logger.error(`A db error occured : ${(_a = error === null || error === void 0 ? void 0 : error.message) !== null && _a !== void 0 ? _a : "Unknown"}`);
+        var _a, _b;
+        if (prodEnv) {
+            console.log(`A db error occured : ${(_a = error === null || error === void 0 ? void 0 : error.message) !== null && _a !== void 0 ? _a : "Unknown"}`);
+        }
+        else {
+            logger_1.logger.error(`A db error occured : ${(_b = error === null || error === void 0 ? void 0 : error.message) !== null && _b !== void 0 ? _b : "Unknown"}`);
+        }
+    });
+    mongoose_1.connection.once('open', function () {
+        if (prodEnv) {
+            logger_1.logger.info("MONGODB Intializing autoincrement plugin");
+        }
+        else {
+            console.log("MONGODB Intializing autoincrement plugin");
+        }
+    });
+    mongoose_1.connection.on('reconnected', () => {
+        if (prodEnv) {
+            logger_1.logger.info('MONGODB Connection Reestablished');
+        }
+        else {
+            console.log('MONGODB Connection Reestablished');
+        }
+    });
+    mongoose_1.connection.on('disconnected', () => {
+        if (prodEnv) {
+            logger_1.logger.info('MONGODB Connection Disconnected');
+        }
+        else {
+            console.log('MONGODB Connection Disconnected');
+        }
+    });
+    mongoose_1.connection.on('close', () => {
+        if (prodEnv) {
+            logger_1.logger.info('MONGODB Connection Closed');
+        }
+        else {
+            console.log('MONGODB Connection Closed');
+        }
+    });
+    mongoose_1.connection.on('error', (error) => {
+        if (prodEnv) {
+            logger_1.logger.info(`MONGODB ERROR: ${error}`);
+        }
+        else {
+            console.log('MONGODB ERROR:', error);
+        }
+        console.error('MONGODB ERROR:', error);
     });
     yield (0, mongoose_1.connect)(process.env.MONGO_STRING);
 });

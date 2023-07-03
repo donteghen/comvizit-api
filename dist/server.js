@@ -49,6 +49,7 @@ const user_2 = require("./models/user");
 const heartBeat_1 = require("./listeners/heartBeat");
 const outgoingMessage_1 = require("./listeners/outgoingMessage");
 const mongoose_1 = require("mongoose");
+const declared_1 = require("./constants/declared");
 // global settings
 dotenv_1.default.config();
 (0, auth_middleware_1.passportConfig)();
@@ -132,24 +133,43 @@ app.get('/api/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 }));
 io.on("connection", (socket) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b, _c;
     // get all chatId linked to this socket user and add the socket to all rooms
-    const socketUserRooms = yield chat_2.Chat.find({ members: { $in: socket.handshake.auth.userId } });
-    if (socketUserRooms.length < 1) {
-        socket.disconnect(true);
+    const socketUserRole = (_a = socket.handshake.auth.user) === null || _a === void 0 ? void 0 : _a.role;
+    let socketUserRooms;
+    if (socketUserRole === declared_1.constants.USER_ROLE.TENANT) {
+        socketUserRooms = yield chat_2.Chat.find({ landlord: (_b = socket.handshake.auth.user) === null || _b === void 0 ? void 0 : _b.id });
     }
-    else {
+    else if (socketUserRole === declared_1.constants.USER_ROLE.LANDLORD) {
+        socketUserRooms = yield chat_2.Chat.find({ tenant: (_c = socket.handshake.auth.user) === null || _c === void 0 ? void 0 : _c.id });
+    }
+    if (socketUserRooms && (socketUserRooms === null || socketUserRooms === void 0 ? void 0 : socketUserRooms.length) > 0) {
         socketUserRooms.forEach(room => {
             socket.join(room._id.toString());
         });
     }
     // handle heartbeat event handler
-    socket.on('heartbeat', (data) => (0, heartBeat_1.onHeartBeat)(socket, data));
+    socket.on('heartbeat', heartBeat_1.onHeartBeat);
     // recieve an outgoing_message event handler
     socket.on('outgoing_message', outgoingMessage_1.onOutgoingMessage);
     // disconnection event handler
-    socket.on('disconnect', (reason) => {
-        // add logger
-        console.log(`socket ${socket.id} disconnected due to ${reason}`);
-    });
+    socket.on('disconnect', (reason) => __awaiter(void 0, void 0, void 0, function* () {
+        var _d;
+        try {
+            const now = Date.now();
+            const update = {
+                isOnline: true,
+                lastOnlineDate: new Date(now),
+                update: now
+            };
+            // update the socket user's document
+            yield user_2.User.findOneAndUpdate({ _id: new mongoose_1.Types.ObjectId((_d = socket.handshake.auth.user) === null || _d === void 0 ? void 0 : _d.id) }, update, { new: true });
+        }
+        catch (error) {
+            console.log(`User update failed on socket disconnect event due to : ${error !== null && error !== void 0 ? error : "Unrecognized reasons"}`);
+            logger_1.logger.error(`User update failed on socket disconnect event due to : ${error !== null && error !== void 0 ? error : "Unrecognized reasons"}`);
+            return;
+        }
+    }));
 }));
 //# sourceMappingURL=server.js.map

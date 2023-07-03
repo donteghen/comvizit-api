@@ -1,6 +1,7 @@
 import {Schema, model} from 'mongoose'
 
 import { IReview } from './interfaces'
+import { NextFunction } from 'express';
 
 /**
  * Review schema, represents the document property definition for a review
@@ -46,12 +47,31 @@ const reviewSchema = new Schema<IReview>({
         required: true,
         default: 'Active',
         enum: ['Active', 'Inactive']
-    }
+    },
+    unique_id: {
+        type: Number,
+        required: true,
+        unique: true
+    },
 }, {
     virtuals: true,
     timestamps: true
 })
 
+reviewSchema.pre('validate', async function (next: NextFunction) {
+    try {
+        let doc = this;
+        // check if it is a document
+        if (doc.isNew) {
+            const collectionCount = await Review.countDocuments();
+            doc.unique_id = collectionCount + 1
+        }
+        next()
+
+    } catch (error) {
+        next(error)
+    }
+})
 const Review = model<IReview>('Reviews', reviewSchema)
 
 export {Review}
