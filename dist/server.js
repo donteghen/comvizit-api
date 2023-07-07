@@ -153,17 +153,17 @@ io.on("connection", (socket) => __awaiter(void 0, void 0, void 0, function* () {
     // recieve an outgoing_message event handler
     socket.on('outgoing_message', outgoingMessage_1.onOutgoingMessage);
     // disconnection event handler
-    socket.on('disconnect', (reason) => __awaiter(void 0, void 0, void 0, function* () {
-        var _d;
+    socket.on('disconnecting', (reason) => __awaiter(void 0, void 0, void 0, function* () {
         try {
+            console.log(socket.handshake.auth.userId, 'is disconnecting due to: ', reason);
             const now = Date.now();
             const update = {
-                isOnline: true,
+                isOnline: false,
                 lastOnlineDate: new Date(now),
                 update: now
             };
             // update the socket user's document
-            yield user_2.User.findOneAndUpdate({ _id: new mongoose_1.Types.ObjectId((_d = socket.handshake.auth.user) === null || _d === void 0 ? void 0 : _d.id) }, update, { new: true });
+            yield user_2.User.findOneAndUpdate({ _id: new mongoose_1.Types.ObjectId(socket.handshake.auth.userId) }, update, { new: true });
         }
         catch (error) {
             console.log(`User update failed on socket disconnect event due to : ${error !== null && error !== void 0 ? error : "Unrecognized reasons"}`);

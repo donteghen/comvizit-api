@@ -61,7 +61,10 @@ ChatMessageRouter.post('/api/chat-messages', auth_middleware_1.isLoggedIn, (req,
 ChatMessageRouter.get('/api/chat-messages', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _b;
     try {
-        const chatId = req.body.chatId;
+        const chatId = req.query.chatId;
+        if (!chatId) {
+            return res.send({ ok: true, data: [] });
+        }
         const chatMessages = yield chatmessage_1.ChatMessage.find({ chatId }).sort({ createdAt: -1 });
         res.send({ ok: true, data: chatMessages });
     }

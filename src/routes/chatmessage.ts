@@ -48,7 +48,10 @@ ChatMessageRouter.post('/api/chat-messages', isLoggedIn, async (req: Request, re
 // get all chat messages
 ChatMessageRouter.get('/api/chat-messages', isLoggedIn, async (req: Request, res: Response) => {
     try {
-        const chatId = req.body.chatId
+        const chatId = req.query.chatId;
+        if (!chatId) {
+            return res.send({ok: true, data: []});
+        }
         const chatMessages = await ChatMessage.find({chatId}).sort({createdAt: -1}) ;
         res.send({ok: true, data: chatMessages});
     } catch (error) {

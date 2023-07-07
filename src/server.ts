@@ -70,6 +70,7 @@ io.use(async function (socket, next) {
   if (!userExists || !userExists.approved || !userExists.isVerified) {
     next(new Error('Illegal connection. Connection unauthenticated!'))
   }
+
   next();
 })
 app.use(
@@ -148,16 +149,17 @@ io.on("connection", async (socket) => {
   socket.on('outgoing_message', onOutgoingMessage);
 
   // disconnection event handler
-  socket.on('disconnect', async (reason) => {
+  socket.on('disconnecting', async (reason) => {
     try {
+      console.log(socket.handshake.auth.userId, 'is disconnecting due to: ', reason)
       const now = Date.now()
       const update = {
-      isOnline: true,
+      isOnline: false,
       lastOnlineDate: new Date(now),
       update: now
     }
     // update the socket user's document
-      await User.findOneAndUpdate({_id: new Types.ObjectId(socket.handshake.auth.user?.id)}, update, {new:true})
+      await User.findOneAndUpdate({_id: new Types.ObjectId(socket.handshake.auth.userId)}, update, {new:true})
     } catch (error) {
       console.log(`User update failed on socket disconnect event due to : ${error??"Unrecognized reasons"}`)
       logger.error(`User update failed on socket disconnect event due to : ${error??"Unrecognized reasons"}`)
