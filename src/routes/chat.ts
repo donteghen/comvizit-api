@@ -120,6 +120,29 @@ ChatRouter.get('/api/chats', isLoggedIn, async (req: Request, res:Response) => {
     }
 })
 
+/**
+ * gets an existing chat between a tenant and landlord
+ */
+ChatRouter.get('/api/existing-chat', isLoggedIn, async (req: Request, res:Response) => {
+    const {tenant, landlord} = req.query ;
+    try {
+        if (!tenant || !landlord) {
+            throw INVALID_REQUEST;
+        }
+        const chat = await Chat.findOne({
+            landlord,
+            tenant
+        });
+        if (!chat) {
+            throw NOT_FOUND;
+        }
+        res.send({ok: true, data: chat});
+    } catch (error) {
+        logger.error(`An error occured while fetching a chat between tenant and landlord  due to : ${error?.message??'Unknown Source'}`)
+        res.status(400).send({ok:false, error})
+    }
+
+})
 
 // get a single chat
 ChatRouter.get('/api/chats/id', isLoggedIn, async (req: Request, res:Response) => {

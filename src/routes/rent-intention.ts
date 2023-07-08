@@ -79,7 +79,7 @@ RentIntentionRouter.get('/api/rent-intentions/:id', isLoggedIn, async (req: Requ
 RentIntentionRouter.post('/api/rent-intentions', isLoggedIn, isTenant, async (req: Request, res: Response) => {
     try {
         const {propertyId, landlordId, comment } = req.body
-        // check if this potential tenant already has an initiated rent-intention
+        // check if this potential tenant already has an initiated rent-intention linked with this property and landlord
         const thrityDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000)
         const existAlready = await RentIntention.findOne({
 
@@ -93,7 +93,8 @@ RentIntentionRouter.post('/api/rent-intentions', isLoggedIn, isTenant, async (re
 
         })
         if (existAlready) {
-            throw RENTINTENTION_ALREADY_EXISTS
+            // throw RENTINTENTION_ALREADY_EXISTS
+            return res.send({ok: true, data: {alreadyExists: true}}); // send response success and alreadyExists true so that the UI can indicate that clearly to user
         }
         // a strict casting is added to prevent future bug introduction in the database
         const newRentIntention = new RentIntention({

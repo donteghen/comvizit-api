@@ -91,7 +91,7 @@ RentIntentionRouter.post('/api/rent-intentions', auth_middleware_1.isLoggedIn, a
     var _g;
     try {
         const { propertyId, landlordId, comment } = req.body;
-        // check if this potential tenant already has an initiated rent-intention
+        // check if this potential tenant already has an initiated rent-intention linked with this property and landlord
         const thrityDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
         const existAlready = yield rent_intention_1.RentIntention.findOne({
             propertyId: new mongoose_1.Types.ObjectId(propertyId),
@@ -103,7 +103,8 @@ RentIntentionRouter.post('/api/rent-intentions', auth_middleware_1.isLoggedIn, a
             }
         });
         if (existAlready) {
-            throw error_1.RENTINTENTION_ALREADY_EXISTS;
+            // throw RENTINTENTION_ALREADY_EXISTS
+            return res.send({ ok: true, data: { alreadyExists: true } }); // send response success and alreadyExists true so that the UI can indicate that clearly to user
         }
         // a strict casting is added to prevent future bug introduction in the database
         const newRentIntention = new rent_intention_1.RentIntention({

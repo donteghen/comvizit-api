@@ -135,23 +135,24 @@ app.get('/api/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 io.on("connection", (socket) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c;
     // get all chatId linked to this socket user and add the socket to all rooms
-    const socketUserRole = (_a = socket.handshake.auth.user) === null || _a === void 0 ? void 0 : _a.role;
-    let socketUserRooms;
-    if (socketUserRole === declared_1.constants.USER_ROLE.TENANT) {
-        socketUserRooms = yield chat_2.Chat.find({ landlord: (_b = socket.handshake.auth.user) === null || _b === void 0 ? void 0 : _b.id });
-    }
-    else if (socketUserRole === declared_1.constants.USER_ROLE.LANDLORD) {
-        socketUserRooms = yield chat_2.Chat.find({ tenant: (_c = socket.handshake.auth.user) === null || _c === void 0 ? void 0 : _c.id });
-    }
+    const socketUserRole = (_a = socket.handshake.auth) === null || _a === void 0 ? void 0 : _a.UserRole;
+    let socketUserRooms = socketUserRole === declared_1.constants.USER_ROLE.TENANT ?
+        yield chat_2.Chat.find({ tenant: (_b = socket.handshake.auth) === null || _b === void 0 ? void 0 : _b.userId }) :
+        socketUserRole === declared_1.constants.USER_ROLE.LANDLORD ?
+            yield chat_2.Chat.find({ landlord: (_c = socket.handshake.auth) === null || _c === void 0 ? void 0 : _c.userId })
+            :
+                [];
+    // console.log('for user : ', socket.handshake.auth.UserRole, socketUserRooms)
     if (socketUserRooms && (socketUserRooms === null || socketUserRooms === void 0 ? void 0 : socketUserRooms.length) > 0) {
         socketUserRooms.forEach(room => {
+            // console.log(room._id.toString())
             socket.join(room._id.toString());
         });
     }
     // handle heartbeat event handler
     socket.on('heartbeat', heartBeat_1.onHeartBeat);
     // recieve an outgoing_message event handler
-    socket.on('outgoing_message', outgoingMessage_1.onOutgoingMessage);
+    socket.on('outgoing_message', (data) => (0, outgoingMessage_1.onOutgoingMessage)(socket, data));
     // disconnection event handler
     socket.on('disconnecting', (reason) => __awaiter(void 0, void 0, void 0, function* () {
         try {

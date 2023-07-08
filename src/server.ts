@@ -127,16 +127,18 @@ app.get('/api/', async (req: Request, res: Response) => {
 
 io.on("connection", async (socket) => {
   // get all chatId linked to this socket user and add the socket to all rooms
-  const socketUserRole = socket.handshake.auth.user?.role
-  let socketUserRooms : any[] | null
-  if (socketUserRole === constants.USER_ROLE.TENANT) {
-    socketUserRooms = await Chat.find({ landlord: socket.handshake.auth.user?.id} )
-  }else if (socketUserRole === constants.USER_ROLE.LANDLORD) {
-    socketUserRooms = await Chat.find({ tenant: socket.handshake.auth.user?.id} )
-  }
+  const socketUserRole = socket.handshake.auth?.UserRole
+  let socketUserRooms : any[] | null = socketUserRole === constants.USER_ROLE.TENANT ?
+  await Chat.find({ tenant: socket.handshake.auth?.userId} ) :
+  socketUserRole === constants.USER_ROLE.LANDLORD ?
+  await Chat.find({ landlord: socket.handshake.auth?.userId} )
+  :
+  []
 
+  // console.log('for user : ', socket.handshake.auth.UserRole, socketUserRooms)
   if (socketUserRooms && socketUserRooms?.length > 0) {
     socketUserRooms.forEach(room => {
+      // console.log(room._id.toString())
       socket.join(room._id.toString());
     })
   }
@@ -146,12 +148,12 @@ io.on("connection", async (socket) => {
   socket.on('heartbeat', onHeartBeat);
 
   // recieve an outgoing_message event handler
-  socket.on('outgoing_message', onOutgoingMessage);
+  socket.on('outgoing_message', (data) => onOutgoingMessage(socket, data));
 
   // disconnection event handler
   socket.on('disconnecting', async (reason) => {
     try {
-      console.log(socket.handshake.auth.userId, 'is disconnecting due to: ', reason)
+      console.log(socket.handshake.auth.userId, 'is disconnecting due to: ', reason);
       const now = Date.now()
       const update = {
       isOnline: false,
