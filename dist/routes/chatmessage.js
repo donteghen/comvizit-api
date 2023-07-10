@@ -61,12 +61,35 @@ ChatMessageRouter.post('/api/chat-messages', auth_middleware_1.isLoggedIn, (req,
 ChatMessageRouter.get('/api/chat-messages', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _b;
     try {
+        const pageSize = process.env.CHAT_MESSAGE_PAGE_SIZE ? Number(process.env.CHAT_MESSAGE_PAGE_SIZE) : 10;
         const chatId = req.query.chatId;
+        const page = req.query.page ? Number(req.query.page) : 1;
         if (!chatId) {
             return res.send({ ok: true, data: [] });
         }
-        const chatMessages = yield chatmessage_1.ChatMessage.find({ chatId }).sort({ createdAt: -1 });
-        res.send({ ok: true, data: chatMessages });
+        let pipeline = [
+            {
+                $match: {
+                    chatId
+                }
+            },
+            {
+                $sort: {
+                    createdAt: -1
+                }
+            },
+            {
+                $skip: (Number(page) - 1) * pageSize
+            },
+            {
+                $limit: pageSize
+            }
+        ];
+        const chatMessages = yield chatmessage_1.ChatMessage.aggregate(pipeline);
+        const totalChatMessageCount = yield chatmessage_1.ChatMessage.countDocuments({ chatId });
+        const totalPages = Math.ceil(totalChatMessageCount / pageSize);
+        const hasMore = page < totalPages ? true : false;
+        res.send({ ok: true, data: { messages: chatMessages, hasMore, page } });
     }
     catch (error) {
         logger_1.logger.error(`An error occured while getting the chatmessages for chat id: ${req.body.chatId} due to ${(_b = error === null || error === void 0 ? void 0 : error.message) !== null && _b !== void 0 ? _b : 'Unknown Source'}`);

@@ -4,7 +4,7 @@ import { isAdmin, isLoggedIn } from '../middleware/auth-middleware';
 import { CHAT_MESSAGE_PARAM_INVALID, INVALID_REQUEST } from '../constants/error';
 import { logger } from '../logs/logger';
 import { setDateFilter } from '../utils/date-query-setter';
-import { Types } from 'mongoose';
+import { Types, PipelineStage } from 'mongoose';
 
 const ChatMessageRouter = express.Router()
 
@@ -48,15 +48,42 @@ ChatMessageRouter.post('/api/chat-messages', isLoggedIn, async (req: Request, re
 // get all chat messages
 ChatMessageRouter.get('/api/chat-messages', isLoggedIn, async (req: Request, res: Response) => {
     try {
-        const chatId = req.query.chatId;
+        const pageSize = process.env.CHAT_MESSAGE_PAGE_SIZE ? Number(process.env.CHAT_MESSAGE_PAGE_SIZE) : 10 ;
+        const chatId : string = req.query.chatId as string ;
+        const page : number = req.query.page ? Number(req.query.page) : 1 ;
+
         if (!chatId) {
             return res.send({ok: true, data: []});
         }
-        const chatMessages = await ChatMessage.find({chatId}).sort({createdAt: -1}) ;
-        res.send({ok: true, data: chatMessages});
+
+        let pipeline: PipelineStage[] = [
+            {
+                $match: {
+                    chatId
+                }
+            },
+            {
+                $sort: {
+                    createdAt: -1
+                }
+            },
+            {
+                $skip:  (Number(page) - 1) * pageSize
+            },
+            {
+                $limit: pageSize
+            }
+        ];
+
+        const chatMessages = await ChatMessage.aggregate(pipeline) ;
+        const totalChatMessageCount = await ChatMessage.countDocuments({chatId}) ;
+        const totalPages = Math.ceil(totalChatMessageCount / pageSize) ;
+        const hasMore = page < totalPages ? true : false ;
+
+        res.send({ok: true, data: {messages: chatMessages, hasMore, page}}) ;
     } catch (error) {
-        logger.error(`An error occured while getting the chatmessages for chat id: ${req.body.chatId} due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error})
+        logger.error(`An error occured while getting the chatmessages for chat id: ${req.body.chatId} due to ${error?.message??'Unknown Source'}`) ;
+        res.status(400).send({ok:false, error}) ;
     }
 })
 /**************************************** Admin Restricted Endpoints */
