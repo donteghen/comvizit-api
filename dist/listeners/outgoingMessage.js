@@ -10,9 +10,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.onOutgoingMessage = void 0;
+const mongoose_1 = require("mongoose");
 const server_1 = require("../server");
 const chatmessage_1 = require("../models/chatmessage");
 const logger_1 = require("../logs/logger");
+const user_1 = require("../models/user");
+const chat_1 = require("../models/chat");
 function onOutgoingMessage(socket, data) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -23,11 +26,14 @@ function onOutgoingMessage(socket, data) {
                 content: data.content,
             });
             const message = yield newMessage.save();
-            console.log('Firing a new message by: ', message.senderId, 'to : ', message.content);
-            console.log('this socket info', socket.rooms, socket.id, socket.sids);
             // emit the save message to all members of this room.
             server_1.io.in(data.chatId).emit('incoming_message', message);
-            socket.to(data.chatId).emit('incoming_message', message);
+            // get the chat to retreive the sender and receiver ids
+            const chat = yield chat_1.Chat.findById(data.chatId);
+            // update both sender && receiver
+            const now = Date.now();
+            const ids = [new mongoose_1.Types.ObjectId(chat.tenant), new mongoose_1.Types.ObjectId(chat.landlord)];
+            yield user_1.User.updateMany({ _id: { $in: ids } }, { lastMessageDate: new Date(now), updated: now });
         }
         catch (error) {
             logger_1.logger.error(`An error occur while creating a new message and emiting incoming_message event due to : ${error !== null && error !== void 0 ? error : "Unrecognized reasons"}`);

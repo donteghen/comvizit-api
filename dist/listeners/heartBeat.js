@@ -19,12 +19,10 @@ function onHeartBeat(data) {
         // update the socket user's online status
         try {
             const user = yield user_1.User.findOne({ _id: new mongoose_1.Types.ObjectId(data.senderId) });
-            if (!user.isOnline) {
-                const now = Date.now();
-                user.isOnline = true,
-                    user.lastOnlineDate = new Date(now),
-                    user.updated = now;
-            }
+            const now = Date.now();
+            user.isOnline = true,
+                user.lastOnlineDate = new Date(now),
+                user.updated = now;
             yield user.save();
         }
         catch (error) {

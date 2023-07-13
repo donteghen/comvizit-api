@@ -10,13 +10,12 @@ async function onHeartBeat (data: Heartbeat) {
     // update the socket user's online status
     try {
         const user = await User.findOne({_id: new Types.ObjectId(data.senderId)});
-    if (!user.isOnline) {
         const now = Date.now()
         user.isOnline = true,
         user.lastOnlineDate = new Date(now),
         user.updated = now
-    }
-    await user.save()
+        await user.save()
+
     } catch (error) {
         logger.error(`User update failed on heartbeat event due to : ${error??"Unrecognized reasons"}`)
         return

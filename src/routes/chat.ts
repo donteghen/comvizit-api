@@ -111,7 +111,7 @@ ChatRouter.get('/api/chats', isLoggedIn, async (req: Request, res:Response) => {
             ]
         }
 
-        let userChats: any[]  = await Chat.aggregate(pipeline).sort({createdAt: -1}) ;
+        let userChats: any[]  = await Chat.aggregate(pipeline).sort({'user.lastMessageDate': -1}) ;
         res.send({ok: true, data: userChats})
     } catch (error) {
         console.log(error)

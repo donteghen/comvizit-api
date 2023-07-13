@@ -132,6 +132,10 @@ const userSchema = new Schema<IUser>({
         required: true,
         default: Date.now
     },
+    lastMessageDate: {
+        type: Date,
+        default: null
+    }
 
 }, {
     virtuals: true,

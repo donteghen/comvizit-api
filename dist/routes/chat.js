@@ -124,7 +124,7 @@ ChatRouter.get('/api/chats', auth_middleware_1.isLoggedIn, (req, res) => __await
                 }
             ];
         }
-        let userChats = yield chat_1.Chat.aggregate(pipeline).sort({ createdAt: -1 });
+        let userChats = yield chat_1.Chat.aggregate(pipeline).sort({ 'user.lastMessageDate': -1 });
         res.send({ ok: true, data: userChats });
     }
     catch (error) {

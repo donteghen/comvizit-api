@@ -168,7 +168,8 @@ export interface IUser extends Document {
     rentIntensions?: string[],
     unique_id: number,
     isOnline: boolean,
-    lastOnlineDate: Date
+    lastOnlineDate: Date,
+    lastMessageDate?: Date
 }
 
 export interface IFeaturedProperties extends Document {

@@ -143,6 +143,10 @@ const userSchema = new mongoose_1.Schema({
         required: true,
         default: Date.now
     },
+    lastMessageDate: {
+        type: Date,
+        default: null
+    }
 }, {
     virtuals: true,
     timestamps: true
