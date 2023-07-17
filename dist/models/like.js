@@ -11,11 +11,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Like = void 0;
 const mongoose_1 = require("mongoose");
+const identity_counter_1 = require("./identity-counter");
 /**
  * Like schema, represents the document property definition for a Like
  * @constructor Like
- * @param {object} propertyId - The id of the property being liked
- * @param {object} userId - The id of the concerned user(tenant) liking the property
+ * @property {object} propertyId - The id of the property being liked
+ * @property {object} userId - The id of the concerned user(tenant) liking the property
+ * @property {number} unique_id - Unique id
  */
 const likeSchema = new mongoose_1.Schema({
     propertyId: {
@@ -41,10 +43,22 @@ likeSchema.pre('validate', function (next) {
             let doc = this;
             // check if it is a document
             if (doc.isNew) {
-                const collectionCount = yield Like.countDocuments();
-                doc.unique_id = collectionCount + 1;
+                const identity = yield identity_counter_1.IdentityCounter.findOne({ model: 'like' });
+                if (identity) {
+                    identity.count = identity.count + 1;
+                    const updatedIdentity = yield identity.save();
+                    doc.unique_id = updatedIdentity.count;
+                    next();
+                }
+                else {
+                    const identityDocument = new identity_counter_1.IdentityCounter({
+                        model: 'like',
+                        field: 'unique_id'
+                    });
+                    doc.unique_id = identityDocument.count;
+                    next();
+                }
             }
-            next();
         }
         catch (error) {
             next(error);

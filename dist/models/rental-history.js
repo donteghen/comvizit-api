@@ -11,15 +11,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RentalHistory = void 0;
 const mongoose_1 = require("mongoose");
+const identity_counter_1 = require("./identity-counter");
 /**
  * RentalHistory schema, represents the document property definition for a RentalHistory
  * @constructor RentalHistory
- * @param {object} propertyId - The id of the concerned property
- * @param {object} landlord - The id of the landlord who owns the concerned property
- * @param {object} tenantId - The Id of the  tenant
- * @param {string} startDate - The date of start of the rental contract
- * @param {string} endDate - The date of termination in milliseconds
- * @param {string} status - The current status of the rental-history
+ * @property {object} propertyId - The id of the concerned property
+ * @property {object} landlord - The id of the landlord who owns the concerned property
+ * @property {object} tenantId - The Id of the  tenant
+ * @property {string} startDate - The date of start of the rental contract
+ * @property {string} endDate - The date of termination in milliseconds
+ * @property {string} status - The current status of the rental-history
+ * @property {number} unique_id - Unique id
  */
 const rentalHistorySchema = new mongoose_1.Schema({
     unique_id: {
@@ -66,10 +68,22 @@ rentalHistorySchema.pre('validate', function (next) {
             let doc = this;
             // check if it is a document
             if (doc.isNew) {
-                const collectionCount = yield RentalHistory.countDocuments();
-                doc.unique_id = collectionCount + 1;
+                const identity = yield identity_counter_1.IdentityCounter.findOne({ model: 'rental-history' });
+                if (identity) {
+                    identity.count = identity.count + 1;
+                    const updatedIdentity = yield identity.save();
+                    doc.unique_id = updatedIdentity.count;
+                    next();
+                }
+                else {
+                    const identityDocument = new identity_counter_1.IdentityCounter({
+                        model: 'rental-history',
+                        field: 'unique_id'
+                    });
+                    doc.unique_id = identityDocument.count;
+                    next();
+                }
             }
-            next();
         }
         catch (error) {
             next(error);

@@ -11,16 +11,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Inquiry = void 0;
 const mongoose_1 = require("mongoose");
+const identity_counter_1 = require("./identity-counter");
 /**
  * Inquiry schema, represents the document property definition for a inquiry
  * @constructor Inquiry
- * @param {string} fullname - The fullname of the person who made the inquiry
- * @param {string} email - The email of the person who made the inquiry
- * @param {string} phone - The telephone number of the person who made the inquiry
- * @param {string} subject - The subject of the inquiry
- * @param {string} message - The message of the inquiry
- * @param {boolean} replied - Replied status of the inquiry document (true / false)
- * @param {number} updated - A timestamp in millseconds of the last time this doc was updated
+ * @property {string} fullname - The fullname of the person who made the inquiry
+ * @property {string} email - The email of the person who made the inquiry
+ * @property {string} phone - The telephone number of the person who made the inquiry
+ * @property {string} subject - The subject of the inquiry
+ * @property {string} message - The message of the inquiry
+ * @property {boolean} replied - Replied status of the inquiry document (true / false)
+ * @property {number} updated - A timestamp in millseconds of the last time this doc was updated
+ * @property {number} unique_id - Unique id
  */
 const inquirySchema = new mongoose_1.Schema({
     fullname: {
@@ -68,10 +70,22 @@ inquirySchema.pre('validate', function (next) {
             let doc = this;
             // check if it is a document
             if (doc.isNew) {
-                const collectionCount = yield Inquiry.countDocuments();
-                doc.unique_id = collectionCount + 1;
+                const identity = yield identity_counter_1.IdentityCounter.findOne({ model: 'inquiry' });
+                if (identity) {
+                    identity.count = identity.count + 1;
+                    const updatedIdentity = yield identity.save();
+                    doc.unique_id = updatedIdentity.count;
+                    next();
+                }
+                else {
+                    const identityDocument = new identity_counter_1.IdentityCounter({
+                        model: 'inquiry',
+                        field: 'unique_id'
+                    });
+                    doc.unique_id = identityDocument.count;
+                    next();
+                }
             }
-            next();
         }
         catch (error) {
             next(error);

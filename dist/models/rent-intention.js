@@ -11,15 +11,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RentIntention = void 0;
 const mongoose_1 = require("mongoose");
+const identity_counter_1 = require("./identity-counter");
 /**
  * RentIntention schema, represents the document property definition for a RentIntention
  * @constructor RentIntention
- * @param {object} propertyId - The id of the concerned property
- * @param {object} landlord - The id of the landlord who owns the concerned property
- * @param {object} potentialTenant - The Id of the potential tenant
- * @param {string} comment - A comment from the potential tenant
- * @param {string} status - The current status of the rent-intention(booking)
- * @param {string} initiatedAt - The timestamp in milliseconds representing the date when the rent-intention was initiated
+ * @property {object} propertyId - The id of the concerned property
+ * @property {object} landlord - The id of the landlord who owns the concerned property
+ * @property {object} potentialTenant - The Id of the potential tenant
+ * @property {string} comment - A comment from the potential tenant
+ * @property {string} status - The current status of the rent-intention(booking)
+ * @property {string} initiatedAt - The timestamp in milliseconds representing the date when the rent-intention was initiated
+ * @property {number} unique_id - Unique id
  */
 const rentIntentionSchema = new mongoose_1.Schema({
     unique_id: {
@@ -63,10 +65,22 @@ rentIntentionSchema.pre('validate', function (next) {
             let doc = this;
             // check if it is a document
             if (doc.isNew) {
-                const collectionCount = yield RentIntention.countDocuments();
-                doc.unique_id = collectionCount + 1;
+                const identity = yield identity_counter_1.IdentityCounter.findOne({ model: 'rent-intention' });
+                if (identity) {
+                    identity.count = identity.count + 1;
+                    const updatedIdentity = yield identity.save();
+                    doc.unique_id = updatedIdentity.count;
+                    next();
+                }
+                else {
+                    const identityDocument = new identity_counter_1.IdentityCounter({
+                        model: 'rent-intention',
+                        field: 'unique_id'
+                    });
+                    doc.unique_id = identityDocument.count;
+                    next();
+                }
             }
-            next();
         }
         catch (error) {
             next(error);

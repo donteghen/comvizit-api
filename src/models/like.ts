@@ -1,13 +1,15 @@
 import {Schema, model} from 'mongoose'
 import { ILike } from './interfaces'
 import { NextFunction } from 'express';
+import { IdentityCounter } from "./identity-counter";
 
 
 /**
  * Like schema, represents the document property definition for a Like
  * @constructor Like
- * @param {object} propertyId - The id of the property being liked
- * @param {object} userId - The id of the concerned user(tenant) liking the property
+ * @property {object} propertyId - The id of the property being liked
+ * @property {object} userId - The id of the concerned user(tenant) liking the property
+ * @property {number} unique_id - Unique id
  */
 
 const likeSchema = new Schema<ILike>({
@@ -34,10 +36,22 @@ likeSchema.pre('validate', async function (next: NextFunction) {
         let doc = this;
         // check if it is a document
         if (doc.isNew) {
-            const collectionCount = await Like.countDocuments();
-            doc.unique_id = collectionCount + 1
+            const identity = await IdentityCounter.findOne({model: 'like'});
+            if (identity) {
+              identity.count = identity.count + 1 ;
+              const updatedIdentity =  await identity.save();
+              doc.unique_id = updatedIdentity.count;
+              next();
+            }
+            else {
+              const identityDocument = new IdentityCounter({
+                model: 'like',
+                field: 'unique_id'
+              }) ;
+              doc.unique_id = identityDocument.count;
+              next();
+            }
         }
-        next()
 
     } catch (error) {
         next(error)

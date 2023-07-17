@@ -7,6 +7,7 @@ import { PipelineStage, Types } from "mongoose";
 import { setDateFilter } from "../utils/date-query-setter";
 import { constants } from "../constants/declared";
 import { User } from "../models/user";
+import { IdentityCounter } from "../models/identity-counter";
 
 const ChatRouter = express.Router()
 
@@ -145,7 +146,7 @@ ChatRouter.get('/api/existing-chat', isLoggedIn, async (req: Request, res:Respon
 })
 
 // get a single chat
-ChatRouter.get('/api/chats/id', isLoggedIn, async (req: Request, res:Response) => {
+ChatRouter.get('/api/chats/:id', isLoggedIn, async (req: Request, res:Response) => {
     try {
         if (!req.params.id) {
             throw INVALID_REQUEST;

@@ -11,14 +11,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Contact = void 0;
 const mongoose_1 = require("mongoose");
+const identity_counter_1 = require("./identity-counter");
 /**
  * Contact-me schema, represents the document property definition for contact-me message
  * @constructor Contact
- * @param {string} fullname - The fullname of the person to be contacted by comvizit support
- * @param {string} email - The email of the person to be contacted by comvizit support
- * @param {string} phone - The telephone number of the person to be contacted by comvizit support
- * @param {boolean} replied - Replied status of the contact-me document (true / false)
- * @param {number} updated - A timestamp in millseconds of the last time this doc was updated
+ * @property {string} fullname - The fullname of the person to be contacted by comvizit support
+ * @property {string} email - The email of the person to be contacted by comvizit support
+ * @property {string} phone - The telephone number of the person to be contacted by comvizit support
+ * @property {boolean} replied - Replied status of the contact-me document (true / false)
+ * @property {number} updated - A timestamp in millseconds of the last time this doc was updated
+ * @property {number} unique_id - Unique id
  */
 const contactSchema = new mongoose_1.Schema({
     fullname: {
@@ -58,10 +60,22 @@ contactSchema.pre('validate', function (next) {
             let doc = this;
             // check if it is a document
             if (doc.isNew) {
-                const collectionCount = yield Contact.countDocuments();
-                doc.unique_id = collectionCount + 1;
+                const identity = yield identity_counter_1.IdentityCounter.findOne({ model: 'contact' });
+                if (identity) {
+                    identity.count = identity.count + 1;
+                    const updatedIdentity = yield identity.save();
+                    doc.unique_id = updatedIdentity.count;
+                    next();
+                }
+                else {
+                    const identityDocument = new identity_counter_1.IdentityCounter({
+                        model: 'contact',
+                        field: 'unique_id'
+                    });
+                    doc.unique_id = identityDocument.count;
+                    next();
+                }
             }
-            next();
         }
         catch (error) {
             next(error);

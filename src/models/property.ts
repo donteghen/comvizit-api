@@ -1,51 +1,53 @@
 import {Schema, model} from 'mongoose'
 import { IProperty, PropertyVirtual, PropertyVideo } from './interfaces'
 import { NextFunction } from 'express';
+import { IdentityCounter } from "./identity-counter";
 
 
 /**
  * Property schema, represents the document property definition for a Property
  * @constructor Property
- * @param {Schema.Types.ObjectId} ownerId - Property owner's reference ID
- * @param {number} price - Property rental price
- * @param {string} propertyType - Property type ['Studio', 'Apartment', 'Private Room', 'Villa', 'House', 'Office']
- * @param {string} updated - A timestamp in millseconds of the last time this doc was updated
- * @param {string} bedroom - Number of bedroom in the property
- * @param {number} propertySize - The size of the property
- * @param {Array<string>} facilities - Property's facilities
- * @param {string} furnishedState - The property's furnished state ['Furnished', 'Unfurnished']
- * @param {Array<string>} amenities - Property's amenities
- * @param {Array<string>} features - Property's features
- * @param {string} description - Property detailed description
- * @param {number} coords.lat - Property's lattitude coordinate number
- * @param {number} coords.log - Property's longitude coordinate number
- * @param {string} town - The town in which the property is located
- * @param {string} quater - The quater in which the property is located
- * @param {string} street - The street in which the property is located
- * @param {string} district - The district in which the property is located
- * @param {Array<string>} photos - Property's photos assets
- * @param {Array<PropertyVirtual>} virtualTours - Property's virtualTour assets
- * @param {Array<PropertyVideo>} videos - Property's video assets
- * @param {number} initialRent - Initial rent to be paid before moving into the property
- * @param {number} commission - The commission to be paid before moving into the property
- * @param {number}  deposit - The deposit to be paid before moving into the property
- * @param {number} bookingSummary.fee - The fee to be paid by the potential tenant to the landlord to confirm the booking
- * @param {number} bookingSummary.cancelationFee - The amount ot be deducted from the booking fee paid, should the tenant be the cause of an unconclusive booking
- * @param {Array<string>}  bookingSummary.paymentMethods - The payment methods allowed by the landlord
- * @param {number}  bookingSummary.maxDuration - The max number of days after which the booking will be cancelled
- * @param {Array<string>} rules - Property's rules to be followed by all tenants during their stay
- * @param {string} preferedTenant.gender - Gender of tenant prefered for this property
- * @param {string} preferedTenant.type - Type of tenant prefered for this property
- * @param {number} distanceFromRoad - Property's distance from the road in KM
- * @param {string} costFromRoad - Property's cost from the road
- * @param {string} availability - Property's availability ['Available', 'Taken', 'Inactive']
- * @param {boolean} rentUtilities.electricity - Determines if electricity bills are included in the rents
- * @param {boolean} rentUtilities.water - Determines if water bills are included in the rents
- * @param {boolean} rentUtilities.internet - Determines if internet bills are included in the rents
- * @param {boolean} rentUtilities.maintenance - - Determines if maintenance bills are included in the rents
- * @param {boolean} rentIntensions - List of rentIntension created for this property
- * @param {boolean} likes - Like id collection related to this property
- * @param {boolean} featuring - Determines if the property is being Featured or not(Listed)
+ * @property {Schema.Types.ObjectId} ownerId - Property owner's reference ID
+ * @property {number} price - Property rental price
+ * @property {string} propertyType - Property type ['Studio', 'Apartment', 'Private Room', 'Villa', 'House', 'Office']
+ * @property {string} updated - A timestamp in millseconds of the last time this doc was updated
+ * @property {string} bedroom - Number of bedroom in the property
+ * @property {number} propertySize - The size of the property
+ * @property {Array<string>} facilities - Property's facilities
+ * @property {string} furnishedState - The property's furnished state ['Furnished', 'Unfurnished']
+ * @property {Array<string>} amenities - Property's amenities
+ * @property {Array<string>} features - Property's features
+ * @property {string} description - Property detailed description
+ * @property {number} coords.lat - Property's lattitude coordinate number
+ * @property {number} coords.log - Property's longitude coordinate number
+ * @property {string} town - The town in which the property is located
+ * @property {string} quater - The quater in which the property is located
+ * @property {string} street - The street in which the property is located
+ * @property {string} district - The district in which the property is located
+ * @property {Array<string>} photos - Property's photos assets
+ * @property {Array<PropertyVirtual>} virtualTours - Property's virtualTour assets
+ * @property {Array<PropertyVideo>} videos - Property's video assets
+ * @property {number} initialRent - Initial rent to be paid before moving into the property
+ * @property {number} commission - The commission to be paid before moving into the property
+ * @property {number}  deposit - The deposit to be paid before moving into the property
+ * @property {number} bookingSummary.fee - The fee to be paid by the potential tenant to the landlord to confirm the booking
+ * @property {number} bookingSummary.cancelationFee - The amount ot be deducted from the booking fee paid, should the tenant be the cause of an unconclusive booking
+ * @property {Array<string>}  bookingSummary.paymentMethods - The payment methods allowed by the landlord
+ * @property {number}  bookingSummary.maxDuration - The max number of days after which the booking will be cancelled
+ * @property {Array<string>} rules - Property's rules to be followed by all tenants during their stay
+ * @property {string} preferedTenant.gender - Gender of tenant prefered for this property
+ * @property {string} preferedTenant.type - Type of tenant prefered for this property
+ * @property {number} distanceFromRoad - Property's distance from the road in KM
+ * @property {string} costFromRoad - Property's cost from the road
+ * @property {string} availability - Property's availability ['Available', 'Taken', 'Inactive']
+ * @property {boolean} rentUtilities.electricity - Determines if electricity bills are included in the rents
+ * @property {boolean} rentUtilities.water - Determines if water bills are included in the rents
+ * @property {boolean} rentUtilities.internet - Determines if internet bills are included in the rents
+ * @property {boolean} rentUtilities.maintenance - - Determines if maintenance bills are included in the rents
+ * @property {boolean} rentIntensions - List of rentIntension created for this property
+ * @property {boolean} likes - Like id collection related to this property
+ * @property {boolean} featuring - Determines if the property is being Featured or not(Listed)
+ * @property {number} unique_id - Unique id
  */
 
 const propertySchema = new Schema<IProperty>({
@@ -274,10 +276,22 @@ propertySchema.pre('validate', async function (next: NextFunction) {
         let doc = this;
         // check if it is a document
         if (doc.isNew) {
-            const collectionCount = await Property.countDocuments();
-            doc.unique_id = collectionCount + 1
+            const identity = await IdentityCounter.findOne({model: 'property'});
+            if (identity) {
+              identity.count = identity.count + 1 ;
+              const updatedIdentity =  await identity.save();
+              doc.unique_id = updatedIdentity.count;
+              next();
+            }
+            else {
+              const identityDocument = new IdentityCounter({
+                model: 'property',
+                field: 'unique_id'
+              }) ;
+              doc.unique_id = identityDocument.count;
+              next();
+            }
         }
-        next()
     } catch (error) {
         next(error)
     }

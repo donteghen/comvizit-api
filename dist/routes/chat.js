@@ -21,6 +21,7 @@ const logger_1 = require("../logs/logger");
 const mongoose_1 = require("mongoose");
 const date_query_setter_1 = require("../utils/date-query-setter");
 const declared_1 = require("../constants/declared");
+const identity_counter_1 = require("../models/identity-counter");
 const ChatRouter = express_1.default.Router();
 exports.ChatRouter = ChatRouter;
 // query helper function
@@ -158,7 +159,7 @@ ChatRouter.get('/api/existing-chat', auth_middleware_1.isLoggedIn, (req, res) =>
     }
 }));
 // get a single chat
-ChatRouter.get('/api/chats/id', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+ChatRouter.get('/api/chats/:id', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _d;
     try {
         if (!req.params.id) {
@@ -206,6 +207,29 @@ ChatRouter.get('/api/all-chats', auth_middleware_1.isLoggedIn, auth_middleware_1
     catch (error) {
         logger_1.logger.error(`An error occured while getting a chat list due to : ${(_e = error === null || error === void 0 ? void 0 : error.message) !== null && _e !== void 0 ? _e : 'Unknown Source'}`);
         res.status(400).send({ ok: false, error });
+    }
+}));
+ChatRouter.post('/api/identity/:name', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        console.log(req.params);
+        const name = req.params.name;
+        if (!name) {
+            return res.send('failed no name provided');
+        }
+        const ident = yield identity_counter_1.IdentityCounter.findOne({ model: name });
+        if (ident) {
+            return res.send('already exits');
+        }
+        const newIden = new identity_counter_1.IdentityCounter({
+            model: name,
+            field: 'unique_id'
+        });
+        yield newIden.save();
+        res.send('successful');
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).send(error);
     }
 }));
 //# sourceMappingURL=chat.js.map

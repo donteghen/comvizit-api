@@ -72,6 +72,11 @@ export type BookingSummary = {
     maxDuration: number
 }
 
+export interface IIdentityCounter {
+    model: string,
+    field: string,
+    count: number
+}
 export interface IChat {
     tenant: string,
     landlord: string,

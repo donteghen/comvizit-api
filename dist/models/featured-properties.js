@@ -11,13 +11,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FeaturedProperties = void 0;
 const mongoose_1 = require("mongoose");
+const identity_counter_1 = require("./identity-counter");
 /**
  * FeaturedProperty schema, represents the document property definition for Fetatured Properties
  * @constructor FeaturedProperty
- * @param {string} propertyId - The Id of the corresponding Property
- * @param {number} duration - How long the property will be featured in milliseconds
- * @param {string} status - The status of the featuring, 'active' or 'inactive'
- * @param {number} startedAt - The time when the property astarted featuring in milliseconds
+ * @property {string} propertyId - The Id of the corresponding Property
+ * @property {number} duration - How long the property will be featured in milliseconds
+ * @property {string} status - The status of the featuring, 'active' or 'inactive'
+ * @property {number} startedAt - The time when the property astarted featuring in milliseconds
+ * @property {number} unique_id - Unique id
  */
 const featuredPropertySchema = new mongoose_1.Schema({
     propertyId: {
@@ -55,10 +57,22 @@ featuredPropertySchema.pre('validate', function (next) {
             let doc = this;
             // check if it is a document
             if (doc.isNew) {
-                const collectionCount = yield FeaturedProperties.countDocuments();
-                doc.unique_id = collectionCount + 1;
+                const identity = yield identity_counter_1.IdentityCounter.findOne({ model: 'featured-property' });
+                if (identity) {
+                    identity.count = identity.count + 1;
+                    const updatedIdentity = yield identity.save();
+                    doc.unique_id = updatedIdentity.count;
+                    next();
+                }
+                else {
+                    const identityDocument = new identity_counter_1.IdentityCounter({
+                        model: 'featured-property',
+                        field: 'unique_id'
+                    });
+                    doc.unique_id = identityDocument.count;
+                    next();
+                }
             }
-            next();
         }
         catch (error) {
             next(error);

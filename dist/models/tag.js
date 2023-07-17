@@ -11,15 +11,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Tag = void 0;
 const mongoose_1 = require("mongoose");
+const identity_counter_1 = require("./identity-counter");
 /**
  * Tag schema, defines the Tag document properties
  * @constructor Tag
- * @param {string} type - The type of the tag, could be any of the following: 'Property', 'User'
- * @param {string} title - The tag's title
- * @param {string} code - The tag's code
- * @param {string} status - The tag's status; 'active' or 'inactive'
- * @param {string} refId - The Id of the corresponding tagged document
- * @param {string} createdDate - The time when the tag was created in milliseconds
+ * @property {string} type - The type of the tag, could be any of the following: 'Property', 'User'
+ * @property {string} title - The tag's title
+ * @property {string} code - The tag's code
+ * @property {string} status - The tag's status; 'active' or 'inactive'
+ * @property {string} refId - The Id of the corresponding tagged document
+ * @property {string} createdDate - The time when the tag was created in milliseconds
+ * @property {number} unique_id - Unique id
  */
 const tagSchema = new mongoose_1.Schema({
     type: {
@@ -70,10 +72,22 @@ tagSchema.pre('validate', function (next) {
             let doc = this;
             // check if it is a document
             if (doc.isNew) {
-                const collectionCount = yield Tag.countDocuments();
-                doc.unique_id = collectionCount + 1;
+                const identity = yield identity_counter_1.IdentityCounter.findOne({ model: 'tag' });
+                if (identity) {
+                    identity.count = identity.count + 1;
+                    const updatedIdentity = yield identity.save();
+                    doc.unique_id = updatedIdentity.count;
+                    next();
+                }
+                else {
+                    const identityDocument = new identity_counter_1.IdentityCounter({
+                        model: 'tag',
+                        field: 'unique_id'
+                    });
+                    doc.unique_id = identityDocument.count;
+                    next();
+                }
             }
-            next();
         }
         catch (error) {
             next(error);

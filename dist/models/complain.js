@@ -11,16 +11,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Complain = void 0;
 const mongoose_1 = require("mongoose");
+const identity_counter_1 = require("./identity-counter");
 /**
  * Complain schema, represents the document property definition for a complain
  * @constructor Complain
- * @param {Schema.Types.ObjectId} targetId - The Id of the corresponding Property
- * @param {string} type - The type of complain, could be 'LANDLORD' or 'PROPERTY'
- * @param {string} subject - The subject of the complain
- * @param {string} message - The detailed complain message
- * @param {boolean} processed - The processed status of the complain
- * @param {number} updated - A timestamp in millseconds of the last time this doc was updated
- * @param {Schema.Types.ObjectId} plaintiveId - The Id of the user issuing the complain
+ * @property {Schema.Types.ObjectId} targetId - The Id of the corresponding Property
+ * @property {string} type - The type of complain, could be 'LANDLORD' or 'PROPERTY'
+ * @property {string} subject - The subject of the complain
+ * @property {string} message - The detailed complain message
+ * @property {boolean} processed - The processed status of the complain
+ * @property {number} updated - A timestamp in millseconds of the last time this doc was updated
+ * @property {Schema.Types.ObjectId} plaintiveId - The Id of the user issuing the complain
+ * @property {number} unique_id - Unique id
  */
 const complainSchema = new mongoose_1.Schema({
     targetId: {
@@ -70,10 +72,22 @@ complainSchema.pre('validate', function (next) {
             let doc = this;
             // check if it is a document
             if (doc.isNew) {
-                const collectionCount = yield Complain.countDocuments();
-                doc.unique_id = collectionCount + 1;
+                const identity = yield identity_counter_1.IdentityCounter.findOne({ model: 'complain' });
+                if (identity) {
+                    identity.count = identity.count + 1;
+                    const updatedIdentity = yield identity.save();
+                    doc.unique_id = updatedIdentity.count;
+                    next();
+                }
+                else {
+                    const identityDocument = new identity_counter_1.IdentityCounter({
+                        model: 'complain',
+                        field: 'unique_id'
+                    });
+                    doc.unique_id = identityDocument.count;
+                    next();
+                }
             }
-            next();
         }
         catch (error) {
             next(error);

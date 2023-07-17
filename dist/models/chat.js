@@ -11,10 +11,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Chat = void 0;
 const mongoose_1 = require("mongoose");
+const identity_counter_1 = require("./identity-counter");
 /**
  * Chat schema, represents the document property definition for a chat
  * @constructor Chat
- * @param {Array<String>} members - The list of all members within a chat
+ * @property {string} tenant - tenant user
+ * @property {string} landlord - landlord user
+ * @property {number} unique_id - Unique Id
  */
 const ChatSchema = new mongoose_1.Schema({
     tenant: {
@@ -37,12 +40,24 @@ ChatSchema.pre('validate', function (next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             let doc = this;
-            // check if it is a document
+            // check if it is a new document
             if (doc.isNew) {
-                const collectionCount = yield Chat.countDocuments();
-                doc.unique_id = collectionCount + 1;
+                const identity = yield identity_counter_1.IdentityCounter.findOne({ model: 'chat' });
+                if (identity) {
+                    identity.count = identity.count + 1;
+                    const updatedIdentity = yield identity.save();
+                    doc.unique_id = updatedIdentity.count;
+                    next();
+                }
+                else {
+                    const identityDocument = new identity_counter_1.IdentityCounter({
+                        model: 'chat',
+                        field: 'unique_id'
+                    });
+                    doc.unique_id = identityDocument.count;
+                    next();
+                }
             }
-            next();
         }
         catch (error) {
             next(error);

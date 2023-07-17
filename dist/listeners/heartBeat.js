@@ -15,7 +15,7 @@ const user_1 = require("../models/user");
 const logger_1 = require("../logs/logger");
 function onHeartBeat(data) {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log('Updating the online status for user with Id', data.senderId);
+        console.log('heartbeat came in so updating the online status for user with Id', data.senderId);
         // update the socket user's online status
         try {
             const user = yield user_1.User.findOne({ _id: new mongoose_1.Types.ObjectId(data.senderId) });

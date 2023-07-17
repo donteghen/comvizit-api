@@ -2,14 +2,16 @@ import {Schema, model} from 'mongoose'
 
 import { IFeaturedProperties } from './interfaces'
 import { NextFunction } from 'express';
+import { IdentityCounter } from "./identity-counter";
 
 /**
  * FeaturedProperty schema, represents the document property definition for Fetatured Properties
  * @constructor FeaturedProperty
- * @param {string} propertyId - The Id of the corresponding Property
- * @param {number} duration - How long the property will be featured in milliseconds
- * @param {string} status - The status of the featuring, 'active' or 'inactive'
- * @param {number} startedAt - The time when the property astarted featuring in milliseconds
+ * @property {string} propertyId - The Id of the corresponding Property
+ * @property {number} duration - How long the property will be featured in milliseconds
+ * @property {string} status - The status of the featuring, 'active' or 'inactive'
+ * @property {number} startedAt - The time when the property astarted featuring in milliseconds
+ * @property {number} unique_id - Unique id
  */
 const featuredPropertySchema = new Schema<IFeaturedProperties>({
     propertyId: {
@@ -47,10 +49,22 @@ featuredPropertySchema.pre('validate', async function (next: NextFunction) {
         let doc = this;
         // check if it is a document
         if (doc.isNew) {
-            const collectionCount = await FeaturedProperties.countDocuments();
-            doc.unique_id = collectionCount + 1
+            const identity = await IdentityCounter.findOne({model: 'featured-property'});
+            if (identity) {
+              identity.count = identity.count + 1 ;
+              const updatedIdentity =  await identity.save();
+              doc.unique_id = updatedIdentity.count;
+              next();
+            }
+            else {
+              const identityDocument = new IdentityCounter({
+                model: 'featured-property',
+                field: 'unique_id'
+              }) ;
+              doc.unique_id = identityDocument.count;
+              next();
+            }
         }
-        next()
 
     } catch (error) {
         next(error)

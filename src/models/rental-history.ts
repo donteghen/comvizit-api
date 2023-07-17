@@ -1,17 +1,19 @@
 import {Schema, model} from 'mongoose'
 import { IRentalHistory } from './interfaces'
 import { NextFunction } from 'express';
+import { IdentityCounter } from "./identity-counter";
 
 
 /**
  * RentalHistory schema, represents the document property definition for a RentalHistory
  * @constructor RentalHistory
- * @param {object} propertyId - The id of the concerned property
- * @param {object} landlord - The id of the landlord who owns the concerned property
- * @param {object} tenantId - The Id of the  tenant
- * @param {string} startDate - The date of start of the rental contract
- * @param {string} endDate - The date of termination in milliseconds
- * @param {string} status - The current status of the rental-history
+ * @property {object} propertyId - The id of the concerned property
+ * @property {object} landlord - The id of the landlord who owns the concerned property
+ * @property {object} tenantId - The Id of the  tenant
+ * @property {string} startDate - The date of start of the rental contract
+ * @property {string} endDate - The date of termination in milliseconds
+ * @property {string} status - The current status of the rental-history
+ * @property {number} unique_id - Unique id
  */
 
 const rentalHistorySchema = new Schema<IRentalHistory>({
@@ -59,10 +61,22 @@ rentalHistorySchema.pre('validate', async function (next: NextFunction) {
         let doc = this;
         // check if it is a document
         if (doc.isNew) {
-            const collectionCount = await RentalHistory.countDocuments();
-            doc.unique_id = collectionCount + 1
+            const identity = await IdentityCounter.findOne({model: 'rental-history'});
+            if (identity) {
+              identity.count = identity.count + 1 ;
+              const updatedIdentity =  await identity.save();
+              doc.unique_id = updatedIdentity.count;
+              next();
+            }
+            else {
+              const identityDocument = new IdentityCounter({
+                model: 'rental-history',
+                field: 'unique_id'
+              }) ;
+              doc.unique_id = identityDocument.count;
+              next();
+            }
         }
-        next()
 
     } catch (error) {
         next(error)

@@ -1,13 +1,14 @@
 import {Schema, model, Types} from 'mongoose'
 import { ILog } from './interfaces'
+import { IdentityCounter } from "./identity-counter";
 
 /**
  * Log schema, represents the document property definition for a Log
  * @constructor Log
- * @param {Date} timestamp - The timestamp from when the log was created
- * @param {string} level - The log's proirity level
- * @param {string} message - The log's message message
- * @param {object} meta - The logs meta details (for stack tracing)
+ * @property {Date} timestamp - The timestamp from when the log was created
+ * @property {string} level - The log's proirity level
+ * @property {string} message - The log's message message
+ * @property {object} meta - The logs meta details (for stack tracing)
  */
 const logSchema = new Schema<ILog>({
     timestamp: {

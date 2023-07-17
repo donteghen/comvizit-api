@@ -11,16 +11,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Review = void 0;
 const mongoose_1 = require("mongoose");
+const identity_counter_1 = require("./identity-counter");
 /**
  * Review schema, represents the document property definition for a review
  * @constructor Review
- * @param {string} type - The type of the document under review ie Property, Landlord, Tenant or Platform <Property or Landlord or Tenant or Platform>
- * @param {string} refId - The string Id of the related document or Platform (ie corresponding to a platform review)
- * @param {Schema.Types.ObjectId} author - The Id of the user making the review
- * @param {string} authorType - The reviewing user's role (ie LANDLORD OR TENANT)
- * @param {string} rating - The numeric value of the rating
- * @param {string} comment - The comment accompanying the review
- * @param {string} status - The current status of the review <Active  or Inactive>
+ * @property {string} type - The type of the document under review ie Property, Landlord, Tenant or Platform <Property or Landlord or Tenant or Platform>
+ * @property {string} refId - The string Id of the related document or Platform (ie corresponding to a platform review)
+ * @property {Schema.Types.ObjectId} author - The Id of the user making the review
+ * @property {string} authorType - The reviewing user's role (ie LANDLORD OR TENANT)
+ * @property {string} rating - The numeric value of the rating
+ * @property {string} comment - The comment accompanying the review
+ * @property {string} status - The current status of the review <Active  or Inactive>
+ * @property {number} unique_id - Unique id
  */
 const reviewSchema = new mongoose_1.Schema({
     type: {
@@ -71,10 +73,22 @@ reviewSchema.pre('validate', function (next) {
             let doc = this;
             // check if it is a document
             if (doc.isNew) {
-                const collectionCount = yield Review.countDocuments();
-                doc.unique_id = collectionCount + 1;
+                const identity = yield identity_counter_1.IdentityCounter.findOne({ model: 'review' });
+                if (identity) {
+                    identity.count = identity.count + 1;
+                    const updatedIdentity = yield identity.save();
+                    doc.unique_id = updatedIdentity.count;
+                    next();
+                }
+                else {
+                    const identityDocument = new identity_counter_1.IdentityCounter({
+                        model: 'review',
+                        field: 'unique_id'
+                    });
+                    doc.unique_id = identityDocument.count;
+                    next();
+                }
             }
-            next();
         }
         catch (error) {
             next(error);

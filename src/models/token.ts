@@ -2,6 +2,8 @@ import {Schema, model} from 'mongoose'
 
 import { IToken } from './interfaces'
 
+
+
 /**
  * Token schema, represents the document property definition for a token
  * @constructor Token

@@ -5,7 +5,7 @@ import { logger } from '../logs/logger';
 
 
 async function onHeartBeat (data: Heartbeat) {
-    console.log('Updating the online status for user with Id', data.senderId)
+    console.log('heartbeat came in so updating the online status for user with Id', data.senderId)
 
     // update the socket user's online status
     try {

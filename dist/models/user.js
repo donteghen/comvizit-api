@@ -17,26 +17,31 @@ const mongoose_1 = require("mongoose");
 const bcryptjs_1 = require("bcryptjs");
 const isEmail_1 = __importDefault(require("validator/lib/isEmail"));
 const isStrongPassword_1 = __importDefault(require("validator/lib/isStrongPassword"));
+const identity_counter_1 = require("./identity-counter");
 /**
  * User schema, represents the document property definition for a User
  * @constructor User
- * @param {string} fullname - User's full name
- * @param {string} email - User's email
- * @param {string} password - TUser's password
- * @param {string} phone - User's telephone number
- * @param {string} gender - User's gender
- * @param {boolean} approved - User account approved state (approved by admin)
- * @param {boolean} isVerified - User account(email) verification state (verified by user)
- * @param {number} updated - A timestamp in millseconds of the last time this doc was updated
- * @param {string} address.town - User's town
- * @param {string} address.quater - User's quater
- * @param {string} address.street - User's street
- * @param {string} avatar - User's avatar
- * @param {string} avatarDeleteId - User's avatar deletion Id
- * @param {string} role - User's role
- * @param {string} lang - User's spoken language(s)
- * @param {string} favorites - User's (Tenant) favorite properties list
- * @param {string} likes - User's (Tenant) likes collection
+ * @property {string} fullname - User's full name
+ * @property {string} email - User's email
+ * @property {string} password - TUser's password
+ * @property {string} phone - User's telephone number
+ * @property {string} gender - User's gender
+ * @property {boolean} approved - User account approved state (approved by admin)
+ * @property {boolean} isVerified - User account(email) verification state (verified by user)
+ * @property {number} updated - A timestamp in millseconds of the last time this doc was updated
+ * @property {string} address.town - User's town
+ * @property {string} address.quater - User's quater
+ * @property {string} address.street - User's street
+ * @property {string} avatar - User's avatar
+ * @property {string} avatarDeleteId - User's avatar deletion Id
+ * @property {string} role - User's role
+ * @property {string} lang - User's spoken language(s)
+ * @property {string} favorites - User's (Tenant) favorite properties list
+ * @property {string} likes - User's (Tenant) likes collection
+ * @property {number} unique_id - User's unique id
+ * @property {boolean} isOnline - User's online status
+ * @property {Date} lastOnlineDate - User's last heatbeat from chat
+ * @property {Date} lastMessageDate - date when the user send/recieved the last chat message
  */
 const userSchema = new mongoose_1.Schema({
     fullname: {
@@ -157,10 +162,22 @@ userSchema.pre('validate', function (next) {
             let doc = this;
             // check if it is a document
             if (doc.isNew) {
-                const collectionCount = yield User.countDocuments();
-                doc.unique_id = collectionCount + 1;
+                const identity = yield identity_counter_1.IdentityCounter.findOne({ model: 'user' });
+                if (identity) {
+                    identity.count = identity.count + 1;
+                    const updatedIdentity = yield identity.save();
+                    doc.unique_id = updatedIdentity.count;
+                    next();
+                }
+                else {
+                    const identityDocument = new identity_counter_1.IdentityCounter({
+                        model: 'user',
+                        field: 'unique_id'
+                    });
+                    doc.unique_id = identityDocument.count;
+                    next();
+                }
             }
-            next();
         }
         catch (error) {
             next(error);
