@@ -21,7 +21,18 @@ const logger_1 = require("../logs/logger");
 const mongoose_1 = require("mongoose");
 const date_query_setter_1 = require("../utils/date-query-setter");
 const declared_1 = require("../constants/declared");
-const identity_counter_1 = require("../models/identity-counter");
+const user_1 = require("../models/user");
+const tag_1 = require("../models/tag");
+const review_1 = require("../models/review");
+const rent_intention_1 = require("../models/rent-intention");
+const property_1 = require("../models/property");
+const like_1 = require("../models/like");
+const inquiry_1 = require("../models/inquiry");
+const featured_properties_1 = require("../models/featured-properties");
+const favorite_1 = require("../models/favorite");
+const contact_1 = require("../models/contact");
+const complain_1 = require("../models/complain");
+const chatmessage_1 = require("../models/chatmessage");
 const ChatRouter = express_1.default.Router();
 exports.ChatRouter = ChatRouter;
 // query helper function
@@ -209,27 +220,28 @@ ChatRouter.get('/api/all-chats', auth_middleware_1.isLoggedIn, auth_middleware_1
         res.status(400).send({ ok: false, error });
     }
 }));
-ChatRouter.post('/api/identity/:name', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+ChatRouter.post('/api/update/:name', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log(req.params);
-        const name = req.params.name;
-        if (!name) {
-            return res.send('failed no name provided');
+        const modelArray = [user_1.User, tag_1.Tag, review_1.Review, rent_intention_1.RentIntention, property_1.Property, like_1.Like, inquiry_1.Inquiry, featured_properties_1.FeaturedProperties, favorite_1.Favorite, contact_1.Contact, complain_1.Complain, chatmessage_1.ChatMessage, chat_1.Chat];
+        for (let cuurModelname of modelArray) {
+            const cuurModel = cuurModelname;
+            const docs = yield cuurModel.find().sort({ createdAt: 1 });
+            console.log(docs === null || docs === void 0 ? void 0 : docs.length);
+            docs === null || docs === void 0 ? void 0 : docs.forEach((doc, index) => __awaiter(void 0, void 0, void 0, function* () {
+                doc.unique_id = index + 1;
+                try {
+                    yield doc.save();
+                }
+                catch (error) {
+                    console.log(error);
+                }
+            }));
         }
-        const ident = yield identity_counter_1.IdentityCounter.findOne({ model: name });
-        if (ident) {
-            return res.send('already exits');
-        }
-        const newIden = new identity_counter_1.IdentityCounter({
-            model: name,
-            field: 'unique_id'
-        });
-        yield newIden.save();
-        res.send('successful');
+        res.send({ ok: true });
     }
     catch (error) {
         console.log(error);
-        res.status(500).send(error);
+        return res.status(500).send({ ok: false, error });
     }
 }));
 //# sourceMappingURL=chat.js.map
