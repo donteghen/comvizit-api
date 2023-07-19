@@ -3,24 +3,12 @@ import { Chat } from "../models/chat";
 import { isAdmin, isLoggedIn } from "../middleware/auth-middleware";
 import { CHAT_PARAM_INVALID, INVALID_REQUEST, NOT_FOUND } from "../constants/error";
 import { logger } from "../logs/logger";
-import { Models, PipelineStage, Types, modelNames } from "mongoose";
+import { PipelineStage, Types } from "mongoose";
 import { setDateFilter } from "../utils/date-query-setter";
 import { constants } from "../constants/declared";
-import { User } from "../models/user";
-import { IdentityCounter } from "../models/identity-counter";
-import {model, connection} from 'mongoose'
-import { Tag } from "../models/tag";
-import { Review } from "../models/review";
-import { RentIntention } from "../models/rent-intention";
-import { RentalHistory } from "../models/rental-history";
-import { Property } from "../models/property";
-import { Like } from "../models/like";
-import { Inquiry } from "../models/inquiry";
-import { FeaturedProperties } from "../models/featured-properties";
-import { Favorite } from "../models/favorite";
-import { Contact } from "../models/contact";
-import { Complain } from "../models/complain";
-import { ChatMessage } from "../models/chatmessage";
+
+
+
 
 const ChatRouter = express.Router()
 
