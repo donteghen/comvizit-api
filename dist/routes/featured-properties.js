@@ -67,7 +67,7 @@ FeaturedRouter.get('/api/featured/properties-active', (req, res) => __awaiter(vo
             },
             {
                 $match: {
-                    'property.availability': 'available'
+                    'property.availability': 'Available'
                 }
             }
         ];
@@ -129,6 +129,7 @@ FeaturedRouter.get('/api/featured/properties-active', (req, res) => __awaiter(vo
         if (req.query.pageView) {
             return res.send({ ok: true, data: { featuredProperties, currPage: pageNum, totalPages, resultCount } });
         }
+        // console.log(req.query, req.body, featuredProperties)
         res.send({ ok: true, data: featuredProperties });
     }
     catch (error) {
