@@ -4,6 +4,7 @@ import { IComplain } from './interfaces'
 import { NextFunction } from 'express';
 import { IdentityCounter } from "./identity-counter";
 
+import { constants } from '../constants/declared';
 /**
  * Complain schema, represents the document property definition for a complain
  * @constructor Complain
@@ -28,12 +29,12 @@ const complainSchema = new Schema<IComplain>({
     type: {
         type: String,
         required: true,
-        enum: ['PROPERTY', 'LANDLORD']
+        enum: [constants.COMPLAIN_TYPES.property, constants.COMPLAIN_TYPES.landlord]
     },
     subject: {
         type: String,
         required: true,
-        enum: ['Report a Landlord', 'Report a Property']
+        enum: [constants.COMPLAIN_SUBJECTS.reportLandlord, constants.COMPLAIN_SUBJECTS.reportProperty]
     },
     message: {
         type: String,

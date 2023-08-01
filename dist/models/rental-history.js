@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RentalHistory = void 0;
 const mongoose_1 = require("mongoose");
 const identity_counter_1 = require("./identity-counter");
+const declared_1 = require("../constants/declared");
 /**
  * RentalHistory schema, represents the document property definition for a RentalHistory
  * @constructor RentalHistory
@@ -51,8 +52,11 @@ const rentalHistorySchema = new mongoose_1.Schema({
     status: {
         type: String,
         required: true,
-        default: 'ONGOING',
-        enum: ['ONGOING', 'TERMINATED']
+        default: declared_1.constants.RENTAL_HISTORY_STATUS_OPTIONS.ONGOING,
+        enum: [
+            declared_1.constants.RENTAL_HISTORY_STATUS_OPTIONS.ONGOING,
+            declared_1.constants.RENTAL_HISTORY_STATUS_OPTIONS.TERMINATED
+        ]
     },
     rentIntentionId: {
         type: mongoose_1.Schema.Types.ObjectId,

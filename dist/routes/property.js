@@ -24,17 +24,23 @@ const mailer_1 = require("../helper/mailer");
 const user_1 = require("../models/user");
 const tag_1 = require("../models/tag");
 const featured_properties_1 = require("../models/featured-properties");
+// import { RentIntention } from "../models/rent-intention";
 const complain_1 = require("../models/complain");
 const review_1 = require("../models/review");
 const like_1 = require("../models/like");
+// utils & helpers
+// import { constants } from "../constants/declared";
 const logger_1 = require("../logs/logger");
 const PropertyRouter = express_1.default.Router();
 exports.PropertyRouter = PropertyRouter;
 const date_query_setter_1 = require("../utils/date-query-setter");
+const declared_1 = require("../constants/declared");
 const pageSize = Number(process.env.PAGE_SIZE); // number of documents returned per request for the get all properties route
 // query helper function
 function setFilter(key, value) {
     switch (key) {
+        case 'unique_id':
+            return { unique_id: Number(value) };
         case 'ownerId':
             return { 'ownerId': new mongoose_1.Types.ObjectId(value) };
         case 'age':
@@ -105,7 +111,7 @@ function priceSetter(reqParams, queryArray, priceQuery) {
 PropertyRouter.get('/api/properties-in-quater/:quaterref', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d, _e;
     try {
-        let filter = { availability: 'Available' };
+        let filter = { availability: declared_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE };
         let sorting = { updated: -1 };
         let pageNum = 1;
         const queries = Object.keys(req.query);
@@ -164,7 +170,7 @@ PropertyRouter.get('/api/properties-by-tag/:code', (req, res) => __awaiter(void 
         let sorting = { createdAt: -1 };
         let pageNum = 1;
         const queries = Object.keys(req.query);
-        let filter = { availability: 'Available', _id: { $in: tagRefIds } };
+        let filter = { availability: declared_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE, _id: { $in: tagRefIds } };
         if (queries.length > 0) {
             let dateFilter = (0, date_query_setter_1.setDateFilter)((_g = (_f = req.query['startDate']) === null || _f === void 0 ? void 0 : _f.toString()) !== null && _g !== void 0 ? _g : '', (_j = (_h = req.query['endDate']) === null || _h === void 0 ? void 0 : _h.toString()) !== null && _j !== void 0 ? _j : '');
             filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) : filter;
@@ -230,7 +236,10 @@ PropertyRouter.get('/api/properties', auth_middleware_1.isLoggedIn, auth_middlew
                 }
             },
             {
-                $unwind: "$owner"
+                $unwind: {
+                    path: "$owner",
+                    preserveNullAndEmptyArrays: true
+                }
             }
         ]);
         res.send({ ok: true, data: properties });
@@ -248,7 +257,7 @@ PropertyRouter.get('/api/landlord-properties/:id', (req, res) => __awaiter(void 
         let pipeline = [];
         let filter = {
             ownerId: new mongoose_1.Types.ObjectId(req.params.id),
-            availability: 'Available'
+            availability: declared_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE
         };
         const queries = Object.keys(req.query);
         let pageNum;
@@ -288,7 +297,10 @@ PropertyRouter.get('/api/landlord-properties/:id', (req, res) => __awaiter(void 
                 }
             },
             {
-                $unwind: "$owner"
+                $unwind: {
+                    path: "$owner",
+                    preserveNullAndEmptyArrays: true
+                }
             }
         ]);
         const resultCount = yield property_1.Property.countDocuments(filter);
@@ -330,7 +342,7 @@ PropertyRouter.get('/api/search-quaters/:quaterRef', (req, res) => __awaiter(voi
             },
             {
                 $match: {
-                    "availability": "Available"
+                    "availability": declared_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE
                 }
             },
             {
@@ -352,7 +364,7 @@ PropertyRouter.get('/api/search-quaters/:quaterRef', (req, res) => __awaiter(voi
 PropertyRouter.get('/api/town-properties/:town', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _y, _z, _0, _1, _2;
     try {
-        let filter = { availability: 'Available' };
+        let filter = { availability: declared_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE };
         let sorting = { createdAt: -1 };
         let pageNum = 1;
         const queries = Object.keys(req.query);
@@ -397,7 +409,7 @@ PropertyRouter.get('/api/town-properties/:town', (req, res) => __awaiter(void 0,
 PropertyRouter.get('/api/district-properties/:districtref', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _3, _4, _5, _6, _7;
     try {
-        let filter = { availability: 'Available' };
+        let filter = { availability: declared_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE };
         let sorting = { createdAt: -1 };
         let pageNum = 1;
         const queries = Object.keys(req.query);
@@ -445,7 +457,7 @@ PropertyRouter.get('/api/properties-group-by-town', (req, res) => __awaiter(void
         const groupsByTown = yield property_1.Property.aggregate([
             {
                 $match: {
-                    'availability': 'Available'
+                    'availability': declared_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE
                 }
             },
             {
@@ -471,7 +483,7 @@ PropertyRouter.get('/api/properties-group-by-district', (req, res) => __awaiter(
         const pipeline = [
             {
                 $match: {
-                    'availability': 'Available'
+                    'availability': declared_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE
                 }
             },
             {
@@ -528,7 +540,8 @@ PropertyRouter.get('/api/properties/:id', (req, res) => __awaiter(void 0, void 0
             },
             {
                 $unwind: {
-                    path: '$owner'
+                    path: '$owner',
+                    preserveNullAndEmptyArrays: true
                 }
             },
             {
@@ -573,7 +586,8 @@ PropertyRouter.get('/api/property/:propertyId/related-properties/:quaterref', (r
             },
             {
                 $unwind: {
-                    path: "$relatedProp"
+                    path: "$relatedProp",
+                    preserveNullAndEmptyArrays: true
                 }
             },
             {
@@ -593,7 +607,7 @@ PropertyRouter.get('/api/property/:propertyId/related-properties/:quaterref', (r
         ];
         const propertiesInSameQuater = yield property_1.Property.find({
             $and: [
-                { availability: 'Available' },
+                { availability: declared_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE },
                 { 'quater.ref': req.params.quaterref },
                 { _id: { $ne: req.params.propertyId } }
             ]

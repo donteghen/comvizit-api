@@ -405,11 +405,110 @@ export function townAggregator () : PipelineStage | any  {
 }
 
 // subpipeline for getting rent-intensions
-export function rentIntentionLookup (filter: any): PipelineStage | any {
+export function rentIntentionListQuery (filter: any): PipelineStage | any {
   return [
     {
       $match: filter
     },
+    ...rentIntentionlookup(),
+    {
+        $sort: {
+            createdAt: -1
+        }
+    }
+  ]
+}
+
+// subpipeline for getting a single rent-intentions detail
+export function singleRentIntentionQuery (id: string) {
+  return [
+    {
+      $match: {
+        _id: new Types.ObjectId(id)
+      }
+    },
+
+    ...rentIntentionlookup()
+  ]
+}
+
+// subpipeline for getting rent-intensions
+export function rentalHistoryListQuery (filter: any): PipelineStage | any {
+  return [
+    {
+      $match: filter
+    },
+    ...rentalHistorylookup(),
+    {
+        $sort: {
+            createdAt: -1
+        }
+    }
+  ]
+}
+
+// subpipeline for getting a single rental history detail
+export function singleRentalHistoryQuery (id: string) {
+  return [
+    {
+      $match: {
+        _id: new Types.ObjectId(id)
+      }
+    },
+    ...rentalHistorylookup()
+  ]
+}
+
+function rentalHistorylookup () {
+  return [
+
+    {
+      $lookup: {
+          from: "users",
+          localField: "tenantId",
+          foreignField: "_id",
+          as: 'tenant'
+        }
+    },
+    {
+        $unwind: {
+            path: '$tenant',
+            preserveNullAndEmptyArrays: true
+        }
+    },
+    {
+      $lookup: {
+          from: "users",
+          localField: "landlordId",
+          foreignField: "_id",
+          as: 'landlord'
+        }
+    },
+    {
+        $unwind: {
+            path: '$landlord',
+            preserveNullAndEmptyArrays: true
+        }
+    },
+    {
+      $lookup: {
+          from: "properties",
+          localField: "propertyId",
+          foreignField: "_id",
+          as: 'property'
+        }
+    },
+    {
+        $unwind: {
+            path: '$property',
+            preserveNullAndEmptyArrays: true
+        }
+    }
+  ]
+}
+function rentIntentionlookup () {
+  return [
+
     {
       $lookup: {
           from: "users",
@@ -420,7 +519,8 @@ export function rentIntentionLookup (filter: any): PipelineStage | any {
     },
     {
         $unwind: {
-            path: '$potentialTenant'
+            path: '$potentialTenant',
+            preserveNullAndEmptyArrays: true
         }
     },
     {
@@ -433,7 +533,8 @@ export function rentIntentionLookup (filter: any): PipelineStage | any {
     },
     {
         $unwind: {
-            path: '$landlord'
+            path: '$landlord',
+            preserveNullAndEmptyArrays: true
         }
     },
     {
@@ -446,166 +547,8 @@ export function rentIntentionLookup (filter: any): PipelineStage | any {
     },
     {
         $unwind: {
-            path: '$property'
-        }
-    },
-    {
-        $sort: {
-            createdAt: -1
-        }
-    }
-  ]
-}
-
-// subpipeline for getting a single rent-intentions detail
-export function singleRentIntentionLookup (id: string) {
-  return [
-    {
-      $match: {
-        _id: new Types.ObjectId(id)
-      }
-    },
-
-    {
-      $lookup: {
-          from: "users",
-          localField: "landlordId",
-          foreignField: "_id",
-          as: 'potentialTenant'
-        }
-    },
-    {
-        $unwind: {
-            path: '$potentialTenant'
-        }
-    },
-    {
-      $lookup: {
-          from: "users",
-          localField: "landlordId",
-          foreignField: "_id",
-          as: 'landlord'
-        }
-    },
-    {
-        $unwind: {
-            path: '$landlord'
-        }
-    },
-    {
-      $lookup: {
-          from: "properties",
-          localField: "propertyId",
-          foreignField: "_id",
-          as: 'property'
-        }
-    },
-    {
-        $unwind: {
-            path: '$property'
-        }
-    }
-  ]
-}
-
-// subpipeline for getting rent-intensions
-export function rentalHistoryLookup (filter: any): PipelineStage | any {
-  return [
-    {
-      $match: filter
-    },
-    {
-      $lookup: {
-          from: "users",
-          localField: "tenantId",
-          foreignField: "_id",
-          as: 'tenant'
-        }
-    },
-    {
-        $unwind: {
-            path: '$tenant'
-        }
-    },
-    {
-      $lookup: {
-          from: "users",
-          localField: "landlordId",
-          foreignField: "_id",
-          as: 'landlord'
-        }
-    },
-    {
-        $unwind: {
-            path: '$landlord'
-        }
-    },
-    {
-      $lookup: {
-          from: "properties",
-          localField: "propertyId",
-          foreignField: "_id",
-          as: 'property'
-        }
-    },
-    {
-        $unwind: {
-            path: '$property'
-        }
-    },
-    {
-        $sort: {
-            createdAt: -1
-        }
-    }
-  ]
-}
-
-// subpipeline for getting a single rental history detail
-export function singleRentalHistoryLookup (id: string) {
-  return [
-    {
-      $match: {
-        _id: new Types.ObjectId(id)
-      }
-    },
-    {
-      $lookup: {
-          from: "users",
-          localField: "tenantId",
-          foreignField: "_id",
-          as: 'tenant'
-        }
-    },
-    {
-        $unwind: {
-            path: '$tenant'
-        }
-    },
-    {
-      $lookup: {
-          from: "users",
-          localField: "landlordId",
-          foreignField: "_id",
-          as: 'landlord'
-        }
-    },
-    {
-        $unwind: {
-            path: '$landlord'
-        }
-    },
-    {
-      $lookup: {
-          from: "properties",
-          localField: "propertyId",
-          foreignField: "_id",
-          as: 'property'
-        }
-    },
-    {
-        $unwind: {
-            path: '$property'
+            path: '$property',
+            preserveNullAndEmptyArrays: true
         }
     }
   ]

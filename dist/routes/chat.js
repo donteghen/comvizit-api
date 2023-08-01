@@ -26,6 +26,8 @@ exports.ChatRouter = ChatRouter;
 // query helper function
 function setFilter(key, value) {
     switch (key) {
+        case 'unique_id':
+            return { unique_id: Number(value) };
         case 'tenant':
             return { tenant: value };
         case 'landlord':
@@ -93,6 +95,7 @@ ChatRouter.get('/api/chats', auth_middleware_1.isLoggedIn, (req, res) => __await
                 {
                     $unwind: {
                         path: '$user',
+                        preserveNullAndEmptyArrays: true
                     }
                 }
             ];
@@ -120,6 +123,7 @@ ChatRouter.get('/api/chats', auth_middleware_1.isLoggedIn, (req, res) => __await
                 {
                     $unwind: {
                         path: '$user',
+                        preserveNullAndEmptyArrays: true
                     }
                 }
             ];
@@ -199,8 +203,50 @@ ChatRouter.get('/api/all-chats', auth_middleware_1.isLoggedIn, auth_middleware_1
                 }
             });
         }
-        const chats = yield chat_1.Chat.find(filter).sort({ createdAt: -1 });
-        ;
+        const chats = yield chat_1.Chat.aggregate([
+            {
+                $match: filter
+            },
+            {
+                $addFields: {
+                    tenantId: { $toObjectId: "$tenant" },
+                    landlordId: { $toObjectId: "$landlord" }
+                }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'tenantId',
+                    foreignField: '_id',
+                    as: 'tenantInfo'
+                }
+            },
+            {
+                $unwind: {
+                    path: '$tenantInfo',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'landlordId',
+                    foreignField: '_id',
+                    as: 'landlordInfo'
+                }
+            },
+            {
+                $unwind: {
+                    path: '$landlordInfo',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $sort: {
+                    createdAt: -1
+                }
+            }
+        ]);
         res.send({ ok: true, data: chats });
     }
     catch (error) {

@@ -37,6 +37,8 @@ exports.RentalHistoryRouter = RentalHistoryRouter;
  */
 function setFilter(key, value) {
     switch (key) {
+        case 'unique_id':
+            return { unique_id: Number(value) };
         case 'id':
             return { '_id': new mongoose_1.Types.ObjectId(value) };
         case 'propertyId':
@@ -57,7 +59,13 @@ function setFilter(key, value) {
 RentalHistoryRouter.get('/api/rental-histories', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d, _e;
     try {
-        let filter = {};
+        let filter = req.user.role === declared_1.constants.USER_ROLE.TENANT ?
+            { tenantId: new mongoose_1.Types.ObjectId(req.user.id) }
+            :
+                req.user.role === declared_1.constants.USER_ROLE.LANDLORD ?
+                    { landlordId: new mongoose_1.Types.ObjectId(req.user.id) }
+                    :
+                        {};
         const queries = Object.keys(req.query);
         if (queries.length > 0) {
             let dateFilter = (0, date_query_setter_1.setDateFilter)((_b = (_a = req.query['startDate']) === null || _a === void 0 ? void 0 : _a.toString()) !== null && _b !== void 0 ? _b : '', (_d = (_c = req.query['endDate']) === null || _c === void 0 ? void 0 : _c.toString()) !== null && _d !== void 0 ? _d : '');
@@ -68,7 +76,7 @@ RentalHistoryRouter.get('/api/rental-histories', auth_middleware_1.isLoggedIn, (
                 }
             });
         }
-        const rentalHistoryList = yield rental_history_1.RentalHistory.aggregate((0, queryMaker_1.rentalHistoryLookup)(filter));
+        const rentalHistoryList = yield rental_history_1.RentalHistory.aggregate((0, queryMaker_1.rentalHistoryListQuery)(filter));
         res.send({ ok: true, data: rentalHistoryList });
     }
     catch (error) {
@@ -83,7 +91,7 @@ RentalHistoryRouter.get('/api/rental-histories/:id/detail', auth_middleware_1.is
         if (!req.params.id) {
             throw error_1.INVALID_REQUEST;
         }
-        const rentalHistory = yield rental_history_1.RentalHistory.aggregate((0, queryMaker_1.singleRentalHistoryLookup)(req.params.id));
+        const rentalHistory = yield rental_history_1.RentalHistory.aggregate((0, queryMaker_1.singleRentalHistoryQuery)(req.params.id));
         if (!rentalHistory || rentalHistory.length === 0) {
             throw error_1.NOT_FOUND;
         }
@@ -170,7 +178,7 @@ RentalHistoryRouter.post('/api/rental-histories', auth_middleware_1.isLoggedIn, 
             throw error_1.SAVE_OPERATION_FAILED;
         }
         // update the corresponding rent-intention's status to CONCLUDED
-        actualRentIntention.status = 'CONCLUDED';
+        actualRentIntention.status = declared_1.constants.RENT_INTENTION_STATUS_OPTIONS.CONCLUDED;
         yield actualRentIntention.save();
         // get the corresponsing landlord and tenant  so that we can get their fullnames to be used in the email templates
         const _landlord = yield user_1.User.findById(landlordId);

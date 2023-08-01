@@ -21,6 +21,7 @@ const mongoose_1 = require("mongoose");
 const property_1 = require("../models/property");
 const logger_1 = require("../logs/logger");
 const date_query_setter_1 = require("../utils/date-query-setter");
+const declared_1 = require("../constants/declared");
 const FeaturedRouter = express_1.default.Router();
 exports.FeaturedRouter = FeaturedRouter;
 /**
@@ -32,6 +33,8 @@ exports.FeaturedRouter = FeaturedRouter;
  */
 function setFilter(key, value) {
     switch (key) {
+        case 'unique_id':
+            return { unique_id: Number(value) };
         case 'propertyId':
             return { 'propertyId': new mongoose_1.Types.ObjectId(value) };
         case 'status':
@@ -62,7 +65,8 @@ FeaturedRouter.get('/api/featured/properties-active', (req, res) => __awaiter(vo
             },
             {
                 $unwind: {
-                    path: "$property"
+                    path: "$property",
+                    preserveNullAndEmptyArrays: true
                 }
             },
             {
@@ -204,7 +208,8 @@ FeaturedRouter.patch('/api/featured/properties/:propertyId/status/update', auth_
             const updateFeaturedProperty = yield featuredProperty.save();
             // update related property's featuring state
             const relatedProperty = yield property_1.Property.findById(featuredProperty.propertyId);
-            relatedProperty.featuring = updateFeaturedProperty.status === 'Active' ? true : false;
+            relatedProperty.featuring = updateFeaturedProperty.status === declared_1.constants.FEATURED_PROPERTY_STATUS.ACTIVE ? true : false;
+            yield relatedProperty.save();
             res.send({ ok: true, data: updateFeaturedProperty });
         }
         else {
@@ -231,6 +236,7 @@ FeaturedRouter.delete('/api/featured/properties/:propertyId/delete', auth_middle
         // update related property's featuring state
         const relatedProperty = yield property_1.Property.findById(featuredProperty.propertyId);
         relatedProperty.featuring = false;
+        yield relatedProperty.save();
         res.send({ ok: true });
     }
     catch (error) {
@@ -255,7 +261,8 @@ FeaturedRouter.get('/api/featured/properties', auth_middleware_1.isLoggedIn, aut
             },
             {
                 $unwind: {
-                    path: "$property"
+                    path: "$property",
+                    preserveNullAndEmptyArrays: true
                 }
             },
         ];

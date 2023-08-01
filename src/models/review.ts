@@ -3,7 +3,7 @@ import {Schema, model} from 'mongoose'
 import { IReview } from './interfaces'
 import { NextFunction } from 'express';
 import { IdentityCounter } from "./identity-counter";
-
+import { constants } from '../constants/declared';
 
 /**
  * Review schema, represents the document property definition for a review
@@ -21,7 +21,12 @@ const reviewSchema = new Schema<IReview>({
     type: {
         type: String,
         required: true,
-        enum: ['Property', 'Landlord', 'Tenant', 'Platform']
+        enum: [
+            constants.REVIEW_TYPES.PROPERTY,
+            constants.REVIEW_TYPES.LANDLORD,
+            constants.REVIEW_TYPES.TENANT,
+            constants.REVIEW_TYPES.PLATFORM
+        ]
     },
     refId: {
         type: String,
@@ -35,7 +40,10 @@ const reviewSchema = new Schema<IReview>({
     authorType: {
         type: String,
         required: true,
-        enum: ['TENANT', 'LANDLORD']
+        enum: [
+            constants.REVIEW_AUTHOR_TYPE.TENANT,
+            constants.REVIEW_AUTHOR_TYPE.LANDLORD
+        ]
     },
     rating: {
         type: Number,
@@ -48,8 +56,11 @@ const reviewSchema = new Schema<IReview>({
     status: {
         type: String,
         required: true,
-        default: 'Active',
-        enum: ['Active', 'Inactive']
+        default: constants.REVIEW_STATUS.ACTIVE,
+        enum: [
+            constants.REVIEW_STATUS.ACTIVE,
+            constants.REVIEW_STATUS.INACTIVE
+        ]
     },
     unique_id: {
         type: Number,

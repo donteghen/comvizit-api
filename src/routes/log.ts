@@ -15,6 +15,8 @@ const LogRouter = express.Router()
  */
 function setFilter(key:string, value:any): any {
     switch (key) {
+        case 'unique_id' :
+            return {unique_id: Number(value)}
         case 'level':
             return {'level': value}
         case '_id':

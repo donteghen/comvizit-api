@@ -18,6 +18,7 @@ const bcryptjs_1 = require("bcryptjs");
 const isEmail_1 = __importDefault(require("validator/lib/isEmail"));
 const isStrongPassword_1 = __importDefault(require("validator/lib/isStrongPassword"));
 const identity_counter_1 = require("./identity-counter");
+const declared_1 = require("../constants/declared");
 /**
  * User schema, represents the document property definition for a User
  * @constructor User
@@ -76,7 +77,10 @@ const userSchema = new mongoose_1.Schema({
     gender: {
         type: String,
         required: true,
-        enum: ['M', 'F']
+        enum: [
+            declared_1.constants.USER_GENDER_OPTIONS.MALE,
+            declared_1.constants.USER_GENDER_OPTIONS.FEMALE
+        ]
     },
     approved: {
         type: Boolean,
@@ -115,12 +119,20 @@ const userSchema = new mongoose_1.Schema({
     lang: {
         type: String,
         required: true,
-        enum: ['French', 'English', 'English & French']
+        enum: [
+            declared_1.constants.USER_LANGUAGE_OPTIONS.FRENCH,
+            declared_1.constants.USER_LANGUAGE_OPTIONS.ENGLISH,
+            declared_1.constants.USER_LANGUAGE_OPTIONS.ENGLISH_FRENCH
+        ]
     },
     role: {
         type: String,
         required: true,
-        enum: ['TENANT', 'LANDLORD', 'ADMIN']
+        enum: [
+            declared_1.constants.USER_ROLE.TENANT,
+            declared_1.constants.USER_ROLE.LANDLORD,
+            declared_1.constants.USER_ROLE.ADMIN
+        ]
     },
     isVerified: {
         type: Boolean,

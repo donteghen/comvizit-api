@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.singleRentalHistoryLookup = exports.rentalHistoryLookup = exports.singleRentIntentionLookup = exports.rentIntentionLookup = exports.townAggregator = exports.categoryAggregator = void 0;
+exports.singleRentalHistoryQuery = exports.rentalHistoryListQuery = exports.singleRentIntentionQuery = exports.rentIntentionListQuery = exports.townAggregator = exports.categoryAggregator = void 0;
 const mongoose_1 = require("mongoose");
 function categoryAggregator(quaterRef) {
     return [
@@ -365,11 +365,107 @@ function townAggregator() {
 }
 exports.townAggregator = townAggregator;
 // subpipeline for getting rent-intensions
-function rentIntentionLookup(filter) {
+function rentIntentionListQuery(filter) {
     return [
         {
             $match: filter
         },
+        ...rentIntentionlookup(),
+        {
+            $sort: {
+                createdAt: -1
+            }
+        }
+    ];
+}
+exports.rentIntentionListQuery = rentIntentionListQuery;
+// subpipeline for getting a single rent-intentions detail
+function singleRentIntentionQuery(id) {
+    return [
+        {
+            $match: {
+                _id: new mongoose_1.Types.ObjectId(id)
+            }
+        },
+        ...rentIntentionlookup()
+    ];
+}
+exports.singleRentIntentionQuery = singleRentIntentionQuery;
+// subpipeline for getting rent-intensions
+function rentalHistoryListQuery(filter) {
+    return [
+        {
+            $match: filter
+        },
+        ...rentalHistorylookup(),
+        {
+            $sort: {
+                createdAt: -1
+            }
+        }
+    ];
+}
+exports.rentalHistoryListQuery = rentalHistoryListQuery;
+// subpipeline for getting a single rental history detail
+function singleRentalHistoryQuery(id) {
+    return [
+        {
+            $match: {
+                _id: new mongoose_1.Types.ObjectId(id)
+            }
+        },
+        ...rentalHistorylookup()
+    ];
+}
+exports.singleRentalHistoryQuery = singleRentalHistoryQuery;
+function rentalHistorylookup() {
+    return [
+        {
+            $lookup: {
+                from: "users",
+                localField: "tenantId",
+                foreignField: "_id",
+                as: 'tenant'
+            }
+        },
+        {
+            $unwind: {
+                path: '$tenant',
+                preserveNullAndEmptyArrays: true
+            }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "landlordId",
+                foreignField: "_id",
+                as: 'landlord'
+            }
+        },
+        {
+            $unwind: {
+                path: '$landlord',
+                preserveNullAndEmptyArrays: true
+            }
+        },
+        {
+            $lookup: {
+                from: "properties",
+                localField: "propertyId",
+                foreignField: "_id",
+                as: 'property'
+            }
+        },
+        {
+            $unwind: {
+                path: '$property',
+                preserveNullAndEmptyArrays: true
+            }
+        }
+    ];
+}
+function rentIntentionlookup() {
+    return [
         {
             $lookup: {
                 from: "users",
@@ -380,7 +476,8 @@ function rentIntentionLookup(filter) {
         },
         {
             $unwind: {
-                path: '$potentialTenant'
+                path: '$potentialTenant',
+                preserveNullAndEmptyArrays: true
             }
         },
         {
@@ -393,7 +490,8 @@ function rentIntentionLookup(filter) {
         },
         {
             $unwind: {
-                path: '$landlord'
+                path: '$landlord',
+                preserveNullAndEmptyArrays: true
             }
         },
         {
@@ -406,168 +504,10 @@ function rentIntentionLookup(filter) {
         },
         {
             $unwind: {
-                path: '$property'
-            }
-        },
-        {
-            $sort: {
-                createdAt: -1
+                path: '$property',
+                preserveNullAndEmptyArrays: true
             }
         }
     ];
 }
-exports.rentIntentionLookup = rentIntentionLookup;
-// subpipeline for getting a single rent-intentions detail
-function singleRentIntentionLookup(id) {
-    return [
-        {
-            $match: {
-                _id: new mongoose_1.Types.ObjectId(id)
-            }
-        },
-        {
-            $lookup: {
-                from: "users",
-                localField: "landlordId",
-                foreignField: "_id",
-                as: 'potentialTenant'
-            }
-        },
-        {
-            $unwind: {
-                path: '$potentialTenant'
-            }
-        },
-        {
-            $lookup: {
-                from: "users",
-                localField: "landlordId",
-                foreignField: "_id",
-                as: 'landlord'
-            }
-        },
-        {
-            $unwind: {
-                path: '$landlord'
-            }
-        },
-        {
-            $lookup: {
-                from: "properties",
-                localField: "propertyId",
-                foreignField: "_id",
-                as: 'property'
-            }
-        },
-        {
-            $unwind: {
-                path: '$property'
-            }
-        }
-    ];
-}
-exports.singleRentIntentionLookup = singleRentIntentionLookup;
-// subpipeline for getting rent-intensions
-function rentalHistoryLookup(filter) {
-    return [
-        {
-            $match: filter
-        },
-        {
-            $lookup: {
-                from: "users",
-                localField: "tenantId",
-                foreignField: "_id",
-                as: 'tenant'
-            }
-        },
-        {
-            $unwind: {
-                path: '$tenant'
-            }
-        },
-        {
-            $lookup: {
-                from: "users",
-                localField: "landlordId",
-                foreignField: "_id",
-                as: 'landlord'
-            }
-        },
-        {
-            $unwind: {
-                path: '$landlord'
-            }
-        },
-        {
-            $lookup: {
-                from: "properties",
-                localField: "propertyId",
-                foreignField: "_id",
-                as: 'property'
-            }
-        },
-        {
-            $unwind: {
-                path: '$property'
-            }
-        },
-        {
-            $sort: {
-                createdAt: -1
-            }
-        }
-    ];
-}
-exports.rentalHistoryLookup = rentalHistoryLookup;
-// subpipeline for getting a single rental history detail
-function singleRentalHistoryLookup(id) {
-    return [
-        {
-            $match: {
-                _id: new mongoose_1.Types.ObjectId(id)
-            }
-        },
-        {
-            $lookup: {
-                from: "users",
-                localField: "tenantId",
-                foreignField: "_id",
-                as: 'tenant'
-            }
-        },
-        {
-            $unwind: {
-                path: '$tenant'
-            }
-        },
-        {
-            $lookup: {
-                from: "users",
-                localField: "landlordId",
-                foreignField: "_id",
-                as: 'landlord'
-            }
-        },
-        {
-            $unwind: {
-                path: '$landlord'
-            }
-        },
-        {
-            $lookup: {
-                from: "properties",
-                localField: "propertyId",
-                foreignField: "_id",
-                as: 'property'
-            }
-        },
-        {
-            $unwind: {
-                path: '$property'
-            }
-        }
-    ];
-}
-exports.singleRentalHistoryLookup = singleRentalHistoryLookup;
 //# sourceMappingURL=queryMaker.js.map

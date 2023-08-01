@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RentIntention = void 0;
 const mongoose_1 = require("mongoose");
 const identity_counter_1 = require("./identity-counter");
+const declared_1 = require("../constants/declared");
 /**
  * RentIntention schema, represents the document property definition for a RentIntention
  * @constructor RentIntention
@@ -47,8 +48,13 @@ const rentIntentionSchema = new mongoose_1.Schema({
     status: {
         type: String,
         required: true,
-        default: 'INITIATED',
-        enum: ['INITIATED', 'CONFIRMED', 'CONCLUDED', 'CANCELED']
+        default: declared_1.constants.RENT_INTENTION_STATUS_OPTIONS.INITIATED,
+        enum: [
+            declared_1.constants.RENT_INTENTION_STATUS_OPTIONS.INITIATED,
+            declared_1.constants.RENT_INTENTION_STATUS_OPTIONS.CONFIRMED,
+            declared_1.constants.RENT_INTENTION_STATUS_OPTIONS.CONCLUDED,
+            declared_1.constants.RENT_INTENTION_STATUS_OPTIONS.CANCELED
+        ]
     },
     initiatedAt: {
         type: Number,

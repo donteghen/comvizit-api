@@ -31,6 +31,8 @@ exports.ReviewRouter = ReviewRouter;
  */
 function setFilter(key, value) {
     switch (key) {
+        case 'unique_id':
+            return { unique_id: Number(value) };
         case 'type':
             return { 'type': value };
         case 'rating':
@@ -116,7 +118,9 @@ ReviewRouter.get('/api/reviews', (req, res) => __awaiter(void 0, void 0, void 0,
                 }
             });
         }
-        const reviews = yield review_1.Review.find(filter).sort({ createdAt: -1 }).populate('author', ['fullname', 'avatar', 'address.town']).exec();
+        const reviews = yield review_1.Review.find(filter).sort({ createdAt: -1 })
+            .populate('author', ['unique_id', 'fullname', 'avatar', 'address.town'])
+            .exec();
         res.send({ ok: true, data: reviews });
     }
     catch (error) {

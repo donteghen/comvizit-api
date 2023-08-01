@@ -29,6 +29,8 @@ exports.LogRouter = LogRouter;
  */
 function setFilter(key, value) {
     switch (key) {
+        case 'unique_id':
+            return { unique_id: Number(value) };
         case 'level':
             return { 'level': value };
         case '_id':

@@ -20,6 +20,7 @@ const error_1 = require("../constants/error");
 const mongoose_1 = require("mongoose");
 const logger_1 = require("../logs/logger");
 const date_query_setter_1 = require("../utils/date-query-setter");
+const declared_1 = require("../constants/declared");
 const TagRouter = express_1.default.Router();
 exports.TagRouter = TagRouter;
 /**
@@ -30,6 +31,8 @@ exports.TagRouter = TagRouter;
  */
 function setFilter(key, value) {
     switch (key) {
+        case 'unique_id':
+            return { unique_id: Number(value) };
         case 'type':
             return { 'type': value };
         case 'title':
@@ -53,10 +56,10 @@ TagRouter.post('/api/tags/add', auth_middleware_1.isLoggedIn, auth_middleware_1.
         const code = title ? title.toString().toLowerCase().split(' ').join('_') : '';
         const existAlready = yield tag_1.Tag.findOne({ $and: [{ refId }, { code }] });
         if (existAlready) {
-            if (existAlready.status === 'Active') {
+            if (existAlready.status === declared_1.constants.TAG_STATUS_OPTIONS.ACTIVE) {
                 throw (0, error_1.TAG_ALREADY_EXISTS)(existAlready.code, existAlready.type, existAlready.refId.toString());
             }
-            existAlready.status = 'Active';
+            existAlready.status = declared_1.constants.TAG_STATUS_OPTIONS.ACTIVE;
             yield existAlready.save();
             res.send({ ok: true, data: existAlready });
             return;

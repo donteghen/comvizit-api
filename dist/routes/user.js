@@ -36,10 +36,13 @@ const complain_1 = require("../models/complain");
 const tag_1 = require("../models/tag");
 const logger_1 = require("../logs/logger");
 const date_query_setter_1 = require("../utils/date-query-setter");
+const declared_1 = require("../constants/declared");
 const UserRouter = express_1.default.Router();
 exports.UserRouter = UserRouter;
 function setFilter(key, value) {
     switch (key) {
+        case 'unique_id':
+            return { unique_id: Number(value) };
         case 'fullname':
             return { 'fullname': { "$regex": value, $options: 'i' } };
         case 'email':
@@ -62,7 +65,7 @@ UserRouter.get('/api/users/landlords/:id/card', (req, res) => __awaiter(void 0, 
         const query = {
             $and: [
                 { _id: new mongoose_1.Types.ObjectId(req.params.id) },
-                { role: "LANDLORD" }
+                { role: declared_1.constants.USER_ROLE.LANDLORD }
             ]
         };
         const landlord = yield user_1.User.findOne(query);
@@ -241,11 +244,11 @@ UserRouter.patch('/api/user/avatarUpload', auth_middleware_1.isLoggedIn, multerU
         // select the folder based on user role
         const folderPath = (role) => {
             switch (role) {
-                case 'TENANT':
+                case declared_1.constants.USER_ROLE.TENANT:
                     return 'Avatars/Users/Tenants';
-                case 'LANDLORD':
+                case declared_1.constants.USER_ROLE.LANDLORD:
                     return 'Avatars/Users/Landlords';
-                case 'ADMIN':
+                case declared_1.constants.USER_ROLE.ADMIN:
                     return 'Avatars/Users/Admins';
                 default:
                     throw new Error('Invalid user role, avatar upload failed!');
@@ -342,7 +345,7 @@ UserRouter.get('/api/users/logout', auth_middleware_1.isLoggedIn, (req, res) => 
 UserRouter.get('/api/users/tenants', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _v, _w, _x, _y, _z;
     try {
-        let filter = { role: 'TENANT' };
+        let filter = { role: declared_1.constants.USER_ROLE.TENANT };
         const queries = Object.keys(req.query);
         if (queries.length > 0) {
             let dateFilter = (0, date_query_setter_1.setDateFilter)((_w = (_v = req.query['startDate']) === null || _v === void 0 ? void 0 : _v.toString()) !== null && _w !== void 0 ? _w : '', (_y = (_x = req.query['endDate']) === null || _x === void 0 ? void 0 : _x.toString()) !== null && _y !== void 0 ? _y : '');
@@ -364,7 +367,7 @@ UserRouter.get('/api/users/tenants', auth_middleware_1.isLoggedIn, auth_middlewa
 UserRouter.get('/api/users/landlords', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _0, _1, _2, _3;
     try {
-        let filter = { role: 'LANDLORD' };
+        let filter = { role: declared_1.constants.USER_ROLE.LANDLORD };
         const queries = Object.keys(req.query);
         if (queries.length > 0) {
             let dateFilter = (0, date_query_setter_1.setDateFilter)((_1 = (_0 = req.query['startDate']) === null || _0 === void 0 ? void 0 : _0.toString()) !== null && _1 !== void 0 ? _1 : '', (_3 = (_2 = req.query['endDate']) === null || _2 === void 0 ? void 0 : _2.toString()) !== null && _3 !== void 0 ? _3 : '');
@@ -386,7 +389,7 @@ UserRouter.get('/api/users/landlords', auth_middleware_1.isLoggedIn, auth_middle
 UserRouter.get('/api/users/admins', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _4, _5, _6, _7;
     try {
-        let filter = { role: 'ADMIN' };
+        let filter = { role: declared_1.constants.USER_ROLE.ADMIN };
         const queries = Object.keys(req.query);
         if (queries.length > 0) {
             let dateFilter = (0, date_query_setter_1.setDateFilter)((_5 = (_4 = req.query['startDate']) === null || _4 === void 0 ? void 0 : _4.toString()) !== null && _5 !== void 0 ? _5 : '', (_7 = (_6 = req.query['endDate']) === null || _6 === void 0 ? void 0 : _6.toString()) !== null && _7 !== void 0 ? _7 : '');
@@ -398,7 +401,8 @@ UserRouter.get('/api/users/admins', auth_middleware_1.isLoggedIn, auth_middlewar
             });
         }
         const adminUsers = yield user_1.User.find(filter);
-        res.send({ ok: true, data: adminUsers });
+        console.log(adminUsers[0]._id, typeof adminUsers[0]._id);
+        res.json({ ok: true, data: adminUsers });
     }
     catch (error) {
         res.status(400).send({ ok: false, error });
@@ -432,7 +436,7 @@ UserRouter.patch('/api/users/all/:id/approve', auth_middleware_1.isLoggedIn, aut
     var _12, _13;
     try {
         // check if the session user is an admin, if no then it should fail as only an admin can approve a landlord or tenant account
-        if (req.user.role !== 'ADMIN') {
+        if (req.user.role !== declared_1.constants.USER_ROLE.ADMIN) {
             throw error_1.NOT_AUTHORIZED;
         }
         const user = yield user_1.User.findById(req.params.id);
@@ -440,7 +444,7 @@ UserRouter.patch('/api/users/all/:id/approve', auth_middleware_1.isLoggedIn, aut
             throw error_1.NO_USER;
         }
         // check if the user being approved is an admin, if yes then it should fail as only the superadmin can approve an admin user
-        if (user.role === 'ADMIN') {
+        if (user.role === declared_1.constants.USER_ROLE.ADMIN) {
             throw error_1.NOT_AUTHORIZED;
         }
         user.approved = true;
@@ -467,7 +471,7 @@ UserRouter.patch('/api/users/all/:id/disapprove', auth_middleware_1.isLoggedIn, 
     var _14, _15;
     try {
         // check if the session user is an admin, if no then it should fail as only an admin can disapprove a landlord or tenant account
-        if (req.user.role !== 'ADMIN') {
+        if (req.user.role !== declared_1.constants.USER_ROLE.ADMIN) {
             throw error_1.NOT_AUTHORIZED;
         }
         const user = yield user_1.User.findById(req.params.id);
@@ -475,7 +479,7 @@ UserRouter.patch('/api/users/all/:id/disapprove', auth_middleware_1.isLoggedIn, 
             throw error_1.NO_USER;
         }
         // check if the user being disapproved is an admin, if yes then it should fail as only the superadmin can approve an admin user
-        if (user.role === 'ADMIN') {
+        if (user.role === declared_1.constants.USER_ROLE.ADMIN) {
             throw error_1.NOT_AUTHORIZED;
         }
         user.approved = false;
@@ -504,7 +508,7 @@ UserRouter.delete('/api/user/all/:id', auth_middleware_1.isLoggedIn, auth_middle
         // make sure that admin can only delete either <user.role === tenant | user.role === landlord>
         // An admin user can be deleted only by the super admin
         const user = yield user_1.User.findById(req.params.id);
-        if (user.role === 'ADMIN') {
+        if (user.role === declared_1.constants.USER_ROLE.ADMIN) {
             throw error_1.NOT_AUTHORIZED;
         }
         const deletedUser = yield user_1.User.findByIdAndDelete(req.params.id);
@@ -512,7 +516,7 @@ UserRouter.delete('/api/user/all/:id', auth_middleware_1.isLoggedIn, auth_middle
             throw error_1.DELETE_OPERATION_FAILED;
         }
         // if user is landlord, then delete all related properties
-        if (deletedUser.role === 'LANDLORD') {
+        if (deletedUser.role === declared_1.constants.USER_ROLE.LANDLORD) {
             property_1.Property.deleteMany({
                 ownerId: deletedUser._id
             });

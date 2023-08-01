@@ -3,7 +3,7 @@ import { IProperty, PropertyVirtual, PropertyVideo } from './interfaces'
 import { NextFunction } from 'express';
 import { IdentityCounter } from "./identity-counter";
 
-
+import { constants } from '../constants/declared';
 /**
  * Property schema, represents the document property definition for a Property
  * @constructor Property
@@ -72,11 +72,23 @@ const propertySchema = new Schema<IProperty>({
     propertyType: {
         type: String,
         required: true,
-        enum: ['Studio', 'Apartment', 'Private Room', 'Villa', 'House', 'Office']
+        enum: [
+            constants.PROPERTY_TYPES.STUDIO,
+            constants.PROPERTY_TYPES.APARTMENT,
+            constants.PROPERTY_TYPES.PRIVATE_ROOM,
+            constants.PROPERTY_TYPES.VILLA,
+            constants.PROPERTY_TYPES.HOUSE,
+            constants.PROPERTY_TYPES.OFFICE
+        ]
     },
     bedroom: {
         type: String,
-        enum: ['ONE', 'TWO', 'THREE', 'FOURPLUS']
+        enum: [
+            constants.PROPERTY_BEDROOM_OPTIONS.ONE,
+            constants.PROPERTY_BEDROOM_OPTIONS.TWO,
+            constants.PROPERTY_BEDROOM_OPTIONS.THREE,
+            constants.PROPERTY_BEDROOM_OPTIONS.FOURPLUS
+        ]
     },
     propertySize: {
         type: Number,
@@ -92,7 +104,10 @@ const propertySchema = new Schema<IProperty>({
     furnishedState: {
         type: String,
         required: true,
-        enum: ['Furnished', 'Unfurnished']
+        enum: [
+            constants.PROPERTY_FURNISHED_STATE.FURNISHED,
+            constants.PROPERTY_FURNISHED_STATE.UNFURNISHED
+        ]
     },
     amenities: {
         type: [String],
@@ -204,13 +219,21 @@ const propertySchema = new Schema<IProperty>({
     preferedTenant: {
         gender: {
             type: String,
-            enum: ['Male', 'Female', 'All'],
+            enum: [
+                constants.PROPERTY_PREFERED_TENANT_GENDERS.MALE,
+                constants.PROPERTY_PREFERED_TENANT_GENDERS.FEMALE,
+                constants.PROPERTY_PREFERED_TENANT_GENDERS.ALL
+            ],
             required: true,
-            default: 'All'
+            default: constants.PROPERTY_PREFERED_TENANT_GENDERS.ALL
         },
         type: {
             type: String,
-            enum: ['Student', 'Family', 'All'],
+            enum: [
+                constants.PROPERTY_PREFERED_TENANT_TYPES.STUDENTS,
+                constants.PROPERTY_PREFERED_TENANT_TYPES.FAMILY,
+                constants.PROPERTY_PREFERED_TENANT_TYPES.ALL
+            ],
             required: true
         }
     },
@@ -224,9 +247,14 @@ const propertySchema = new Schema<IProperty>({
     },
     availability: {
         type: String,
-        enum: ['Inactive', 'Available', 'Booked', 'Taken'],
+        enum: [
+            constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.UNAVAILABLE,
+            constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE,
+            constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.BOOKED,
+            constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.TAKEN
+        ],
         required: true,
-        default: 'Inactive'
+        default: constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.UNAVAILABLE,
     },
     rentUtilities: {
         electricity: {

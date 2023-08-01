@@ -23,19 +23,6 @@ const like_1 = require("../models/like");
 const logger_1 = require("../logs/logger");
 const LikeRouter = express_1.default.Router();
 exports.LikeRouter = LikeRouter;
-// query helper function
-// function setFilter(key:string, value:any): any {
-//     switch (key) {
-//         case '_id':
-//             return {'_id': value}
-//         case 'propertyId':
-//             return {'propertyId': new Types.ObjectId(value)}
-//         case 'likeId':
-//             return {'likeId': new Types.ObjectId(value)}
-//         default:
-//             return {}
-//     }
-// }
 // ***************************** public enpoints ***********************************************
 // get a property's like count
 LikeRouter.get('/api/properties/:id/likes/count', (req, res) => __awaiter(void 0, void 0, void 0, function* () {

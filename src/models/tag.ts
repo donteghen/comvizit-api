@@ -3,7 +3,7 @@ import {Schema, model} from 'mongoose'
 import { ITag } from './interfaces'
 import { NextFunction } from 'express';
 import { IdentityCounter } from "./identity-counter";
-
+import { constants } from '../constants/declared';
 /**
  * Tag schema, defines the Tag document properties
  * @constructor Tag
@@ -19,7 +19,10 @@ const tagSchema = new Schema<ITag>({
     type: {
         type: String,
         required: true,
-        enum: ['Property', 'User']
+        enum: [
+            constants.TAG_TYPES.PROPERTY,
+            constants.TAG_TYPES.USER
+        ]
     },
     title: {
         type: String,
@@ -32,8 +35,11 @@ const tagSchema = new Schema<ITag>({
     status: {
         type: String,
         required: true,
-        enum: ['Active', 'Inactive'],
-        default: 'Active'
+        enum: [
+            constants.TAG_STATUS_OPTIONS.ACTIVE,
+            constants.TAG_STATUS_OPTIONS.INACTIVE
+        ],
+        default: constants.TAG_STATUS_OPTIONS.ACTIVE
     },
     refId: {
         type: Schema.Types.ObjectId,

@@ -10,19 +10,7 @@ import { logger } from '../logs/logger';
 
 const LikeRouter = express.Router()
 
-// query helper function
-// function setFilter(key:string, value:any): any {
-//     switch (key) {
-//         case '_id':
-//             return {'_id': value}
-//         case 'propertyId':
-//             return {'propertyId': new Types.ObjectId(value)}
-//         case 'likeId':
-//             return {'likeId': new Types.ObjectId(value)}
-//         default:
-//             return {}
-//     }
-// }
+
 
 // ***************************** public enpoints ***********************************************
 

@@ -31,6 +31,8 @@ exports.RentIntentionRouter = RentIntentionRouter;
 // query helper function
 function setFilter(key, value) {
     switch (key) {
+        case 'unique_id':
+            return { unique_id: Number(value) };
         case '_id':
             return { '_id': value };
         case 'propertyId':
@@ -51,7 +53,13 @@ function setFilter(key, value) {
 RentIntentionRouter.get('/api/rent-intentions', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d, _e;
     try {
-        let filter = {};
+        let filter = req.user.role === declared_1.constants.USER_ROLE.TENANT ?
+            { potentialTenantId: new mongoose_1.Types.ObjectId(req.user.id) }
+            :
+                req.user.role === declared_1.constants.USER_ROLE.LANDLORD ?
+                    { landlordId: new mongoose_1.Types.ObjectId(req.user.id) }
+                    :
+                        {};
         const queries = Object.keys(req.query);
         if (queries.length > 0) {
             let dateFilter = (0, date_query_setter_1.setDateFilter)((_b = (_a = req.query['startDate']) === null || _a === void 0 ? void 0 : _a.toString()) !== null && _b !== void 0 ? _b : '', (_d = (_c = req.query['endDate']) === null || _c === void 0 ? void 0 : _c.toString()) !== null && _d !== void 0 ? _d : '');
@@ -62,7 +70,7 @@ RentIntentionRouter.get('/api/rent-intentions', auth_middleware_1.isLoggedIn, (r
                 }
             });
         }
-        const rentIntentions = yield rent_intention_1.RentIntention.aggregate((0, queryMaker_1.rentIntentionLookup)(filter));
+        const rentIntentions = yield rent_intention_1.RentIntention.aggregate((0, queryMaker_1.rentIntentionListQuery)(filter));
         res.send({ ok: true, data: rentIntentions });
     }
     catch (error) {
@@ -74,7 +82,7 @@ RentIntentionRouter.get('/api/rent-intentions', auth_middleware_1.isLoggedIn, (r
 RentIntentionRouter.get('/api/rent-intentions/:id', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _f;
     try {
-        const rentIntention = yield rent_intention_1.RentIntention.aggregate((0, queryMaker_1.singleRentIntentionLookup)(req.params.id));
+        const rentIntention = yield rent_intention_1.RentIntention.aggregate((0, queryMaker_1.singleRentIntentionQuery)(req.params.id));
         if (!(rentIntention.length > 0)) {
             throw error_1.NOT_FOUND;
         }

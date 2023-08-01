@@ -27,6 +27,8 @@ exports.ComplainRouter = ComplainRouter;
 // query helper function
 function setFilter(key, value) {
     switch (key) {
+        case 'unique_id':
+            return { unique_id: Number(value) };
         case '_id':
             return { '_id': value };
         case 'processed':
@@ -92,7 +94,25 @@ ComplainRouter.get('/api/complains', auth_middleware_1.isLoggedIn, (req, res) =>
                 }
             });
         }
-        const complains = yield complain_1.Complain.find(filter);
+        const complains = yield complain_1.Complain.aggregate([
+            {
+                $match: filter
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "plaintiveId",
+                    foreignField: "_id",
+                    as: "plaintive"
+                }
+            },
+            {
+                $unwind: {
+                    path: "$plaintive",
+                    preserveNullAndEmptyArrays: true
+                }
+            }
+        ]);
         res.send({ ok: true, data: complains });
     }
     catch (error) {

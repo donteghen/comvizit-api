@@ -15,16 +15,23 @@ export const constants = {
         ACTIVE: 'Active',
         'INACTIVE': 'Inactive'
     },
+    REVIEW_AUTHOR_TYPE: {
+        TENANT:'TENANT',
+        LANDLORD:'LANDLORD'
+    },
     USER_ROLE: {
         ADMIN: 'ADMIN',
         TENANT: 'TENANT',
         LANDLORD: 'LANDLORD'
     },
-    PROPERTY_AVAILABILITY_STATUS_OPTIONS: {
-        'BOOKED': 'Booked',
-        'TAKEN': 'Taken',
-        'UNAVAILABLE': 'Unavailable',
-        'AVAILABLE': 'Available'
+    USER_GENDER_OPTIONS : {
+        MALE: 'M',
+        FEMALE: 'F'
+    },
+    USER_LANGUAGE_OPTIONS :  {
+        FRENCH: 'French',
+        ENGLISH: 'English',
+        ENGLISH_FRENCH: 'English & French'
     },
     RENTAL_HISTORY_STATUS_OPTIONS: {
         'ONGOING' : 'ONGOING',
@@ -35,6 +42,60 @@ export const constants = {
         'ORANGE_MOMO': 'ORANGE_MOMO',
         'CASH': 'CASH'
     },
+    COMPLAIN_TYPES : {
+        'property': 'PROPERTY',
+        'landlord': 'LANDLORD'
+    },
+    COMPLAIN_SUBJECTS : {
+        'reportLandlord': 'Report a Landlord',
+        'reportProperty': 'Report a Property'
+    },
+    FEATURED_PROPERTY_STATUS : {
+        'ACTIVE': 'Active',
+        'INACTIVE': 'Inactive'
+    },
+    PROPERTY_TYPES : {
+        STUDIO: 'Studio',
+        APARTMENT: 'Apartment',
+        PRIVATE_ROOM: 'Private Room',
+        VILLA: 'Villa',
+        HOUSE: 'House',
+        OFFICE: 'Office'
+    },
+    PROPERTY_BEDROOM_OPTIONS : {
+        ONE: 'ONE',
+        TWO: 'TWO',
+        THREE: 'THREE',
+        FOURPLUS: 'FOURPLUS'
+    },
+    PROPERTY_FURNISHED_STATE : {
+        FURNISHED: 'Furnished',
+        UNFURNISHED: 'Unfurnished'
+    },
+    PROPERTY_PREFERED_TENANT_GENDERS : {
+        MALE: 'Male',
+        FEMALE: 'Female',
+        ALL: 'All'
+    },
+    PROPERTY_PREFERED_TENANT_TYPES : {
+        STUDENTS: 'Student',
+        FAMILY: 'Family',
+        ALL: 'All'
+    },
+    PROPERTY_AVAILABILITY_STATUS_OPTIONS: {
+        'BOOKED': 'Booked',
+        'TAKEN': 'Taken',
+        'UNAVAILABLE': 'Unavailable',
+        'AVAILABLE': 'Available'
+    },
+    TAG_STATUS_OPTIONS : {
+        ACTIVE: 'Active',
+        INACTIVE: 'Inactive'
+    },
+    TAG_TYPES : {
+        PROPERTY: 'Property',
+        USER: 'User'
+    }
 }
 
 

@@ -17,6 +17,8 @@ const ReviewRouter = express.Router()
  */
 function setFilter(key:string, value:any): any {
     switch (key) {
+        case 'unique_id' :
+            return {unique_id: Number(value)}
         case 'type':
             return {'type': value}
         case 'rating':
@@ -104,11 +106,13 @@ ReviewRouter.get('/api/reviews', async (req: Request, res: Response) => {
                 }
             })
         }
-        const reviews = await Review.find(filter).sort({createdAt: -1}).populate('author', ['fullname', 'avatar', 'address.town'] ).exec()
-        res.send({ok: true, data: reviews})
+        const reviews = await Review.find(filter).sort({createdAt: -1})
+        .populate('author', ['unique_id', 'fullname', 'avatar', 'address.town'] )
+        .exec();
+        res.send({ok: true, data: reviews});
     } catch (error) {
         logger.error(`An Error occured while querying all reviews due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error})
+        res.status(400).send({ok:false, error});
     }
 })
 

@@ -5,7 +5,7 @@ import isStrongPassword from 'validator/lib/isStrongPassword'
 import { IUser } from './interfaces'
 import { NextFunction } from 'express'
 import { IdentityCounter } from "./identity-counter";
-
+import { constants } from '../constants/declared'
 
 /**
  * User schema, represents the document property definition for a User
@@ -65,7 +65,10 @@ const userSchema = new Schema<IUser>({
     gender: {
         type: String,
         required: true,
-        enum:['M', 'F']
+        enum:[
+            constants.USER_GENDER_OPTIONS.MALE,
+            constants.USER_GENDER_OPTIONS.FEMALE
+        ]
     },
     approved: {
         type: Boolean,
@@ -104,12 +107,20 @@ const userSchema = new Schema<IUser>({
     lang: {
         type: String,
         required: true,
-        enum: ['French', 'English', 'English & French']
+        enum: [
+            constants.USER_LANGUAGE_OPTIONS.FRENCH,
+            constants.USER_LANGUAGE_OPTIONS.ENGLISH,
+            constants.USER_LANGUAGE_OPTIONS.ENGLISH_FRENCH
+        ]
     },
     role: {
         type: String,
         required: true,
-        enum: ['TENANT', 'LANDLORD', 'ADMIN']
+        enum: [
+            constants.USER_ROLE.TENANT,
+            constants.USER_ROLE.LANDLORD,
+            constants.USER_ROLE.ADMIN
+        ]
     },
     isVerified: {
         type: Boolean,

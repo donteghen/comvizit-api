@@ -2,6 +2,7 @@ import {Schema, model} from 'mongoose'
 import { IRentIntention } from './interfaces'
 import { NextFunction } from 'express';
 import { IdentityCounter } from "./identity-counter";
+import { constants } from '../constants/declared';
 
 
 /**
@@ -40,8 +41,13 @@ const rentIntentionSchema = new Schema<IRentIntention>({
     status: {
         type: String,
         required: true,
-        default: 'INITIATED',
-        enum: ['INITIATED','CONFIRMED', 'CONCLUDED', 'CANCELED']
+        default: constants.RENT_INTENTION_STATUS_OPTIONS.INITIATED,
+        enum: [
+            constants.RENT_INTENTION_STATUS_OPTIONS.INITIATED,
+            constants.RENT_INTENTION_STATUS_OPTIONS.CONFIRMED,
+            constants.RENT_INTENTION_STATUS_OPTIONS.CONCLUDED,
+            constants.RENT_INTENTION_STATUS_OPTIONS.CANCELED
+        ]
     },
     initiatedAt: {
         type: Number,

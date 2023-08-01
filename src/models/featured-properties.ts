@@ -3,6 +3,7 @@ import {Schema, model} from 'mongoose'
 import { IFeaturedProperties } from './interfaces'
 import { NextFunction } from 'express';
 import { IdentityCounter } from "./identity-counter";
+import { constants } from '../constants/declared';
 
 /**
  * FeaturedProperty schema, represents the document property definition for Fetatured Properties
@@ -31,7 +32,7 @@ const featuredPropertySchema = new Schema<IFeaturedProperties>({
     status: {
         type: String,
         required: true,
-        enum: ['Active', 'Inactive'],
+        enum: [constants.FEATURED_PROPERTY_STATUS.ACTIVE, constants.FEATURED_PROPERTY_STATUS.INACTIVE],
         default: 'Active'
     },
     unique_id: {

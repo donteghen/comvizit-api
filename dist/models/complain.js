@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Complain = void 0;
 const mongoose_1 = require("mongoose");
 const identity_counter_1 = require("./identity-counter");
+const declared_1 = require("../constants/declared");
 /**
  * Complain schema, represents the document property definition for a complain
  * @constructor Complain
@@ -36,12 +37,12 @@ const complainSchema = new mongoose_1.Schema({
     type: {
         type: String,
         required: true,
-        enum: ['PROPERTY', 'LANDLORD']
+        enum: [declared_1.constants.COMPLAIN_TYPES.property, declared_1.constants.COMPLAIN_TYPES.landlord]
     },
     subject: {
         type: String,
         required: true,
-        enum: ['Report a Landlord', 'Report a Property']
+        enum: [declared_1.constants.COMPLAIN_SUBJECTS.reportLandlord, declared_1.constants.COMPLAIN_SUBJECTS.reportProperty]
     },
     message: {
         type: String,

@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.FeaturedProperties = void 0;
 const mongoose_1 = require("mongoose");
 const identity_counter_1 = require("./identity-counter");
+const declared_1 = require("../constants/declared");
 /**
  * FeaturedProperty schema, represents the document property definition for Fetatured Properties
  * @constructor FeaturedProperty
@@ -39,7 +40,7 @@ const featuredPropertySchema = new mongoose_1.Schema({
     status: {
         type: String,
         required: true,
-        enum: ['Active', 'Inactive'],
+        enum: [declared_1.constants.FEATURED_PROPERTY_STATUS.ACTIVE, declared_1.constants.FEATURED_PROPERTY_STATUS.INACTIVE],
         default: 'Active'
     },
     unique_id: {

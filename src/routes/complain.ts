@@ -13,6 +13,8 @@ const ComplainRouter = express.Router()
 // query helper function
 function setFilter(key:string, value:any): any {
     switch (key) {
+        case 'unique_id' :
+            return {unique_id: Number(value)}
         case '_id':
             return {'_id': value}
         case 'processed':
@@ -83,7 +85,26 @@ ComplainRouter.get('/api/complains', isLoggedIn, async (req: Request, res: Respo
                 }
             })
         }
-        const complains = await Complain.find(filter)
+
+        const complains = await Complain.aggregate([
+            {
+                $match: filter
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "plaintiveId",
+                    foreignField: "_id",
+                    as: "plaintive"
+                }
+            },
+            {
+                $unwind: {
+                   path:  "$plaintive",
+                    preserveNullAndEmptyArrays: true
+                }
+            }
+        ])
         res.send({ok: true, data: complains})
     } catch (error) {
         logger.error(`An error occured while querying complain list due to : ${error?.message??'Unknown Source'}`)

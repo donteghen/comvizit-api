@@ -11,6 +11,8 @@ const ChatMessageRouter = express.Router()
 // query helper function
 function setFilter(key:string, value:any): any {
     switch (key) {
+        case 'unique_id' :
+            return {unique_id: Number(value)}
         case 'chatId':
             return { 'chatId': value}
         case 'senderId':
@@ -47,10 +49,10 @@ ChatMessageRouter.post('/api/chat-messages', isLoggedIn, async (req: Request, re
 
 // get all chat messages
 ChatMessageRouter.get('/api/chat-messages', isLoggedIn, async (req: Request, res: Response) => {
-    try {
-        const pageSize = process.env.CHAT_MESSAGE_PAGE_SIZE ? Number(process.env.CHAT_MESSAGE_PAGE_SIZE) : 10 ;
+    const pageSize = process.env.CHAT_MESSAGE_PAGE_SIZE ? Number(process.env.CHAT_MESSAGE_PAGE_SIZE) : 10 ;
         const chatId : string = req.query.chatId as string ;
         const page : number = req.query.page ? Number(req.query.page) : 1 ;
+    try {
 
         if (!chatId) {
             return res.send({ok: true, data: []});
@@ -80,35 +82,15 @@ ChatMessageRouter.get('/api/chat-messages', isLoggedIn, async (req: Request, res
         const totalPages = Math.ceil(totalChatMessageCount / pageSize) ;
         const hasMore = page < totalPages ? true : false ;
 
-        res.send({ok: true, data: {messages: chatMessages, hasMore, page}}) ;
+        res.send({ok: true, data: {messages: chatMessages, hasMore, page, total: totalChatMessageCount, pageCount: totalPages}}) ;
     } catch (error) {
-        logger.error(`An error occured while getting the chatmessages for chat id: ${req.body.chatId} due to ${error?.message??'Unknown Source'}`) ;
+        logger.error(`An error occured while getting the chatmessages for chat id: ${chatId} due to ${error?.message??'Unknown Source'}`) ;
         res.status(400).send({ok:false, error}) ;
     }
 })
-/**************************************** Admin Restricted Endpoints */
+/**************************************** Admin Restricted Endpoints **************************************/
 
-// get all messages in the admin
-ChatMessageRouter.get('/api/all-chat-messages', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
-    try {
-        let filter: any = {}
-        const queries = Object.keys(req.query)
-        if (queries.length > 0) {
-            queries.forEach(key => {
-                let dateFilter = setDateFilter(req.query['startDate']?.toString()??'', req.query['endDate']?.toString()??'')
-                filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) :  filter
-                if (req.query[key]) {
-                    filter = Object.assign(filter, setFilter(key, req.query[key]))
-                }
-            })
-        }
-        const chatMessages = await ChatMessage.find(filter).sort({createdAt: -1}) ;
-        res.send({ok: true, data: chatMessages})
-    } catch (error) {
-        logger.error(`An error occured while getting the chatmessages in the admin due to : ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error})
-    }
-})
+
 
 export {
     ChatMessageRouter

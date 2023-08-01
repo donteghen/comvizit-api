@@ -6,7 +6,7 @@ import { RentalHistory } from "../models/rental-history";
 import { mailer } from '../helper/mailer';
 import { notifyRentalHistoryCreatedToLandlord, notifyRentalHistoryCreatedToTenant, notifyRentalHistoryTerminatedToLandlord, notifyRentalHistoryTerminatedToTenant } from '../utils/mailer-templates'
 import { User } from '../models/user';
-import { singleRentalHistoryLookup, rentalHistoryLookup } from '../utils/queryMaker';
+import { singleRentalHistoryQuery, rentalHistoryListQuery } from '../utils/queryMaker';
 import { RentIntention } from '../models/rent-intention';
 import { IRentIntention } from '../models/interfaces';
 import { logger } from '../logs/logger';
@@ -24,6 +24,8 @@ const RentalHistoryRouter = express.Router()
  */
 function setFilter(key:string, value:any) {
     switch (key) {
+        case 'unique_id' :
+            return {unique_id: Number(value)}
         case 'id':
             return {'_id': new Types.ObjectId(value)}
         case 'propertyId':
@@ -47,7 +49,13 @@ function setFilter(key:string, value:any) {
 // get rental history list
 RentalHistoryRouter.get('/api/rental-histories', isLoggedIn, async (req: Request, res: Response) => {
     try {
-        let filter: any = {}
+        let filter: any = req.user.role === constants.USER_ROLE.TENANT ?
+        {tenantId: new Types.ObjectId(req.user.id)}
+        :
+        req.user.role === constants.USER_ROLE.LANDLORD ?
+        {landlordId: new Types.ObjectId(req.user.id)}
+        :
+        {}
         const queries = Object.keys(req.query)
         if (queries.length > 0) {
             let dateFilter = setDateFilter(req.query['startDate']?.toString()??'', req.query['endDate']?.toString()??'')
@@ -58,7 +66,7 @@ RentalHistoryRouter.get('/api/rental-histories', isLoggedIn, async (req: Request
                 }
             })
         }
-        const rentalHistoryList = await RentalHistory.aggregate(rentalHistoryLookup(filter))
+        const rentalHistoryList = await RentalHistory.aggregate(rentalHistoryListQuery(filter))
         res.send({ok: true, data: rentalHistoryList})
 
     } catch (error) {
@@ -73,7 +81,7 @@ RentalHistoryRouter.get('/api/rental-histories/:id/detail', isLoggedIn, async (r
         if (!req.params.id) {
             throw INVALID_REQUEST
         }
-        const rentalHistory = await RentalHistory.aggregate(singleRentalHistoryLookup(req.params.id))
+        const rentalHistory = await RentalHistory.aggregate(singleRentalHistoryQuery(req.params.id))
         if (!rentalHistory || rentalHistory.length === 0) {
             throw NOT_FOUND
         }
@@ -169,7 +177,7 @@ RentalHistoryRouter.post('/api/rental-histories', isLoggedIn, isAdmin, async (re
         }
 
         // update the corresponding rent-intention's status to CONCLUDED
-        actualRentIntention.status = 'CONCLUDED'
+        actualRentIntention.status = constants.RENT_INTENTION_STATUS_OPTIONS.CONCLUDED
         await actualRentIntention.save()
 
         // get the corresponsing landlord and tenant  so that we can get their fullnames to be used in the email templates

@@ -1,10 +1,10 @@
 import express, { Request, Response } from 'express'
 import { Types } from 'mongoose';
 import { User } from '../models/user';
-import { NOT_FOUND, DELETE_OPERATION_FAILED, RENTINTENTION_ALREADY_EXISTS, NOT_AUTHORIZED } from '../constants/error';
+import { NOT_FOUND, DELETE_OPERATION_FAILED, NOT_AUTHORIZED } from '../constants/error';
 import { isAdmin, isLoggedIn, isTenant} from '../middleware/auth-middleware';
 import { RentIntention } from "../models/rent-intention";
-import { rentIntentionLookup, singleRentIntentionLookup } from '../utils/queryMaker';
+import { rentIntentionListQuery, singleRentIntentionQuery } from '../utils/queryMaker';
 import { mailer } from '../helper/mailer';
 import { notifyNewRentIntentionToAdmin, notifyRentIntentionToLandlord } from '../utils/mailer-templates';
 import { logger } from '../logs/logger';
@@ -17,6 +17,8 @@ const RentIntentionRouter = express.Router()
 // query helper function
 function setFilter(key:string, value:any): any {
     switch (key) {
+        case 'unique_id' :
+            return {unique_id: Number(value)}
         case '_id':
             return {'_id': value}
         case 'propertyId':
@@ -39,7 +41,13 @@ function setFilter(key:string, value:any): any {
 // get  rentIntentions
 RentIntentionRouter.get('/api/rent-intentions', isLoggedIn, async (req: Request, res: Response) => {
     try {
-        let filter: any = {}
+        let filter: any = req.user.role === constants.USER_ROLE.TENANT ?
+        {potentialTenantId: new Types.ObjectId(req.user.id)}
+        :
+        req.user.role === constants.USER_ROLE.LANDLORD ?
+        {landlordId: new Types.ObjectId(req.user.id)}
+        :
+        {}
         const queries = Object.keys(req.query)
         if (queries.length > 0) {
             let dateFilter = setDateFilter(req.query['startDate']?.toString()??'', req.query['endDate']?.toString()??'')
@@ -50,7 +58,7 @@ RentIntentionRouter.get('/api/rent-intentions', isLoggedIn, async (req: Request,
                 }
             })
         }
-        const rentIntentions = await RentIntention.aggregate(rentIntentionLookup(filter))
+        const rentIntentions = await RentIntention.aggregate(rentIntentionListQuery(filter))
         res.send({ok: true, data: rentIntentions})
     } catch (error) {
         logger.error(`An Error occured while querying rent-intention list due to ${error?.message??'Unknown Source'}`)
@@ -62,7 +70,7 @@ RentIntentionRouter.get('/api/rent-intentions', isLoggedIn, async (req: Request,
 // get a rentIntention's detail
 RentIntentionRouter.get('/api/rent-intentions/:id', isLoggedIn, async (req: Request, res: Response) => {
     try {
-        const rentIntention = await RentIntention.aggregate(singleRentIntentionLookup(req.params.id))
+        const rentIntention = await RentIntention.aggregate(singleRentIntentionQuery(req.params.id))
         if (!(rentIntention.length > 0)) {
             throw NOT_FOUND
         }

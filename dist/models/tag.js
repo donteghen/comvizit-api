@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Tag = void 0;
 const mongoose_1 = require("mongoose");
 const identity_counter_1 = require("./identity-counter");
+const declared_1 = require("../constants/declared");
 /**
  * Tag schema, defines the Tag document properties
  * @constructor Tag
@@ -27,7 +28,10 @@ const tagSchema = new mongoose_1.Schema({
     type: {
         type: String,
         required: true,
-        enum: ['Property', 'User']
+        enum: [
+            declared_1.constants.TAG_TYPES.PROPERTY,
+            declared_1.constants.TAG_TYPES.USER
+        ]
     },
     title: {
         type: String,
@@ -40,8 +44,11 @@ const tagSchema = new mongoose_1.Schema({
     status: {
         type: String,
         required: true,
-        enum: ['Active', 'Inactive'],
-        default: 'Active'
+        enum: [
+            declared_1.constants.TAG_STATUS_OPTIONS.ACTIVE,
+            declared_1.constants.TAG_STATUS_OPTIONS.INACTIVE
+        ],
+        default: declared_1.constants.TAG_STATUS_OPTIONS.ACTIVE
     },
     refId: {
         type: mongoose_1.Schema.Types.ObjectId,

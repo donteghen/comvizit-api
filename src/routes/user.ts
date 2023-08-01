@@ -21,11 +21,14 @@ import {Complain} from '../models/complain'
 import {Tag} from '../models/tag'
 import { logger } from '../logs/logger'
 import { setDateFilter } from '../utils/date-query-setter';
+import { constants } from '../constants/declared'
 
 const UserRouter = express.Router()
 
 function setFilter(key:string, value:any): any {
     switch (key) {
+        case 'unique_id' :
+            return {unique_id: Number(value)}
         case 'fullname':
             return {'fullname': { "$regex": value, $options: 'i'}}
         case 'email':
@@ -50,7 +53,7 @@ UserRouter.get('/api/users/landlords/:id/card', async (req: Request, res: Respon
         const query = {
             $and: [
                 {_id: new Types.ObjectId(req.params.id)},
-                {role: "LANDLORD"}
+                {role: constants.USER_ROLE.LANDLORD}
             ]
         }
         const landlord = await User.findOne(query)
@@ -247,11 +250,11 @@ UserRouter.patch('/api/user/avatarUpload', isLoggedIn,  multerUpload.single('ava
         // select the folder based on user role
         const folderPath = (role: string): string => {
             switch (role) {
-                case 'TENANT':
+                case constants.USER_ROLE.TENANT:
                     return 'Avatars/Users/Tenants'
-                case 'LANDLORD':
+                case constants.USER_ROLE.LANDLORD:
                     return 'Avatars/Users/Landlords'
-                case 'ADMIN':
+                case constants.USER_ROLE.ADMIN:
                     return 'Avatars/Users/Admins'
                 default:
                     throw new Error('Invalid user role, avatar upload failed!')
@@ -357,7 +360,7 @@ UserRouter.get('/api/users/logout', isLoggedIn, async (req: Request, res: Respon
 // get all tenants
 UserRouter.get('/api/users/tenants', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
-        let filter: any = {role: 'TENANT'}
+        let filter: any = {role: constants.USER_ROLE.TENANT}
         const queries = Object.keys(req.query)
         if (queries.length > 0) {
             let dateFilter = setDateFilter(req.query['startDate']?.toString()??'', req.query['endDate']?.toString()??'')
@@ -379,7 +382,7 @@ UserRouter.get('/api/users/tenants', isLoggedIn, isAdmin, async (req: Request, r
 // get all landlords
 UserRouter.get('/api/users/landlords', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
-        let filter: any = {role: 'LANDLORD'}
+        let filter: any = {role: constants.USER_ROLE.LANDLORD}
         const queries = Object.keys(req.query)
         if (queries.length > 0) {
             let dateFilter = setDateFilter(req.query['startDate']?.toString()??'', req.query['endDate']?.toString()??'')
@@ -400,7 +403,7 @@ UserRouter.get('/api/users/landlords', isLoggedIn, isAdmin, async (req: Request,
 // get all admin users
 UserRouter.get('/api/users/admins', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
-        let filter: any = {role: 'ADMIN'}
+        let filter: any = {role: constants.USER_ROLE.ADMIN}
         const queries = Object.keys(req.query)
         if (queries.length > 0) {
             let dateFilter = setDateFilter(req.query['startDate']?.toString()??'', req.query['endDate']?.toString()??'')
@@ -412,7 +415,8 @@ UserRouter.get('/api/users/admins', isLoggedIn, isAdmin, async (req: Request, re
             })
         }
         const adminUsers = await User.find(filter)
-        res.send({ok:true, data: adminUsers})
+        console.log(adminUsers[0]._id, typeof adminUsers[0]._id)
+        res.json({ok:true, data: adminUsers})
     } catch (error) {
         res.status(400).send({ok:false, error})
     }
@@ -444,7 +448,7 @@ UserRouter.get('/api/users/all', isLoggedIn, isAdmin, async (req: Request, res: 
 UserRouter.patch('/api/users/all/:id/approve', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
         // check if the session user is an admin, if no then it should fail as only an admin can approve a landlord or tenant account
-        if (req.user.role !== 'ADMIN') {
+        if (req.user.role !== constants.USER_ROLE.ADMIN) {
             throw NOT_AUTHORIZED
         }
         const user = await User.findById(req.params.id)
@@ -452,7 +456,7 @@ UserRouter.patch('/api/users/all/:id/approve', isLoggedIn, isAdmin, async (req: 
             throw NO_USER
         }
         // check if the user being approved is an admin, if yes then it should fail as only the superadmin can approve an admin user
-        if (user.role === 'ADMIN') {
+        if (user.role === constants.USER_ROLE.ADMIN) {
             throw NOT_AUTHORIZED
         }
 
@@ -486,7 +490,7 @@ UserRouter.patch('/api/users/all/:id/approve', isLoggedIn, isAdmin, async (req: 
 UserRouter.patch('/api/users/all/:id/disapprove', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
         // check if the session user is an admin, if no then it should fail as only an admin can disapprove a landlord or tenant account
-        if (req.user.role !== 'ADMIN') {
+        if (req.user.role !== constants.USER_ROLE.ADMIN) {
             throw NOT_AUTHORIZED
         }
         const user = await User.findById(req.params.id)
@@ -494,7 +498,7 @@ UserRouter.patch('/api/users/all/:id/disapprove', isLoggedIn, isAdmin, async (re
             throw NO_USER
         }
         // check if the user being disapproved is an admin, if yes then it should fail as only the superadmin can approve an admin user
-        if (user.role === 'ADMIN') {
+        if (user.role === constants.USER_ROLE.ADMIN) {
             throw NOT_AUTHORIZED
         }
 
@@ -529,7 +533,7 @@ UserRouter.delete('/api/user/all/:id', isLoggedIn, isAdmin, async (req: Request,
         // make sure that admin can only delete either <user.role === tenant | user.role === landlord>
         // An admin user can be deleted only by the super admin
         const user = await User.findById(req.params.id)
-        if (user.role === 'ADMIN') {
+        if (user.role === constants.USER_ROLE.ADMIN) {
             throw NOT_AUTHORIZED
         }
         const deletedUser = await User.findByIdAndDelete(req.params.id)
@@ -537,7 +541,7 @@ UserRouter.delete('/api/user/all/:id', isLoggedIn, isAdmin, async (req: Request,
             throw DELETE_OPERATION_FAILED
         }
         // if user is landlord, then delete all related properties
-        if (deletedUser.role === 'LANDLORD') {
+        if (deletedUser.role === constants.USER_ROLE.LANDLORD) {
             Property.deleteMany({
                 ownerId: deletedUser._id
             })

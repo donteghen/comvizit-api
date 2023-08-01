@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Review = void 0;
 const mongoose_1 = require("mongoose");
 const identity_counter_1 = require("./identity-counter");
+const declared_1 = require("../constants/declared");
 /**
  * Review schema, represents the document property definition for a review
  * @constructor Review
@@ -28,7 +29,12 @@ const reviewSchema = new mongoose_1.Schema({
     type: {
         type: String,
         required: true,
-        enum: ['Property', 'Landlord', 'Tenant', 'Platform']
+        enum: [
+            declared_1.constants.REVIEW_TYPES.PROPERTY,
+            declared_1.constants.REVIEW_TYPES.LANDLORD,
+            declared_1.constants.REVIEW_TYPES.TENANT,
+            declared_1.constants.REVIEW_TYPES.PLATFORM
+        ]
     },
     refId: {
         type: String,
@@ -42,7 +48,10 @@ const reviewSchema = new mongoose_1.Schema({
     authorType: {
         type: String,
         required: true,
-        enum: ['TENANT', 'LANDLORD']
+        enum: [
+            declared_1.constants.REVIEW_AUTHOR_TYPE.TENANT,
+            declared_1.constants.REVIEW_AUTHOR_TYPE.LANDLORD
+        ]
     },
     rating: {
         type: Number,
@@ -55,8 +64,11 @@ const reviewSchema = new mongoose_1.Schema({
     status: {
         type: String,
         required: true,
-        default: 'Active',
-        enum: ['Active', 'Inactive']
+        default: declared_1.constants.REVIEW_STATUS.ACTIVE,
+        enum: [
+            declared_1.constants.REVIEW_STATUS.ACTIVE,
+            declared_1.constants.REVIEW_STATUS.INACTIVE
+        ]
     },
     unique_id: {
         type: Number,

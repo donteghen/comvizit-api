@@ -15,6 +15,8 @@ const ChatRouter = express.Router()
 // query helper function
 function setFilter(key:string, value:any): any {
     switch (key) {
+        case 'unique_id' :
+            return {unique_id: Number(value)}
         case 'tenant':
             return { tenant:  value}
         case 'landlord':
@@ -81,6 +83,7 @@ ChatRouter.get('/api/chats', isLoggedIn, async (req: Request, res:Response) => {
                 {
                     $unwind: {
                         path: '$user',
+                        preserveNullAndEmptyArrays: true
                     }
                 }
             ]
@@ -108,6 +111,7 @@ ChatRouter.get('/api/chats', isLoggedIn, async (req: Request, res:Response) => {
                 {
                     $unwind: {
                         path: '$user',
+                        preserveNullAndEmptyArrays: true
                     }
                 }
             ]
@@ -186,7 +190,51 @@ ChatRouter.get('/api/all-chats', isLoggedIn, isAdmin, async (req: Request, res:R
                 }
             })
         }
-        const chats = await Chat.find(filter).sort({createdAt: -1}) ;;
+        const chats = await Chat.aggregate([
+            {
+                $match: filter
+            },
+            {
+                $addFields: {
+                    tenantId: { $toObjectId: "$tenant" },
+                    landlordId: { $toObjectId: "$landlord" }
+                }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'tenantId',
+                    foreignField: '_id',
+                    as: 'tenantInfo'
+                }
+            },
+            {
+                $unwind: {
+                    path: '$tenantInfo',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'landlordId',
+                    foreignField: '_id',
+                    as: 'landlordInfo'
+                }
+            },
+            {
+                $unwind: {
+                    path: '$landlordInfo',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $sort: {
+                    createdAt: -1
+                }
+            }
+        ]);
+
         res.send({ok: true, data: chats})
     } catch (error) {
         logger.error(`An error occured while getting a chat list due to : ${error?.message??'Unknown Source'}`)

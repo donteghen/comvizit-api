@@ -3,7 +3,7 @@ import express, { Request, Response } from 'express'
 
 import { Types, PipelineStage, ObjectId } from "mongoose";
 import { categoryAggregator, townAggregator } from "../utils/queryMaker";
-import { isAdmin, isLandlord, isLoggedIn } from "../middleware/auth-middleware";
+import { isAdmin, isLoggedIn } from "../middleware/auth-middleware";
 import { DELETE_OPERATION_FAILED, INVALID_REQUEST, NOT_AUTHORIZED, NOT_FOUND, NOT_PROPERTY_OWNER, SAVE_OPERATION_FAILED, NOT_SPECIFIED} from '../constants/error'
 import {notifyPropertyAvailability} from '../utils/mailer-templates'
 import { mailer } from "../helper/mailer";
@@ -11,21 +11,24 @@ import { IProperty, IUser } from "../models/interfaces";
 import { User } from "../models/user";
 import { Tag } from "../models/tag";
 import { FeaturedProperties } from "../models/featured-properties";
-import { RentIntention } from "../models/rent-intention";
+// import { RentIntention } from "../models/rent-intention";
 import { Complain } from "../models/complain";
 import { Review } from "../models/review";
 import { Like } from "../models/like";
 // utils & helpers
-import { constants } from "../constants/declared";
+// import { constants } from "../constants/declared";
 import { logger } from "../logs/logger";
 const PropertyRouter = express.Router()
 import { setDateFilter } from '../utils/date-query-setter';
+import { constants } from "../constants/declared";
 
 const pageSize: number = Number(process.env.PAGE_SIZE) // number of documents returned per request for the get all properties route
 
 // query helper function
 function setFilter(key:string, value:any): any {
     switch (key) {
+        case 'unique_id' :
+            return {unique_id: Number(value)}
         case 'ownerId':
             return {'ownerId': new Types.ObjectId(value)}
         case 'age':
@@ -99,7 +102,7 @@ function priceSetter (reqParams: any, queryArray: string[], priceQuery: string) 
 // get all properties in quater
 PropertyRouter.get('/api/properties-in-quater/:quaterref', async (req: Request, res: Response) => {
     try {
-        let filter: any = {availability:'Available'}
+        let filter: any = {availability:constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE}
         let sorting:any = {updated: -1}
         let pageNum: number = 1
         const queries = Object.keys(req.query)
@@ -160,7 +163,7 @@ PropertyRouter.get('/api/properties-by-tag/:code', async (req: Request, res: Res
         let sorting:any = {createdAt: -1}
         let pageNum: number = 1
         const queries = Object.keys(req.query)
-        let filter: any = {availability:'Available', _id: {$in: tagRefIds}}
+        let filter: any = {availability:constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE, _id: {$in: tagRefIds}}
         if (queries.length > 0) {
             let dateFilter = setDateFilter(req.query['startDate']?.toString()??'', req.query['endDate']?.toString()??'')
             filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) :  filter
@@ -229,7 +232,10 @@ PropertyRouter.get('/api/properties', isLoggedIn,  isAdmin, async (req: Request,
                 }
             },
             {
-                $unwind: "$owner"
+                $unwind: {
+                   path:  "$owner",
+                    preserveNullAndEmptyArrays: true
+                }
             }
         ])
 
@@ -248,7 +254,7 @@ PropertyRouter.get('/api/landlord-properties/:id', async (req: Request, res: Res
         let pipeline: PipelineStage[] = []
         let filter: any = {
             ownerId: new Types.ObjectId(req.params.id),
-            availability: 'Available'
+            availability: constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE
         }
         const queries = Object.keys(req.query)
         let pageNum
@@ -292,7 +298,10 @@ PropertyRouter.get('/api/landlord-properties/:id', async (req: Request, res: Res
                 }
             },
             {
-                $unwind: "$owner"
+                $unwind: {
+                    path: "$owner",
+                    preserveNullAndEmptyArrays: true
+                }
             }
         ])
         const resultCount = await Property.countDocuments(filter)
@@ -337,7 +346,7 @@ PropertyRouter.get('/api/search-quaters/:quaterRef', async (req: Request, res: R
             },
             {
                 $match: {
-                    "availability": "Available"
+                    "availability": constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE
                 }
             },
             {
@@ -358,7 +367,7 @@ PropertyRouter.get('/api/search-quaters/:quaterRef', async (req: Request, res: R
 // get properties in a town
 PropertyRouter.get('/api/town-properties/:town', async (req: Request, res: Response) => {
     try {
-        let filter: any = {availability:'Available'}
+        let filter: any = {availability:constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE}
         let sorting:any = {createdAt: -1}
         let pageNum: number = 1
         const queries = Object.keys(req.query)
@@ -405,7 +414,7 @@ PropertyRouter.get('/api/town-properties/:town', async (req: Request, res: Respo
 // get properties in a district
 PropertyRouter.get('/api/district-properties/:districtref', async (req: Request, res: Response) => {
     try {
-        let filter: any = {availability:'Available'}
+        let filter: any = {availability:constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE}
         let sorting:any = {createdAt: -1}
         let pageNum: number = 1
         const queries = Object.keys(req.query)
@@ -455,7 +464,7 @@ PropertyRouter.get('/api/properties-group-by-town', async (req: Request, res: Re
         const groupsByTown = await Property.aggregate([
             {
                 $match: {
-                    'availability':'Available'
+                    'availability':constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE
                 }
             },
             {
@@ -480,7 +489,7 @@ PropertyRouter.get('/api/properties-group-by-district', async (req: Request, res
         const pipeline: PipelineStage[] = [
             {
                 $match: {
-                    'availability':'Available'
+                    'availability':constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE
                 }
             },
             {
@@ -536,7 +545,8 @@ PropertyRouter.get('/api/properties/:id', async (req: Request, res: Response) =>
             },
             {
                 $unwind: {
-                    path: '$owner'
+                    path: '$owner',
+                    preserveNullAndEmptyArrays: true
                 }
             },
             {
@@ -580,7 +590,8 @@ PropertyRouter.get('/api/property/:propertyId/related-properties/:quaterref', as
             },
             {
                 $unwind: {
-                    path: "$relatedProp"
+                    path: "$relatedProp",
+                    preserveNullAndEmptyArrays: true
                 }
             },
             {
@@ -600,7 +611,7 @@ PropertyRouter.get('/api/property/:propertyId/related-properties/:quaterref', as
         ]
         const propertiesInSameQuater = await Property.find({
             $and: [
-                {availability:'Available'},
+                {availability:constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE},
                 {'quater.ref': req.params.quaterref},
                 {_id : {$ne : req.params.propertyId}}
             ]})

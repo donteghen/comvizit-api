@@ -2,6 +2,7 @@ import {Schema, model} from 'mongoose'
 import { IRentalHistory } from './interfaces'
 import { NextFunction } from 'express';
 import { IdentityCounter } from "./identity-counter";
+import { constants } from '../constants/declared';
 
 
 /**
@@ -44,8 +45,11 @@ const rentalHistorySchema = new Schema<IRentalHistory>({
     status: {
         type: String,
         required: true,
-        default: 'ONGOING',
-        enum: ['ONGOING', 'TERMINATED']
+        default: constants.RENTAL_HISTORY_STATUS_OPTIONS.ONGOING,
+        enum: [
+            constants.RENTAL_HISTORY_STATUS_OPTIONS.ONGOING,
+            constants.RENTAL_HISTORY_STATUS_OPTIONS.TERMINATED
+        ]
     },
     rentIntentionId: {
         type: Schema.Types.ObjectId,

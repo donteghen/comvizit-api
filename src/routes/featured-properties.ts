@@ -6,6 +6,7 @@ import {PipelineStage, Types} from 'mongoose'
 import { Property } from '../models/property';
 import { logger } from '../logs/logger';
 import { setDateFilter } from '../utils/date-query-setter';
+import { constants} from '../constants/declared';
 
 const FeaturedRouter = express.Router()
 
@@ -18,6 +19,8 @@ const FeaturedRouter = express.Router()
  */
 function setFilter(key:string, value:any): any {
     switch (key) {
+        case 'unique_id' :
+            return {unique_id: Number(value)}
         case 'propertyId':
             return {'propertyId': new Types.ObjectId(value)}
         case 'status':
@@ -51,7 +54,8 @@ FeaturedRouter.get('/api/featured/properties-active',  async (req: Request, res:
             },
             {
                 $unwind: {
-                    path: "$property"
+                    path: "$property",
+                    preserveNullAndEmptyArrays: true
                 }
             },
             {
@@ -201,8 +205,9 @@ FeaturedRouter.patch('/api/featured/properties/:propertyId/status/update', isLog
             const updateFeaturedProperty = await featuredProperty.save()
             // update related property's featuring state
             const relatedProperty = await Property.findById(featuredProperty.propertyId)
-            relatedProperty.featuring = updateFeaturedProperty.status === 'Active' ? true : false
-            res.send({ok: true, data: updateFeaturedProperty})
+            relatedProperty.featuring = updateFeaturedProperty.status === constants.FEATURED_PROPERTY_STATUS.ACTIVE ? true : false
+            await relatedProperty.save();
+            res.send({ok: true, data: updateFeaturedProperty});
         }
         else {
             throw INVALID_REQUEST
@@ -220,17 +225,18 @@ FeaturedRouter.patch('/api/featured/properties/:propertyId/status/update', isLog
 // delete a featured property by id
 FeaturedRouter.delete('/api/featured/properties/:propertyId/delete', isLoggedIn, isAdmin, async (req: Request, res: Response) => {
     try {
-        const featuredProperty = await FeaturedProperties.findByIdAndDelete(req.params.propertyId)
+        const featuredProperty = await FeaturedProperties.findByIdAndDelete(req.params.propertyId);
         if (!featuredProperty) {
             throw DELETE_OPERATION_FAILED
         }
         // update related property's featuring state
-        const relatedProperty = await Property.findById(featuredProperty.propertyId)
-        relatedProperty.featuring = false
+        const relatedProperty = await Property.findById(featuredProperty.propertyId);
+        relatedProperty.featuring = false;
+        await relatedProperty.save();
         res.send({ok: true})
     } catch (error) {
         logger.error(`An Error occured while deleting a property featring with id: ${req.params.propertyId} due to${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error})
+        res.status(400).send({ok:false, error});
     }
 })
 
@@ -250,7 +256,8 @@ FeaturedRouter.get('/api/featured/properties', isLoggedIn, isAdmin, async (req: 
             },
             {
                 $unwind: {
-                    path: "$property"
+                    path: "$property",
+                    preserveNullAndEmptyArrays: true
                 }
             },
 

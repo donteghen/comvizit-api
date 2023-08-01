@@ -12,6 +12,8 @@ const InquiryRouter = express.Router()
 // query helper function
 function setFilter(key:string, value:any): any {
     switch (key) {
+        case 'unique_id' :
+            return {unique_id: Number(value)}
         case 'replied':
             return {'replied': value}
         case 'email':

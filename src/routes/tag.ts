@@ -5,6 +5,7 @@ import {DELETE_OPERATION_FAILED, INVALID_REQUEST, NOT_FOUND, SAVE_OPERATION_FAIL
 import {Types} from 'mongoose';
 import { logger } from '../logs/logger';
 import { setDateFilter } from '../utils/date-query-setter';
+import { constants } from '../constants/declared';
 
 const TagRouter = express.Router()
 
@@ -16,6 +17,8 @@ const TagRouter = express.Router()
  */
 function setFilter(key:string, value:any): any {
     switch (key) {
+        case 'unique_id' :
+            return {unique_id: Number(value)}
         case 'type':
             return {'type': value}
         case 'title':
@@ -40,10 +43,10 @@ TagRouter.post('/api/tags/add', isLoggedIn, isAdmin, async (req: Request, res: R
         const code: string = title ? title.toString().toLowerCase().split(' ').join('_') : ''
         const existAlready = await Tag.findOne({$and: [{refId}, {code}]})
         if (existAlready) {
-            if (existAlready.status === 'Active') {
+            if (existAlready.status === constants.TAG_STATUS_OPTIONS.ACTIVE) {
                 throw TAG_ALREADY_EXISTS(existAlready.code, existAlready.type, existAlready.refId.toString())
             }
-            existAlready.status = 'Active'
+            existAlready.status = constants.TAG_STATUS_OPTIONS.ACTIVE
             await existAlready.save()
             res.send({ok: true, data: existAlready})
             return
