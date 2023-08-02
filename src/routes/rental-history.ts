@@ -26,14 +26,6 @@ function setFilter(key:string, value:any) {
     switch (key) {
         case 'unique_id' :
             return {unique_id: Number(value)}
-        case 'id':
-            return {'_id': new Types.ObjectId(value)}
-        case 'propertyId':
-            return {'propertyId': new Types.ObjectId(value)}
-        case 'landlordId':
-            return {landlordId: new Types.ObjectId(value)}
-        case 'tenantId':
-            return {'tenantId': new Types.ObjectId(value)}
         case 'status':
             return {status:  value}
         default:
@@ -56,7 +48,7 @@ RentalHistoryRouter.get('/api/rental-histories', isLoggedIn, async (req: Request
         {landlordId: new Types.ObjectId(req.user.id)}
         :
         {}
-        const queries = Object.keys(req.query)
+        const queries = Object.keys(req.query);
         if (queries.length > 0) {
             let dateFilter = setDateFilter(req.query['startDate']?.toString()??'', req.query['endDate']?.toString()??'')
             filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) :  filter
@@ -66,8 +58,37 @@ RentalHistoryRouter.get('/api/rental-histories', isLoggedIn, async (req: Request
                 }
             })
         }
-        const rentalHistoryList = await RentalHistory.aggregate(rentalHistoryListQuery(filter))
-        res.send({ok: true, data: rentalHistoryList})
+        const pipeline = rentalHistoryListQuery(filter);
+        if (queries.includes('propertyId') && req.query['propertyId']) {
+            pipeline.push({
+                $match: {
+                    'property.unique_id': Number(req.query['propertyId'])
+                }
+            });
+        }
+        if (queries.includes('tenantId') && req.query['tenantId']) {
+            pipeline.push({
+                $match: {
+                    'tenant.unique_id': Number(req.query['tenantId'])
+                }
+            });
+        }
+        if (req.user.role === constants.USER_ROLE.ADMIN && queries.includes('landlordId') && req.query['landlordId']) {
+            pipeline.push({
+                $match: {
+                    'landlord.unique_id': Number(req.query['landlordId'])
+                }
+            });
+        }
+        if (queries.includes('rentIntentionId') && req.query['rentIntentionId']) {
+            pipeline.push({
+                $match: {
+                    'rentIntention.unique_id': Number(req.query['rentIntentionId'])
+                }
+            });
+        }
+        const rentalHistoryList = await RentalHistory.aggregate(pipeline);
+        res.send({ok: true, data: rentalHistoryList});
 
     } catch (error) {
         logger.error(`An Error occured while querying rental-history list due to ${error?.message??'Unknown Source'}`)

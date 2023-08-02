@@ -17,7 +17,6 @@ const express_1 = __importDefault(require("express"));
 const auth_middleware_1 = require("../middleware/auth-middleware");
 const log_1 = require("../models/log");
 const error_1 = require("../constants/error");
-const mongoose_1 = require("mongoose");
 const logger_1 = require("../logs/logger");
 const LogRouter = express_1.default.Router();
 exports.LogRouter = LogRouter;
@@ -29,12 +28,10 @@ exports.LogRouter = LogRouter;
  */
 function setFilter(key, value) {
     switch (key) {
-        case 'unique_id':
-            return { unique_id: Number(value) };
         case 'level':
             return { 'level': value };
-        case '_id':
-            return { '_id': new mongoose_1.Types.ObjectId(value) };
+        case 'message':
+            return { 'message': { "$regex": value, $options: 'i' } };
         default:
             return {};
     }

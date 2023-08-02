@@ -50,9 +50,9 @@ function setFilter(key, value) {
         case 'gender':
             return { 'gender': value };
         case 'approved':
-            return { 'approved': value };
+            return { 'approved': (value && value === 'true') ? true : false };
         case 'isVerified':
-            return { 'isVerified': value };
+            return { 'isVerified': (value && value === 'true') ? true : false };
         default:
             return {};
     }
@@ -213,6 +213,7 @@ UserRouter.post('/api/user/profile/change-password', auth_middleware_1.isLoggedI
             error = error_1.NO_USER;
             throw error;
         }
+        ;
         const { newPassword, oldPassword } = req.body;
         const isMatched = yield (0, bcryptjs_1.compare)(oldPassword, user.password);
         if (!isMatched) {
@@ -221,6 +222,7 @@ UserRouter.post('/api/user/profile/change-password', auth_middleware_1.isLoggedI
         if (!(0, isStrongPassword_1.default)(newPassword, { minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1 })) {
             throw error_1.NEW_PASSWORD_IS_INVALID;
         }
+        ;
         user.password = newPassword;
         const updatedUser = yield user.save();
         res.send({ ok: true, data: updatedUser });
@@ -238,9 +240,11 @@ UserRouter.patch('/api/user/avatarUpload', auth_middleware_1.isLoggedIn, multerU
         if (!user) {
             throw error_1.NO_USER;
         }
+        ;
         if (user.avatar && user.avatarDeleteId) {
             yield cloudinary_1.default.v2.uploader.destroy(user.avatarDeleteId);
         }
+        ;
         // select the folder based on user role
         const folderPath = (role) => {
             switch (role) {
@@ -268,10 +272,12 @@ UserRouter.patch('/api/user/avatarUpload', auth_middleware_1.isLoggedIn, multerU
         if (error instanceof multer_1.MulterError) {
             res.status(400).send({ ok: false, error: `Multer Upload Error : ${error.message}`, code: (_k = error.code) !== null && _k !== void 0 ? _k : 1000 });
         }
+        ;
         if (error.name === 'ValidationError') {
             res.status(400).send({ ok: false, error: `Validation Error : ${error.message}`, code: (_l = error.code) !== null && _l !== void 0 ? _l : 1000 });
             return;
         }
+        ;
         res.status(400).send({ ok: false, error: error.message, code: (_m = error.code) !== null && _m !== void 0 ? _m : 1000 });
     }
 }));
@@ -286,10 +292,12 @@ UserRouter.patch('/api/users/all/:id/profile/update', auth_middleware_1.isLogged
         if (Object.keys(updatedProps).length > 0) {
             updatedProps.updated = Date.now();
         }
+        ;
         const userIsUpdated = yield user_1.User.findByIdAndUpdate(req.params.id, { $set: updatedProps }, { runValidators: true });
         if (!userIsUpdated) {
             throw error_1.USER_UPDATE_OPERATION_FAILED;
         }
+        ;
         const updatedUser = yield user_1.User.findById(req.params.id);
         res.send({ ok: true, data: updatedUser });
     }
@@ -401,7 +409,6 @@ UserRouter.get('/api/users/admins', auth_middleware_1.isLoggedIn, auth_middlewar
             });
         }
         const adminUsers = yield user_1.User.find(filter);
-        console.log(adminUsers[0]._id, typeof adminUsers[0]._id);
         res.json({ ok: true, data: adminUsers });
     }
     catch (error) {
@@ -548,7 +555,6 @@ UserRouter.delete('/api/user/all/:id', auth_middleware_1.isLoggedIn, auth_middle
                 $in: (_17 = deletedUser.likes) === null || _17 === void 0 ? void 0 : _17.map(id => new mongoose_1.Types.ObjectId(id))
             }
         });
-        // rent intension comming up
         res.send({ ok: true });
     }
     catch (error) {

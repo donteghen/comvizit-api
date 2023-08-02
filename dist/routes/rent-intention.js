@@ -33,14 +33,6 @@ function setFilter(key, value) {
     switch (key) {
         case 'unique_id':
             return { unique_id: Number(value) };
-        case '_id':
-            return { '_id': value };
-        case 'propertyId':
-            return { 'propertyId': new mongoose_1.Types.ObjectId(value) };
-        case 'landlordId':
-            return { 'landlordId': new mongoose_1.Types.ObjectId(value) };
-        case 'potentialTenantId':
-            return { 'potentialTenantId': new mongoose_1.Types.ObjectId(value) };
         case 'status':
             return { 'status': value };
         default:
@@ -70,7 +62,29 @@ RentIntentionRouter.get('/api/rent-intentions', auth_middleware_1.isLoggedIn, (r
                 }
             });
         }
-        const rentIntentions = yield rent_intention_1.RentIntention.aggregate((0, queryMaker_1.rentIntentionListQuery)(filter));
+        const pipeline = (0, queryMaker_1.rentIntentionListQuery)(filter);
+        if (queries.includes('propertyId') && req.query['propertyId']) {
+            pipeline.push({
+                $match: {
+                    'property.unique_id': Number(req.query['propertyId'])
+                }
+            });
+        }
+        if (queries.includes('potentialTenantId') && req.query['potentialTenantId']) {
+            pipeline.push({
+                $match: {
+                    'potentialTenant.unique_id': Number(req.query['potentialTenantId'])
+                }
+            });
+        }
+        if (req.user.role === declared_1.constants.USER_ROLE.ADMIN && queries.includes('landlordId') && req.query['landlordId']) {
+            pipeline.push({
+                $match: {
+                    'landlord.unique_id': Number(req.query['landlordId'])
+                }
+            });
+        }
+        const rentIntentions = yield rent_intention_1.RentIntention.aggregate(pipeline);
         res.send({ ok: true, data: rentIntentions });
     }
     catch (error) {

@@ -7,33 +7,28 @@ import {notifyNewComplained} from '../utils/mailer-templates'
 import { Types } from 'mongoose';
 import { logger } from '../logs/logger';
 import { setDateFilter } from '../utils/date-query-setter';
+import { constants } from '../constants/declared';
 
-const ComplainRouter = express.Router()
+const ComplainRouter = express.Router();
 
 // query helper function
 function setFilter(key:string, value:any): any {
     switch (key) {
         case 'unique_id' :
-            return {unique_id: Number(value)}
-        case '_id':
-            return {'_id': value}
+            return {unique_id: Number(value)};
         case 'processed':
             let v: any
             if (typeof value === 'string') {
                 v = value === 'true' ? true : false
             }
             else {
-                v = value
+                v = value;
             }
-            return {'processed': v}
+            return {'processed': v};
         case 'type':
-            return {'type': value}
-        case 'plaintiveId':
-            return {'plaintiveId': new Types.ObjectId(value)}
-        case 'targetId':
-            return {'targetId': new Types.ObjectId(value)}
+            return {'type': value};
         default:
-            return {}
+            return {};
     }
 }
 
@@ -43,29 +38,29 @@ function setFilter(key:string, value:any): any {
 // create new complain
 ComplainRouter.post('/api/complains', isLoggedIn, isTenant, async (req: Request, res: Response) => {
     try {
-        const {type, targetId, subject, message } = req.body
+        const {type, targetId, subject, message } = req.body;
         const newComplain = new Complain({
             plaintiveId: new Types.ObjectId(req.user.id),
             type,
             targetId,
             subject,
             message
-        })
-        const complain = await newComplain.save()
+        });
+        const complain = await newComplain.save();
 
         // Send a notification email to the admin
-        const _link = `${process.env.CLIENT_URL}/admin/dashboard`
+        const _link = `${process.env.CLIENT_URL}/admin/dashboard`;
         const _success = await mailer(process.env.SENDGRID_VERIFIED_SENDER, notifyNewComplained.subject, notifyNewComplained.heading,
-            notifyNewComplained.detail, _link, notifyNewComplained.linkText )
+            notifyNewComplained.detail, _link, notifyNewComplained.linkText );
 
-        res.send({ok: true, data: complain})
+        res.send({ok: true, data: complain});
     } catch (error) {
-        logger.error(`An error occured while creating a complain due to : ${error?.message??'Unknown Source'}`)
+        logger.error(`An error occured while creating a complain due to : ${error?.message??'Unknown Source'}`);
         if (error.name === 'ValidationError') {
-            res.status(400).send({ok: false, error:`Validation Error : ${error.message}`})
+            res.status(400).send({ok: false, error:`Validation Error : ${error.message}`});
             return
         }
-        res.status(400).send({ok:false, error})
+        res.status(400).send({ok:false, error});
     }
 })
 
@@ -74,8 +69,14 @@ ComplainRouter.post('/api/complains', isLoggedIn, isTenant, async (req: Request,
 // get all complains (with or without query string)
 ComplainRouter.get('/api/complains', isLoggedIn, async (req: Request, res: Response) => {
     try {
-        let filter: any = {}
-        const queries = Object.keys(req.query)
+        let filter: any = req.user.role === constants.USER_ROLE.TENANT ?
+        {potentialTenantId: new Types.ObjectId(req.user.id)}
+        :
+        req.user.role === constants.USER_ROLE.LANDLORD ?
+        {landlordId: new Types.ObjectId(req.user.id)}
+        :
+        {}
+        const queries = Object.keys(req.query);
         if (queries.length > 0) {
             let dateFilter = setDateFilter(req.query['startDate']?.toString()??'', req.query['endDate']?.toString()??'')
             filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) :  filter
@@ -83,10 +84,9 @@ ComplainRouter.get('/api/complains', isLoggedIn, async (req: Request, res: Respo
                 if (req.query[key]) {
                     filter = Object.assign(filter, setFilter(key, req.query[key]))
                 }
-            })
+            });
         }
-
-        const complains = await Complain.aggregate([
+        const pipeline = [
             {
                 $match: filter
             },
@@ -104,8 +104,16 @@ ComplainRouter.get('/api/complains', isLoggedIn, async (req: Request, res: Respo
                     preserveNullAndEmptyArrays: true
                 }
             }
-        ])
-        res.send({ok: true, data: complains})
+        ];
+        if (req.user.role === constants.USER_ROLE.ADMIN && queries.includes('plaintiveId') && req.query['plaintiveId']) {
+            pipeline.push({
+                $match: {
+                    'plaintive.unique_id': Number(req.query['plaintiveId'])
+                }
+            })
+        };
+        const complains = await Complain.aggregate(pipeline);
+        res.send({ok: true, data: complains});
     } catch (error) {
         logger.error(`An error occured while querying complain list due to : ${error?.message??'Unknown Source'}`)
         res.status(400).send({ok:false, error})

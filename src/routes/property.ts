@@ -29,8 +29,6 @@ function setFilter(key:string, value:any): any {
     switch (key) {
         case 'unique_id' :
             return {unique_id: Number(value)}
-        case 'ownerId':
-            return {'ownerId': new Types.ObjectId(value)}
         case 'age':
             return {'age': {$lte: Number(value)}}
         case 'availability':
@@ -63,6 +61,8 @@ function setFilter(key:string, value:any): any {
             return {'district.ref': value}
         case 'quaterref':
             return {'quater.ref': value}
+        case 'featuring':
+            return {'featuring': (value && value === 'true') ? true : false}
         default:
             return {}
     }
@@ -204,47 +204,7 @@ PropertyRouter.get('/api/properties-by-tag/:code', async (req: Request, res: Res
         res.status(400).send({ok:false, error})
     }
 })
-// get all properties by admin
-PropertyRouter.get('/api/properties', isLoggedIn,  isAdmin, async (req: Request, res: Response) => {
-    try {
-        let filter: any =  {}
-        const queries = Object.keys(req.query)
-        if (queries.length > 0) {
-            let dateFilter = setDateFilter(req.query['startDate']?.toString()??'', req.query['endDate']?.toString()??'')
-            filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) :  filter
-            queries.forEach(key => {
-                if (req.query[key]) {
-                    filter = Object.assign(filter, setFilter(key, req.query[key]))
-                }
-            })
-        }
-        // console.log(req.query, filter)
-        const properties = await Property.aggregate([
-            {
-                $match: filter
-            },
-            {
-                $lookup: {
-                    from: "users",
-                    localField: "ownerId",
-                    foreignField: "_id",
-                    as: "owner"
-                }
-            },
-            {
-                $unwind: {
-                   path:  "$owner",
-                    preserveNullAndEmptyArrays: true
-                }
-            }
-        ])
 
-        res.send({ok: true, data: properties})
-    } catch (error) {
-        logger.error(`An Error occured while getting all properties by admin due to ${error?.message??'Unknown Source'}`)
-        res.status(400).send({ok:false, error})
-    }
-})
 
 // get all landlords properties
 PropertyRouter.get('/api/landlord-properties/:id', async (req: Request, res: Response) => {
@@ -654,7 +614,53 @@ PropertyRouter.get('/api/property/:propertyId/related-properties/:quaterref', as
 
 // ***************************** admin endpoints ***********************************************
 
-
+// get all properties by admin
+PropertyRouter.get('/api/properties', isLoggedIn,  isAdmin, async (req: Request, res: Response) => {
+    try {
+        let filter: any =  {}
+        const queries = Object.keys(req.query)
+        if (queries.length > 0) {
+            let dateFilter = setDateFilter(req.query['startDate']?.toString()??'', req.query['endDate']?.toString()??'')
+            filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) :  filter
+            queries.forEach(key => {
+                if (req.query[key]) {
+                    filter = Object.assign(filter, setFilter(key, req.query[key]))
+                }
+            })
+        }
+        const pipeline : PipelineStage[] = [
+            {
+                $match: filter
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "ownerId",
+                    foreignField: "_id",
+                    as: "owner"
+                }
+            },
+            {
+                $unwind: {
+                   path:  "$owner",
+                    preserveNullAndEmptyArrays: true
+                }
+            }
+        ]
+        if (queries.includes('ownerId') && req.query['ownerId']) {
+            pipeline.push({
+                $match: {
+                    'owner.unique_id': Number(req.query['ownerId'])
+                }
+            });
+        }
+        const properties = await Property.aggregate(pipeline);
+        res.send({ok: true, data: properties})
+    } catch (error) {
+        logger.error(`An Error occured while getting all properties by admin due to ${error?.message??'Unknown Source'}`)
+        res.status(400).send({ok:false, error})
+    }
+})
 
 // create new property
 PropertyRouter.post('/api/properties', isLoggedIn, isAdmin, async (req: Request, res: Response) => {

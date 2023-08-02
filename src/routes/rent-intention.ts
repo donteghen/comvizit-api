@@ -11,6 +11,7 @@ import { logger } from '../logs/logger';
 import { Property } from '../models/property';
 import { constants } from '../constants/declared';
 import { setDateFilter } from '../utils/date-query-setter';
+import { Container } from 'winston';
 
 const RentIntentionRouter = express.Router()
 
@@ -19,14 +20,6 @@ function setFilter(key:string, value:any): any {
     switch (key) {
         case 'unique_id' :
             return {unique_id: Number(value)}
-        case '_id':
-            return {'_id': value}
-        case 'propertyId':
-            return {'propertyId': new Types.ObjectId(value)}
-        case 'landlordId':
-            return {'landlordId': new Types.ObjectId(value)}
-        case 'potentialTenantId':
-            return {'potentialTenantId': new Types.ObjectId(value)}
         case 'status':
             return {'status': value}
         default:
@@ -58,7 +51,29 @@ RentIntentionRouter.get('/api/rent-intentions', isLoggedIn, async (req: Request,
                 }
             })
         }
-        const rentIntentions = await RentIntention.aggregate(rentIntentionListQuery(filter))
+        const pipeline = rentIntentionListQuery(filter);
+        if (queries.includes('propertyId') && req.query['propertyId']) {
+            pipeline.push({
+                $match: {
+                    'property.unique_id': Number(req.query['propertyId'])
+                }
+            });
+        }
+        if (queries.includes('potentialTenantId') && req.query['potentialTenantId']) {
+            pipeline.push({
+                $match: {
+                    'potentialTenant.unique_id': Number(req.query['potentialTenantId'])
+                }
+            });
+        }
+        if (req.user.role === constants.USER_ROLE.ADMIN && queries.includes('landlordId') && req.query['landlordId']) {
+            pipeline.push({
+                $match: {
+                    'landlord.unique_id': Number(req.query['landlordId'])
+                }
+            });
+        }
+        const rentIntentions = await RentIntention.aggregate(pipeline)
         res.send({ok: true, data: rentIntentions})
     } catch (error) {
         logger.error(`An Error occured while querying rent-intention list due to ${error?.message??'Unknown Source'}`)

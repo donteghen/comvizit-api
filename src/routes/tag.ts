@@ -22,13 +22,11 @@ function setFilter(key:string, value:any): any {
         case 'type':
             return {'type': value}
         case 'title':
-            return {'title': value}
+            return {'title': { "$regex": value, $options: 'i'}}
         case 'status':
             return {'status': value}
         case 'code':
-            return {'code': value}
-        case 'refId':
-            return {'refId': new Types.ObjectId(value)}
+            return {'code': { "$regex": value, $options: 'i'}}
         default:
             return {}
     }
@@ -88,6 +86,7 @@ TagRouter.get('/api/tags', async (req: Request, res: Response) => {
                 }
             })
         }
+
         const tags = await Tag.find(filter)
         res.send({ok: true, data: tags})
     } catch (error) {

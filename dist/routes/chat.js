@@ -28,10 +28,6 @@ function setFilter(key, value) {
     switch (key) {
         case 'unique_id':
             return { unique_id: Number(value) };
-        case 'tenant':
-            return { tenant: value };
-        case 'landlord':
-            return { landlord: value };
         default:
             return {};
     }
@@ -203,7 +199,7 @@ ChatRouter.get('/api/all-chats', auth_middleware_1.isLoggedIn, auth_middleware_1
                 }
             });
         }
-        const chats = yield chat_1.Chat.aggregate([
+        const pipeline = [
             {
                 $match: filter
             },
@@ -246,7 +242,24 @@ ChatRouter.get('/api/all-chats', auth_middleware_1.isLoggedIn, auth_middleware_1
                     createdAt: -1
                 }
             }
-        ]);
+        ];
+        if (queries.includes('landlordId') && req.query['landlordId']) {
+            pipeline.push({
+                $match: {
+                    'landlordInfo.unique_id': Number(req.query['landlordId'])
+                }
+            });
+        }
+        ;
+        if (queries.includes('tenantId') && req.query['tenantId']) {
+            pipeline.push({
+                $match: {
+                    'tenantInfo.unique_id': Number(req.query['tenantId'])
+                }
+            });
+        }
+        ;
+        const chats = yield chat_1.Chat.aggregate(pipeline);
         res.send({ ok: true, data: chats });
     }
     catch (error) {

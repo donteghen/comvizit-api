@@ -1,6 +1,5 @@
-import {Schema, model, Types} from 'mongoose'
+import {Schema, model} from 'mongoose'
 import { ILog } from './interfaces'
-import { IdentityCounter } from "./identity-counter";
 
 /**
  * Log schema, represents the document property definition for a Log

@@ -17,10 +17,6 @@ function setFilter(key:string, value:any): any {
     switch (key) {
         case 'unique_id' :
             return {unique_id: Number(value)}
-        case 'tenant':
-            return { tenant:  value}
-        case 'landlord':
-            return { landlord:  value}
         default:
             return {}
     }
@@ -190,7 +186,7 @@ ChatRouter.get('/api/all-chats', isLoggedIn, isAdmin, async (req: Request, res:R
                 }
             })
         }
-        const chats = await Chat.aggregate([
+        const pipeline : PipelineStage[] = [
             {
                 $match: filter
             },
@@ -233,7 +229,22 @@ ChatRouter.get('/api/all-chats', isLoggedIn, isAdmin, async (req: Request, res:R
                     createdAt: -1
                 }
             }
-        ]);
+        ];
+        if (queries.includes('landlordId') && req.query['landlordId']) {
+            pipeline.push({
+                $match: {
+                    'landlordInfo.unique_id': Number(req.query['landlordId'])
+                }
+            });
+        };
+        if (queries.includes('tenantId') && req.query['tenantId']) {
+            pipeline.push({
+                $match: {
+                    'tenantInfo.unique_id': Number(req.query['tenantId'])
+                }
+            });
+        };
+        const chats = await Chat.aggregate(pipeline);
 
         res.send({ok: true, data: chats})
     } catch (error) {

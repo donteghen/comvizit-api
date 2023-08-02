@@ -39,14 +39,6 @@ function setFilter(key, value) {
     switch (key) {
         case 'unique_id':
             return { unique_id: Number(value) };
-        case 'id':
-            return { '_id': new mongoose_1.Types.ObjectId(value) };
-        case 'propertyId':
-            return { 'propertyId': new mongoose_1.Types.ObjectId(value) };
-        case 'landlordId':
-            return { landlordId: new mongoose_1.Types.ObjectId(value) };
-        case 'tenantId':
-            return { 'tenantId': new mongoose_1.Types.ObjectId(value) };
         case 'status':
             return { status: value };
         default:
@@ -76,7 +68,36 @@ RentalHistoryRouter.get('/api/rental-histories', auth_middleware_1.isLoggedIn, (
                 }
             });
         }
-        const rentalHistoryList = yield rental_history_1.RentalHistory.aggregate((0, queryMaker_1.rentalHistoryListQuery)(filter));
+        const pipeline = (0, queryMaker_1.rentalHistoryListQuery)(filter);
+        if (queries.includes('propertyId') && req.query['propertyId']) {
+            pipeline.push({
+                $match: {
+                    'property.unique_id': Number(req.query['propertyId'])
+                }
+            });
+        }
+        if (queries.includes('tenantId') && req.query['tenantId']) {
+            pipeline.push({
+                $match: {
+                    'tenant.unique_id': Number(req.query['tenantId'])
+                }
+            });
+        }
+        if (req.user.role === declared_1.constants.USER_ROLE.ADMIN && queries.includes('landlordId') && req.query['landlordId']) {
+            pipeline.push({
+                $match: {
+                    'landlord.unique_id': Number(req.query['landlordId'])
+                }
+            });
+        }
+        if (queries.includes('rentIntentionId') && req.query['rentIntentionId']) {
+            pipeline.push({
+                $match: {
+                    'rentIntention.unique_id': Number(req.query['rentIntentionId'])
+                }
+            });
+        }
+        const rentalHistoryList = yield rental_history_1.RentalHistory.aggregate(pipeline);
         res.send({ ok: true, data: rentalHistoryList });
     }
     catch (error) {

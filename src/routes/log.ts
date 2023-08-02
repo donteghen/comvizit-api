@@ -15,12 +15,10 @@ const LogRouter = express.Router()
  */
 function setFilter(key:string, value:any): any {
     switch (key) {
-        case 'unique_id' :
-            return {unique_id: Number(value)}
         case 'level':
             return {'level': value}
-        case '_id':
-            return {'_id': new Types.ObjectId(value)}
+        case 'message':
+            return {'message': { "$regex": value, $options: 'i'}}
         default:
             return {}
     }

@@ -36,13 +36,11 @@ function setFilter(key, value) {
         case 'type':
             return { 'type': value };
         case 'title':
-            return { 'title': value };
+            return { 'title': { "$regex": value, $options: 'i' } };
         case 'status':
             return { 'status': value };
         case 'code':
-            return { 'code': value };
-        case 'refId':
-            return { 'refId': new mongoose_1.Types.ObjectId(value) };
+            return { 'code': { "$regex": value, $options: 'i' } };
         default:
             return {};
     }

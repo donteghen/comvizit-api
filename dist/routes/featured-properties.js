@@ -17,7 +17,6 @@ const express_1 = __importDefault(require("express"));
 const error_1 = require("../constants/error");
 const auth_middleware_1 = require("../middleware/auth-middleware");
 const featured_properties_1 = require("../models/featured-properties");
-const mongoose_1 = require("mongoose");
 const property_1 = require("../models/property");
 const logger_1 = require("../logs/logger");
 const date_query_setter_1 = require("../utils/date-query-setter");
@@ -35,8 +34,6 @@ function setFilter(key, value) {
     switch (key) {
         case 'unique_id':
             return { unique_id: Number(value) };
-        case 'propertyId':
-            return { 'propertyId': new mongoose_1.Types.ObjectId(value) };
         case 'status':
             return { 'status': value };
         default:
@@ -269,6 +266,13 @@ FeaturedRouter.get('/api/featured/properties', auth_middleware_1.isLoggedIn, aut
         const queries = Object.keys(req.query);
         if (queries.length > 0) {
             queries.forEach(key => {
+                if (key === 'propertyId' && req.query[key]) {
+                    subpipeline.push({
+                        $match: {
+                            "property.unique_id": Number(req.query[key])
+                        }
+                    });
+                }
                 if (key === 'quaterref' && req.query[key] !== undefined && req.query[key] !== null) {
                     subpipeline.push({
                         $match: {

@@ -21,8 +21,6 @@ function setFilter(key:string, value:any): any {
     switch (key) {
         case 'unique_id' :
             return {unique_id: Number(value)}
-        case 'propertyId':
-            return {'propertyId': new Types.ObjectId(value)}
         case 'status':
             return {'status': value}
         default:
@@ -266,7 +264,15 @@ FeaturedRouter.get('/api/featured/properties', isLoggedIn, isAdmin, async (req: 
         const queries = Object.keys(req.query)
         if (queries.length > 0) {
             queries.forEach(key => {
-
+                if (key === 'propertyId' && req.query[key]) {
+                    subpipeline.push(
+                        {
+                            $match: {
+                                "property.unique_id": Number(req.query[key])
+                            }
+                        }
+                    )
+                }
                 if (key === 'quaterref' && req.query[key] !== undefined && req.query[key] !== null) {
                     subpipeline.push(
                         {

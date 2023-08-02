@@ -461,6 +461,20 @@ function rentalHistorylookup() {
                 path: '$property',
                 preserveNullAndEmptyArrays: true
             }
+        },
+        {
+            $lookup: {
+                from: "rentintentions",
+                localField: "rentIntentionId",
+                foreignField: "_id",
+                as: 'rentIntention'
+            }
+        },
+        {
+            $unwind: {
+                path: '$rentIntention',
+                preserveNullAndEmptyArrays: true
+            }
         }
     ];
 }

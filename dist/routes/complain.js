@@ -22,6 +22,7 @@ const mailer_templates_1 = require("../utils/mailer-templates");
 const mongoose_1 = require("mongoose");
 const logger_1 = require("../logs/logger");
 const date_query_setter_1 = require("../utils/date-query-setter");
+const declared_1 = require("../constants/declared");
 const ComplainRouter = express_1.default.Router();
 exports.ComplainRouter = ComplainRouter;
 // query helper function
@@ -29,8 +30,6 @@ function setFilter(key, value) {
     switch (key) {
         case 'unique_id':
             return { unique_id: Number(value) };
-        case '_id':
-            return { '_id': value };
         case 'processed':
             let v;
             if (typeof value === 'string') {
@@ -42,10 +41,6 @@ function setFilter(key, value) {
             return { 'processed': v };
         case 'type':
             return { 'type': value };
-        case 'plaintiveId':
-            return { 'plaintiveId': new mongoose_1.Types.ObjectId(value) };
-        case 'targetId':
-            return { 'targetId': new mongoose_1.Types.ObjectId(value) };
         default:
             return {};
     }
@@ -83,7 +78,13 @@ ComplainRouter.post('/api/complains', auth_middleware_1.isLoggedIn, auth_middlew
 ComplainRouter.get('/api/complains', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _b, _c, _d, _e, _f;
     try {
-        let filter = {};
+        let filter = req.user.role === declared_1.constants.USER_ROLE.TENANT ?
+            { potentialTenantId: new mongoose_1.Types.ObjectId(req.user.id) }
+            :
+                req.user.role === declared_1.constants.USER_ROLE.LANDLORD ?
+                    { landlordId: new mongoose_1.Types.ObjectId(req.user.id) }
+                    :
+                        {};
         const queries = Object.keys(req.query);
         if (queries.length > 0) {
             let dateFilter = (0, date_query_setter_1.setDateFilter)((_c = (_b = req.query['startDate']) === null || _b === void 0 ? void 0 : _b.toString()) !== null && _c !== void 0 ? _c : '', (_e = (_d = req.query['endDate']) === null || _d === void 0 ? void 0 : _d.toString()) !== null && _e !== void 0 ? _e : '');
@@ -94,7 +95,7 @@ ComplainRouter.get('/api/complains', auth_middleware_1.isLoggedIn, (req, res) =>
                 }
             });
         }
-        const complains = yield complain_1.Complain.aggregate([
+        const pipeline = [
             {
                 $match: filter
             },
@@ -112,7 +113,16 @@ ComplainRouter.get('/api/complains', auth_middleware_1.isLoggedIn, (req, res) =>
                     preserveNullAndEmptyArrays: true
                 }
             }
-        ]);
+        ];
+        if (req.user.role === declared_1.constants.USER_ROLE.ADMIN && queries.includes('plaintiveId') && req.query['plaintiveId']) {
+            pipeline.push({
+                $match: {
+                    'plaintive.unique_id': Number(req.query['plaintiveId'])
+                }
+            });
+        }
+        ;
+        const complains = yield complain_1.Complain.aggregate(pipeline);
         res.send({ ok: true, data: complains });
     }
     catch (error) {
