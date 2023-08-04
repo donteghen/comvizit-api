@@ -5,7 +5,7 @@ import { logger } from './logs/logger' // bring in the logger to add server star
 import {server} from './server' // Bring in our server config
 import cluster from 'cluster';
 import os from 'os'
-// import {initialize} from 'mongoose-auto-increment'
+
 // set the port
 const PORT = process.env.PORT
 const maxTimeout = 1200000;

@@ -1,7 +1,7 @@
 "use strict";
 ////////////////////////// ------User Related ------/////////////////////////////////
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.notifyRentalHistoryTerminatedToTenant = exports.notifyRentalHistoryTerminatedToLandlord = exports.notifyRentalHistoryCreatedToTenant = exports.notifyRentalHistoryCreatedToLandlord = exports.notifyRentIntentionToLandlord = exports.notifyNewRentIntentionToAdmin = exports.notifyNewContactMe = exports.notifyNewInquiry = exports.notifyNewComplained = exports.notifyPropertyAvailability = exports.notifyPropertyDeleted = exports.notifyAccountDisapproved = exports.notifyAccountApproved = exports.notifyAccountVerified = exports.welcomeTemplate = exports.notifyAccountCreated = exports.verifyAccountTemplate = void 0;
+exports.notifyTenantToReviewProperty = exports.notifyTenantToReviewLandlord = exports.notifyRentalHistoryTerminatedToTenant = exports.notifyRentalHistoryTerminatedToLandlord = exports.notifyRentalHistoryCreatedToTenant = exports.notifyRentalHistoryCreatedToLandlord = exports.notifyRentIntentionToLandlord = exports.notifyNewRentIntentionToAdmin = exports.notifyNewContactMe = exports.notifyNewInquiry = exports.notifyNewComplained = exports.notifyPropertyAvailability = exports.notifyPropertyDeleted = exports.notifyAccountDisapproved = exports.notifyAccountApproved = exports.notifyAccountVerified = exports.welcomeTemplate = exports.notifyAccountCreated = exports.verifyAccountTemplate = void 0;
 exports.verifyAccountTemplate = {
     subject: 'Account verification',
     heading: 'Account Verification',
@@ -130,4 +130,22 @@ const notifyRentalHistoryTerminatedToTenant = (tenantName) => {
     };
 };
 exports.notifyRentalHistoryTerminatedToTenant = notifyRentalHistoryTerminatedToTenant;
+const notifyTenantToReviewLandlord = (tenantName, landlordName) => {
+    return {
+        _subject: 'Review Reminder Request',
+        _heading: 'Review Reminder Request',
+        _detail: `Dear ${tenantName},<br/><br/> Your rental contract with ${landlordName} has been terminated.<br/><strong>Please tell us and others, your experience with this landlord by leaving a quick review.</strong>.<br/>A few minutes is all it takes, follow the link below.<br/><br/>Regards!`,
+        _linkText: 'Leave a Review Now'
+    };
+};
+exports.notifyTenantToReviewLandlord = notifyTenantToReviewLandlord;
+const notifyTenantToReviewProperty = (tenantName, landlordName) => {
+    return {
+        _subject: 'Review Reminder Request',
+        _heading: 'Review Reminder Request',
+        _detail: `Dear ${tenantName},<br/><br/> Your rental contract with ${landlordName} has been terminated.<br/><strong>Please tell us and others, your experience in this property by leaving a quick review.</strong>.<br/>A few minutes is all it takes, follow the link below.<br/><br/>Regards!`,
+        _linkText: 'Leave a Review Now'
+    };
+};
+exports.notifyTenantToReviewProperty = notifyTenantToReviewProperty;
 //# sourceMappingURL=mailer-templates.js.map

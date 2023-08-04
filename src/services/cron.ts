@@ -1,37 +1,47 @@
-
-import {createClient} from 'redis'
-import { Property } from '../models/property';
-import { FeaturedProperties } from '../models/featured-properties'
-const redisClient = createClient({legacyMode: true })
-redisClient.connect().catch(console.error);
-const CronJob = require('cron-cluster')(redisClient).CronJob
+/** TODO research on how to add a handler to redis client */
+import {createClient} from 'redis';
+const redisClient = createClient({legacyMode: true });
+// redisClient.connect().catch(console.error);
+const CronJob = require('cron-cluster')(redisClient).CronJob;
 
 
-export function updatePropertyFeaturingCron () {
-    const job = new CronJob('0 6 * * *', async function () {
-        try {
-            console.log(new Date(Date.now()),'*** Featured Property Update Cron Job Starting ***')
-            const featuredProperties = await FeaturedProperties.find({status: 'Active'})
-
-            if (featuredProperties.length > 0) {
-                for(const featProp of featuredProperties) {
-                    if ((Date.now() - featProp.startedAt) > featProp.duration) {
-                        featProp.status = 'Inactive'
-                        await featProp.save()
-                    }
-                }
-            }
-        } catch (error) {
-            console.log(error)
-        }
-    })
-    job.start()
-  }
+// import cron functions
+import updatePropertyFeaturing from '../rental-activities/update-property-featuring';
+import propertyReviewReminder from '../rental-activities/property-review-reminder';
+import landlordReviewReminder from '../rental-activities/landlord-review-reminder';
+import resetBookedProperties from '../rental-activities/reset-booked-properties';
 
 
-  const cronScheduler = () => {
-    updatePropertyFeaturingCron()
-  }
+function updatePropertyFeaturingCron () {
+    const job = new CronJob('0 6 * * *', updatePropertyFeaturing)
+    job.start();
+}
+
+function propertyReviewReminderCron () {
+    const job = new CronJob('0 8 * * MON', propertyReviewReminder);
+    job.start();
+}
+
+function landlordReviewReminderCron () {
+    const job = new CronJob('0 8 * * MON', landlordReviewReminder);
+    job.start();
+}
+
+function resetBookedPropertiesCron () {
+    const job = new CronJob('0 18 * * *', resetBookedProperties);
+    job.start();
+}
+
+
+
+
+function cronScheduler () {
+    console.log('...Registering cron schedulers...');
+    updatePropertyFeaturingCron();
+    propertyReviewReminderCron();
+    landlordReviewReminderCron();
+    resetBookedPropertiesCron();
+}
 
 
 export default cronScheduler

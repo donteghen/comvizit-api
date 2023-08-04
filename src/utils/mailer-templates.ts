@@ -144,3 +144,21 @@ export const notifyRentalHistoryTerminatedToTenant = (tenantName: string) => {
         _linkText: 'Search Now'
     }
 }
+
+export const notifyTenantToReviewLandlord = (tenantName: string, landlordName: string) => {
+    return {
+        _subject: 'Review Reminder Request',
+        _heading: 'Review Reminder Request',
+        _detail:`Dear ${tenantName},<br/><br/> Your rental contract with ${landlordName} has been terminated.<br/><strong>Please tell us and others, your experience with this landlord by leaving a quick review.</strong>.<br/>A few minutes is all it takes, follow the link below.<br/><br/>Regards!`,
+        _linkText: 'Leave a Review Now'
+    }
+}
+
+export const notifyTenantToReviewProperty = (tenantName: string, landlordName: string) => {
+    return {
+        _subject: 'Review Reminder Request',
+        _heading: 'Review Reminder Request',
+        _detail:`Dear ${tenantName},<br/><br/> Your rental contract with ${landlordName} has been terminated.<br/><strong>Please tell us and others, your experience in this property by leaving a quick review.</strong>.<br/>A few minutes is all it takes, follow the link below.<br/><br/>Regards!`,
+        _linkText: 'Leave a Review Now'
+    }
+}

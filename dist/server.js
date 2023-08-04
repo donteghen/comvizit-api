@@ -122,6 +122,7 @@ app.use(chat_1.ChatRouter);
 app.use(log_1.LogRouter);
 // start all cron jobs
 (0, cron_1.default)();
+// doCron()
 //  Routes
 app.get('/api/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

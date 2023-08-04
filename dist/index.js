@@ -9,7 +9,6 @@ const logger_1 = require("./logs/logger"); // bring in the logger to add server 
 const server_1 = require("./server"); // Bring in our server config
 const cluster_1 = __importDefault(require("cluster"));
 const os_1 = __importDefault(require("os"));
-// import {initialize} from 'mongoose-auto-increment'
 // set the port
 const PORT = process.env.PORT;
 const maxTimeout = 1200000;

@@ -50,7 +50,7 @@ ChatRouter.post('/api/chats', isLoggedIn, async (req: Request, res:Response) => 
         }
         res.status(400).send({ok:false, error})
     }
-  })
+})
 
 // get all chat by a user
 ChatRouter.get('/api/chats', isLoggedIn, async (req: Request, res:Response) => {
