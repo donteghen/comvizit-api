@@ -2,12 +2,12 @@ import express, { Request, Response } from 'express'
 import { Types } from 'mongoose';
 import { Property } from '../models/property';
 import { User } from '../models/user';
-import { NOT_FOUND, SAVE_OPERATION_FAILED } from '../constants/error';
+import { errors } from '../constants';
 import { isAdmin, isLoggedIn, isTenant} from '../middleware/auth-middleware';
 import { Like } from "../models/like";
 import { logger } from '../logs/logger';
 
-
+const { NOT_FOUND, SAVE_OPERATION_FAILED } = errors;
 const LikeRouter = express.Router()
 
 

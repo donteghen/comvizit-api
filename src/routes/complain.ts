@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express'
-import { NOT_FOUND, DELETE_OPERATION_FAILED } from '../constants/error';
+import { errors, constants } from "../constants";
 import { isAdmin, isLoggedIn, isTenant } from '../middleware/auth-middleware';
 import { Complain } from "../models/complain";
 import { mailer } from '../helper/mailer';
@@ -7,8 +7,9 @@ import {notifyNewComplained} from '../utils/mailer-templates'
 import { Types } from 'mongoose';
 import { logger } from '../logs/logger';
 import { setDateFilter } from '../utils/date-query-setter';
-import { constants } from '../constants/declared';
 
+
+const { NOT_FOUND, DELETE_OPERATION_FAILED } = errors;
 const ComplainRouter = express.Router();
 
 // query helper function

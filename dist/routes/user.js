@@ -18,16 +18,14 @@ const user_1 = require("../models/user");
 const passport_1 = __importDefault(require("passport"));
 const auth_middleware_1 = require("../middleware/auth-middleware");
 const mongoose_1 = require("mongoose");
-const multerUpload_1 = __importDefault(require("../config/multerUpload"));
-const cloudinary_1 = __importDefault(require("../config/cloudinary"));
 const multer_1 = require("multer");
-const mailer_1 = require("../helper/mailer");
-const mailer_templates_1 = require("../utils/mailer-templates");
-const error_1 = require("../constants/error");
+const uuidv4_1 = require("uuidv4");
 const bcryptjs_1 = require("bcryptjs");
 const isStrongPassword_1 = __importDefault(require("validator/lib/isStrongPassword"));
+const mailer_templates_1 = require("../utils/mailer-templates");
+const multerUpload_1 = __importDefault(require("../config/multerUpload"));
+const cloudinary_1 = __importDefault(require("../config/cloudinary"));
 const token_1 = require("../models/token");
-const uuidv4_1 = require("uuidv4");
 const property_1 = require("../models/property");
 const favorite_1 = require("../models/favorite");
 const like_1 = require("../models/like");
@@ -35,8 +33,11 @@ const review_1 = require("../models/review");
 const complain_1 = require("../models/complain");
 const tag_1 = require("../models/tag");
 const logger_1 = require("../logs/logger");
+const constants_1 = require("../constants");
+// utils & helpers
 const date_query_setter_1 = require("../utils/date-query-setter");
-const declared_1 = require("../constants/declared");
+const mailer_1 = require("../helper/mailer");
+const { ACCOUNST_IS_ALREADY_VERIFIED, DELETE_OPERATION_FAILED, INVALID_REQUEST, INVALID_RESET_TOKEN, NEW_PASSWORD_IS_INVALID, NOT_AUTHORIZED, NO_USER, OLD_PASSWORD_IS_INCORRECT, RESET_TOKEN_DEACTIVED, SAVE_OPERATION_FAILED, USER_UPDATE_OPERATION_FAILED } = constants_1.errors;
 const UserRouter = express_1.default.Router();
 exports.UserRouter = UserRouter;
 function setFilter(key, value) {
@@ -65,12 +66,12 @@ UserRouter.get('/api/users/landlords/:id/card', (req, res) => __awaiter(void 0, 
         const query = {
             $and: [
                 { _id: new mongoose_1.Types.ObjectId(req.params.id) },
-                { role: declared_1.constants.USER_ROLE.LANDLORD }
+                { role: constants_1.constants.USER_ROLE.LANDLORD }
             ]
         };
         const landlord = yield user_1.User.findOne(query);
         if (!landlord) {
-            throw error_1.NO_USER;
+            throw NO_USER;
         }
         const propertyCount = yield property_1.Property.count({ ownerId: landlord._id });
         res.send({ ok: true, data: { landlord, propertyCount } });
@@ -87,16 +88,16 @@ UserRouter.patch('/api/users/all/:id/verify', (req, res) => __awaiter(void 0, vo
     try {
         const user = yield user_1.User.findById(req.params.id);
         if (!user) {
-            throw error_1.NO_USER;
+            throw NO_USER;
         }
         if (user.isVerified) {
-            throw error_1.ACCOUNST_IS_ALREADY_VERIFIED;
+            throw ACCOUNST_IS_ALREADY_VERIFIED;
         }
         user.isVerified = true;
         user.updated = Date.now();
         const updatedUser = yield user.save();
         if (!updatedUser) {
-            throw error_1.SAVE_OPERATION_FAILED;
+            throw SAVE_OPERATION_FAILED;
         }
         // Send a welcome email to the verified user
         const link = `${process.env.CLIENT_URL}/profile`;
@@ -119,7 +120,7 @@ UserRouter.post('/api/user/reset-password', (req, res) => __awaiter(void 0, void
         // console.log(req.body)
         const user = yield user_1.User.findOne({ email: req.body.email });
         if (!user) {
-            throw error_1.NO_USER;
+            throw NO_USER;
         }
         const generatedToken = new token_1.Token({
             owner: user._id,
@@ -145,24 +146,24 @@ UserRouter.post('/api/user/confirm-reset-password', (req, res) => __awaiter(void
         const token = req.query.token;
         const { password } = req.body;
         if (!(0, uuidv4_1.isUuid)(token.toString())) {
-            throw error_1.INVALID_RESET_TOKEN;
+            throw INVALID_RESET_TOKEN;
         }
         const user = yield user_1.User.findOne({ email: userEmail });
         if (!user) {
-            throw error_1.NO_USER;
+            throw NO_USER;
         }
         const resetToken = yield token_1.Token.findOne({ $and: [
                 { owner: user._id },
                 { secret: token }
             ] });
         if (!resetToken) {
-            throw error_1.INVALID_REQUEST;
+            throw INVALID_REQUEST;
         }
         if (Date.now() - resetToken.generatedAt > Number(process.env.PASSWORD_RESET_CYCLE_DURATION)) {
-            throw error_1.RESET_TOKEN_DEACTIVED;
+            throw RESET_TOKEN_DEACTIVED;
         }
         if (!password || !(0, isStrongPassword_1.default)(password, { minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1 })) {
-            throw error_1.NEW_PASSWORD_IS_INVALID;
+            throw NEW_PASSWORD_IS_INVALID;
         }
         user.password = password.toString();
         yield user.save();
@@ -210,17 +211,17 @@ UserRouter.post('/api/user/profile/change-password', auth_middleware_1.isLoggedI
         const user = yield user_1.User.findById(req.user.id);
         if (!user) {
             let error = new Error();
-            error = error_1.NO_USER;
+            error = NO_USER;
             throw error;
         }
         ;
         const { newPassword, oldPassword } = req.body;
         const isMatched = yield (0, bcryptjs_1.compare)(oldPassword, user.password);
         if (!isMatched) {
-            throw error_1.OLD_PASSWORD_IS_INCORRECT;
+            throw OLD_PASSWORD_IS_INCORRECT;
         }
         if (!(0, isStrongPassword_1.default)(newPassword, { minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1 })) {
-            throw error_1.NEW_PASSWORD_IS_INVALID;
+            throw NEW_PASSWORD_IS_INVALID;
         }
         ;
         user.password = newPassword;
@@ -238,7 +239,7 @@ UserRouter.patch('/api/user/avatarUpload', auth_middleware_1.isLoggedIn, multerU
     try {
         const user = yield user_1.User.findOne({ email: req.user.email });
         if (!user) {
-            throw error_1.NO_USER;
+            throw NO_USER;
         }
         ;
         if (user.avatar && user.avatarDeleteId) {
@@ -248,11 +249,11 @@ UserRouter.patch('/api/user/avatarUpload', auth_middleware_1.isLoggedIn, multerU
         // select the folder based on user role
         const folderPath = (role) => {
             switch (role) {
-                case declared_1.constants.USER_ROLE.TENANT:
+                case constants_1.constants.USER_ROLE.TENANT:
                     return 'Avatars/Users/Tenants';
-                case declared_1.constants.USER_ROLE.LANDLORD:
+                case constants_1.constants.USER_ROLE.LANDLORD:
                     return 'Avatars/Users/Landlords';
-                case declared_1.constants.USER_ROLE.ADMIN:
+                case constants_1.constants.USER_ROLE.ADMIN:
                     return 'Avatars/Users/Admins';
                 default:
                     throw new Error('Invalid user role, avatar upload failed!');
@@ -295,7 +296,7 @@ UserRouter.patch('/api/users/all/:id/profile/update', auth_middleware_1.isLogged
         ;
         const userIsUpdated = yield user_1.User.findByIdAndUpdate(req.params.id, { $set: updatedProps }, { runValidators: true });
         if (!userIsUpdated) {
-            throw error_1.USER_UPDATE_OPERATION_FAILED;
+            throw USER_UPDATE_OPERATION_FAILED;
         }
         ;
         const updatedUser = yield user_1.User.findById(req.params.id);
@@ -353,7 +354,7 @@ UserRouter.get('/api/users/logout', auth_middleware_1.isLoggedIn, (req, res) => 
 UserRouter.get('/api/users/tenants', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _v, _w, _x, _y, _z;
     try {
-        let filter = { role: declared_1.constants.USER_ROLE.TENANT };
+        let filter = { role: constants_1.constants.USER_ROLE.TENANT };
         const queries = Object.keys(req.query);
         if (queries.length > 0) {
             let dateFilter = (0, date_query_setter_1.setDateFilter)((_w = (_v = req.query['startDate']) === null || _v === void 0 ? void 0 : _v.toString()) !== null && _w !== void 0 ? _w : '', (_y = (_x = req.query['endDate']) === null || _x === void 0 ? void 0 : _x.toString()) !== null && _y !== void 0 ? _y : '');
@@ -375,7 +376,7 @@ UserRouter.get('/api/users/tenants', auth_middleware_1.isLoggedIn, auth_middlewa
 UserRouter.get('/api/users/landlords', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _0, _1, _2, _3;
     try {
-        let filter = { role: declared_1.constants.USER_ROLE.LANDLORD };
+        let filter = { role: constants_1.constants.USER_ROLE.LANDLORD };
         const queries = Object.keys(req.query);
         if (queries.length > 0) {
             let dateFilter = (0, date_query_setter_1.setDateFilter)((_1 = (_0 = req.query['startDate']) === null || _0 === void 0 ? void 0 : _0.toString()) !== null && _1 !== void 0 ? _1 : '', (_3 = (_2 = req.query['endDate']) === null || _2 === void 0 ? void 0 : _2.toString()) !== null && _3 !== void 0 ? _3 : '');
@@ -397,7 +398,7 @@ UserRouter.get('/api/users/landlords', auth_middleware_1.isLoggedIn, auth_middle
 UserRouter.get('/api/users/admins', auth_middleware_1.isLoggedIn, auth_middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _4, _5, _6, _7;
     try {
-        let filter = { role: declared_1.constants.USER_ROLE.ADMIN };
+        let filter = { role: constants_1.constants.USER_ROLE.ADMIN };
         const queries = Object.keys(req.query);
         if (queries.length > 0) {
             let dateFilter = (0, date_query_setter_1.setDateFilter)((_5 = (_4 = req.query['startDate']) === null || _4 === void 0 ? void 0 : _4.toString()) !== null && _5 !== void 0 ? _5 : '', (_7 = (_6 = req.query['endDate']) === null || _6 === void 0 ? void 0 : _6.toString()) !== null && _7 !== void 0 ? _7 : '');
@@ -443,16 +444,16 @@ UserRouter.patch('/api/users/all/:id/approve', auth_middleware_1.isLoggedIn, aut
     var _12, _13;
     try {
         // check if the session user is an admin, if no then it should fail as only an admin can approve a landlord or tenant account
-        if (req.user.role !== declared_1.constants.USER_ROLE.ADMIN) {
-            throw error_1.NOT_AUTHORIZED;
+        if (req.user.role !== constants_1.constants.USER_ROLE.ADMIN) {
+            throw NOT_AUTHORIZED;
         }
         const user = yield user_1.User.findById(req.params.id);
         if (!user) {
-            throw error_1.NO_USER;
+            throw NO_USER;
         }
         // check if the user being approved is an admin, if yes then it should fail as only the superadmin can approve an admin user
-        if (user.role === declared_1.constants.USER_ROLE.ADMIN) {
-            throw error_1.NOT_AUTHORIZED;
+        if (user.role === constants_1.constants.USER_ROLE.ADMIN) {
+            throw NOT_AUTHORIZED;
         }
         user.approved = true;
         user.updated = Date.now();
@@ -478,16 +479,16 @@ UserRouter.patch('/api/users/all/:id/disapprove', auth_middleware_1.isLoggedIn, 
     var _14, _15;
     try {
         // check if the session user is an admin, if no then it should fail as only an admin can disapprove a landlord or tenant account
-        if (req.user.role !== declared_1.constants.USER_ROLE.ADMIN) {
-            throw error_1.NOT_AUTHORIZED;
+        if (req.user.role !== constants_1.constants.USER_ROLE.ADMIN) {
+            throw NOT_AUTHORIZED;
         }
         const user = yield user_1.User.findById(req.params.id);
         if (!user) {
-            throw error_1.NO_USER;
+            throw NO_USER;
         }
         // check if the user being disapproved is an admin, if yes then it should fail as only the superadmin can approve an admin user
-        if (user.role === declared_1.constants.USER_ROLE.ADMIN) {
-            throw error_1.NOT_AUTHORIZED;
+        if (user.role === constants_1.constants.USER_ROLE.ADMIN) {
+            throw NOT_AUTHORIZED;
         }
         user.approved = false;
         user.updated = Date.now();
@@ -515,15 +516,15 @@ UserRouter.delete('/api/user/all/:id', auth_middleware_1.isLoggedIn, auth_middle
         // make sure that admin can only delete either <user.role === tenant | user.role === landlord>
         // An admin user can be deleted only by the super admin
         const user = yield user_1.User.findById(req.params.id);
-        if (user.role === declared_1.constants.USER_ROLE.ADMIN) {
-            throw error_1.NOT_AUTHORIZED;
+        if (user.role === constants_1.constants.USER_ROLE.ADMIN) {
+            throw NOT_AUTHORIZED;
         }
         const deletedUser = yield user_1.User.findByIdAndDelete(req.params.id);
         if (!deletedUser) {
-            throw error_1.DELETE_OPERATION_FAILED;
+            throw DELETE_OPERATION_FAILED;
         }
         // if user is landlord, then delete all related properties
-        if (deletedUser.role === declared_1.constants.USER_ROLE.LANDLORD) {
+        if (deletedUser.role === constants_1.constants.USER_ROLE.LANDLORD) {
             property_1.Property.deleteMany({
                 ownerId: deletedUser._id
             });

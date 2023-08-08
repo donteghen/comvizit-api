@@ -1,12 +1,13 @@
 import express, { Request, Response } from 'express'
 import { Types } from 'mongoose';
 import { User } from '../models/user';
-import { NOT_FOUND } from '../constants/error';
+import { errors } from "../constants";
 import { isLoggedIn, isTenant} from '../middleware/auth-middleware';
 import { Favorite } from "../models/favorite";
 import { IFavorite } from '../models/interfaces';
 import { logger } from '../logs/logger';
 
+const { NOT_FOUND } = errors;
 const FavoriteRouter = express.Router()
 
 // ***************************** tenant enpoints ***********************************************

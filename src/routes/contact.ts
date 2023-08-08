@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express'
-import { DELETE_OPERATION_FAILED, NOT_FOUND } from '../constants/error';
+import { errors } from "../constants";
 import { isAdmin, isLoggedIn } from '../middleware/auth-middleware';
 import { Contact } from "../models/contact";
 import { mailer } from '../helper/mailer';
@@ -7,6 +7,7 @@ import {notifyNewContactMe} from '../utils/mailer-templates'
 import { logger } from '../logs/logger';
 import { setDateFilter } from '../utils/date-query-setter';
 
+const { DELETE_OPERATION_FAILED, NOT_FOUND } = errors;
 const ContactRouter = express.Router()
 
 // query helper function

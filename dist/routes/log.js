@@ -16,8 +16,9 @@ exports.LogRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const auth_middleware_1 = require("../middleware/auth-middleware");
 const log_1 = require("../models/log");
-const error_1 = require("../constants/error");
+const constants_1 = require("../constants");
 const logger_1 = require("../logs/logger");
+const { DELETE_OPERATION_FAILED, NOT_FOUND } = constants_1.errors;
 const LogRouter = express_1.default.Router();
 exports.LogRouter = LogRouter;
 /**
@@ -110,7 +111,7 @@ LogRouter.get('/api/logs/:id', (req, res) => __awaiter(void 0, void 0, void 0, f
     try {
         const log = yield log_1.Log.findById(req.params.id);
         if (!log) {
-            throw error_1.NOT_FOUND;
+            throw NOT_FOUND;
         }
         res.send({ ok: true, data: log });
     }
@@ -125,7 +126,7 @@ LogRouter.delete('/api/logs/:id/delete', auth_middleware_1.isLoggedIn, auth_midd
     try {
         const log = yield log_1.Log.findByIdAndDelete(req.params.id);
         if (!log) {
-            throw error_1.DELETE_OPERATION_FAILED;
+            throw DELETE_OPERATION_FAILED;
         }
         res.send({ ok: true });
     }

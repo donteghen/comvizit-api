@@ -49,7 +49,7 @@ const user_2 = require("./models/user");
 const heartBeat_1 = require("./listeners/heartBeat");
 const outgoingMessage_1 = require("./listeners/outgoingMessage");
 const mongoose_1 = require("mongoose");
-const declared_1 = require("./constants/declared");
+const constants_1 = require("./constants");
 // global settings
 dotenv_1.default.config();
 (0, auth_middleware_1.passportConfig)();
@@ -122,7 +122,6 @@ app.use(chat_1.ChatRouter);
 app.use(log_1.LogRouter);
 // start all cron jobs
 (0, cron_1.default)();
-// doCron()
 //  Routes
 app.get('/api/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -137,9 +136,9 @@ io.on("connection", (socket) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c;
     // get all chatId linked to this socket user and add the socket to all rooms
     const socketUserRole = (_a = socket.handshake.auth) === null || _a === void 0 ? void 0 : _a.UserRole;
-    let socketUserRooms = socketUserRole === declared_1.constants.USER_ROLE.TENANT ?
+    let socketUserRooms = socketUserRole === constants_1.constants.USER_ROLE.TENANT ?
         yield chat_2.Chat.find({ tenant: (_b = socket.handshake.auth) === null || _b === void 0 ? void 0 : _b.userId }) :
-        socketUserRole === declared_1.constants.USER_ROLE.LANDLORD ?
+        socketUserRole === constants_1.constants.USER_ROLE.LANDLORD ?
             yield chat_2.Chat.find({ landlord: (_c = socket.handshake.auth) === null || _c === void 0 ? void 0 : _c.userId })
             :
                 [];

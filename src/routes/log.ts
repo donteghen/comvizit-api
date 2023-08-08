@@ -1,11 +1,11 @@
 import express, { Request, Response } from 'express'
 import { isAdmin, isLoggedIn } from '../middleware/auth-middleware';
 import {Log} from '../models/log'
-import {DELETE_OPERATION_FAILED, NOT_FOUND} from '../constants/error'
-import {Types} from 'mongoose';
+import {errors} from '../constants'
 import { logger } from '../logs/logger';
-import { setDateFilter } from '../utils/date-query-setter';
 
+
+const {DELETE_OPERATION_FAILED, NOT_FOUND} = errors;
 const LogRouter = express.Router()
 /**
  * Get tag search query filter

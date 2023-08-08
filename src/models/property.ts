@@ -1,9 +1,9 @@
 import {Schema, model} from 'mongoose'
-import { IProperty, PropertyVirtual, PropertyVideo } from './interfaces'
+import { IProperty } from './interfaces'
 import { NextFunction } from 'express';
 import { IdentityCounter } from "./identity-counter";
 
-import { constants } from '../constants/declared';
+import { constants } from '../constants';
 /**
  * Property schema, represents the document property definition for a Property
  * @constructor Property

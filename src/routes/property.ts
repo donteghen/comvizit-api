@@ -1,26 +1,27 @@
-import { Property } from "../models/property";
 import express, { Request, Response } from 'express'
-
+import { errors, constants } from "../constants";
 import { Types, PipelineStage, ObjectId } from "mongoose";
-import { categoryAggregator, townAggregator } from "../utils/queryMaker";
-import { isAdmin, isLoggedIn } from "../middleware/auth-middleware";
-import { DELETE_OPERATION_FAILED, INVALID_REQUEST, NOT_AUTHORIZED, NOT_FOUND, NOT_PROPERTY_OWNER, SAVE_OPERATION_FAILED, NOT_SPECIFIED} from '../constants/error'
-import {notifyPropertyAvailability} from '../utils/mailer-templates'
-import { mailer } from "../helper/mailer";
 import { IProperty, IUser } from "../models/interfaces";
+import { Property } from "../models/property";
 import { User } from "../models/user";
 import { Tag } from "../models/tag";
 import { FeaturedProperties } from "../models/featured-properties";
-// import { RentIntention } from "../models/rent-intention";
+import { logger } from "../logs/logger";
 import { Complain } from "../models/complain";
 import { Review } from "../models/review";
 import { Like } from "../models/like";
+
 // utils & helpers
-// import { constants } from "../constants/declared";
-import { logger } from "../logs/logger";
-const PropertyRouter = express.Router()
+import { mailer } from "../helper/mailer";
 import { setDateFilter } from '../utils/date-query-setter';
-import { constants } from "../constants/declared";
+import { categoryAggregator, townAggregator } from "../utils/queryMaker";
+import { isAdmin, isLoggedIn } from "../middleware/auth-middleware";
+import {notifyPropertyAvailability} from '../utils/mailer-templates'
+
+
+const { DELETE_OPERATION_FAILED, INVALID_REQUEST, NOT_AUTHORIZED, NOT_FOUND, NOT_PROPERTY_OWNER, SAVE_OPERATION_FAILED, NOT_SPECIFIED} = errors;
+const PropertyRouter = express.Router()
+
 
 const pageSize: number = Number(process.env.PAGE_SIZE) // number of documents returned per request for the get all properties route
 

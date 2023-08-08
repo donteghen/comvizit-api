@@ -5,7 +5,7 @@ import isStrongPassword from 'validator/lib/isStrongPassword'
 import { IUser } from './interfaces'
 import { NextFunction } from 'express'
 import { IdentityCounter } from "./identity-counter";
-import { constants } from '../constants/declared'
+import { constants } from '../constants'
 
 /**
  * User schema, represents the document property definition for a User

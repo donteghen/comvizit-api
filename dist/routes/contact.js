@@ -14,13 +14,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ContactRouter = void 0;
 const express_1 = __importDefault(require("express"));
-const error_1 = require("../constants/error");
+const constants_1 = require("../constants");
 const auth_middleware_1 = require("../middleware/auth-middleware");
 const contact_1 = require("../models/contact");
 const mailer_1 = require("../helper/mailer");
 const mailer_templates_1 = require("../utils/mailer-templates");
 const logger_1 = require("../logs/logger");
 const date_query_setter_1 = require("../utils/date-query-setter");
+const { DELETE_OPERATION_FAILED, NOT_FOUND } = constants_1.errors;
 const ContactRouter = express_1.default.Router();
 exports.ContactRouter = ContactRouter;
 // query helper function
@@ -95,7 +96,7 @@ ContactRouter.get('/api/contacts/:id', auth_middleware_1.isLoggedIn, auth_middle
     try {
         const contact = yield contact_1.Contact.findById(req.params.id);
         if (!contact) {
-            throw error_1.NOT_FOUND;
+            throw NOT_FOUND;
         }
         res.send({ ok: true, data: contact });
     }
@@ -110,7 +111,7 @@ ContactRouter.patch('/api/contacts/:id/reply', auth_middleware_1.isLoggedIn, aut
     try {
         const contact = yield contact_1.Contact.findById(req.params.id);
         if (!contact) {
-            throw error_1.NOT_FOUND;
+            throw NOT_FOUND;
         }
         contact.replied = true;
         contact.updated = Date.now();
@@ -132,11 +133,11 @@ ContactRouter.delete('/api/contacts/:id/delete', auth_middleware_1.isLoggedIn, a
     try {
         const contact = yield contact_1.Contact.findById(req.params.id);
         if (!contact) {
-            throw error_1.NOT_FOUND;
+            throw NOT_FOUND;
         }
         const deleteResult = yield contact_1.Contact.deleteOne({ _id: contact._id });
         if (deleteResult.deletedCount !== 1) {
-            throw error_1.DELETE_OPERATION_FAILED;
+            throw DELETE_OPERATION_FAILED;
         }
         res.send({ ok: true });
     }

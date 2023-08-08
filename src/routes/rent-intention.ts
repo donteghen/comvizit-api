@@ -1,18 +1,21 @@
 import express, { Request, Response } from 'express'
 import { Types } from 'mongoose';
 import { User } from '../models/user';
-import { NOT_FOUND, DELETE_OPERATION_FAILED, NOT_AUTHORIZED } from '../constants/error';
+import { errors, constants } from '../constants';
 import { isAdmin, isLoggedIn, isTenant} from '../middleware/auth-middleware';
 import { RentIntention } from "../models/rent-intention";
-import { rentIntentionListQuery, singleRentIntentionQuery } from '../utils/queryMaker';
-import { mailer } from '../helper/mailer';
-import { notifyNewRentIntentionToAdmin, notifyRentIntentionToLandlord } from '../utils/mailer-templates';
 import { logger } from '../logs/logger';
 import { Property } from '../models/property';
-import { constants } from '../constants/declared';
-import { setDateFilter } from '../utils/date-query-setter';
-import { Container } from 'winston';
 
+
+// utils & helpers
+import { rentIntentionListQuery, singleRentIntentionQuery } from '../utils/queryMaker';
+import { mailer } from '../helper/mailer';
+import { setDateFilter } from '../utils/date-query-setter';
+import { notifyNewRentIntentionToAdmin, notifyRentIntentionToLandlord } from '../utils/mailer-templates';
+
+
+const { NOT_FOUND, DELETE_OPERATION_FAILED, NOT_AUTHORIZED } = errors;
 const RentIntentionRouter = express.Router()
 
 // query helper function

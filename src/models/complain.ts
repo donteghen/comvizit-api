@@ -4,7 +4,7 @@ import { IComplain } from './interfaces'
 import { NextFunction } from 'express';
 import { IdentityCounter } from "./identity-counter";
 
-import { constants } from '../constants/declared';
+import { constants } from '../constants';
 /**
  * Complain schema, represents the document property definition for a complain
  * @constructor Complain

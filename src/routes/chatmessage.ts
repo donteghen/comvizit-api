@@ -1,11 +1,11 @@
 import express, {Request, Response} from 'express';
 import { ChatMessage } from "../models/chatmessage";
-import { isAdmin, isLoggedIn } from '../middleware/auth-middleware';
-import { CHAT_MESSAGE_PARAM_INVALID, INVALID_REQUEST } from '../constants/error';
+import { isLoggedIn } from '../middleware/auth-middleware';
+import { errors } from "../constants";
 import { logger } from '../logs/logger';
-import { setDateFilter } from '../utils/date-query-setter';
-import { Types, PipelineStage } from 'mongoose';
+import {  PipelineStage } from 'mongoose';
 
+const { CHAT_MESSAGE_PARAM_INVALID } = errors;
 const ChatMessageRouter = express.Router()
 
 // query helper function

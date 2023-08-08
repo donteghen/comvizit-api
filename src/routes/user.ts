@@ -3,16 +3,16 @@ import {User} from '../models/user'
 import passport from 'passport'
 import { isLoggedIn, isAdmin } from '../middleware/auth-middleware'
 import { Types } from 'mongoose'
-import multerUpload from '../config/multerUpload'
-import cloudinary from '../config/cloudinary'
 import { MulterError } from 'multer'
-import { mailer } from '../helper/mailer'
-import {welcomeTemplate, notifyAccountCreated, verifyAccountTemplate, notifyAccountApproved, notifyAccountVerified, notifyAccountDisapproved} from '../utils/mailer-templates'
-import { ACCOUNST_IS_ALREADY_VERIFIED, DELETE_OPERATION_FAILED, INVALID_REQUEST, INVALID_RESET_TOKEN, NEW_PASSWORD_IS_INVALID, NOT_AUTHORIZED, NOT_FOUND, NO_USER, OLD_PASSWORD_IS_INCORRECT, RESET_TOKEN_DEACTIVED, SAVE_OPERATION_FAILED , USER_UPDATE_OPERATION_FAILED} from '../constants/error'
+import {uuid, isUuid} from 'uuidv4'
 import {compare} from 'bcryptjs'
 import isStrongPassword from 'validator/lib/isStrongPassword'
+import {welcomeTemplate, notifyAccountCreated, verifyAccountTemplate, notifyAccountApproved, notifyAccountVerified, notifyAccountDisapproved} from '../utils/mailer-templates'
+
+
+import multerUpload from '../config/multerUpload'
+import cloudinary from '../config/cloudinary'
 import { Token } from '../models/token'
-import {uuid, isUuid} from 'uuidv4'
 import { Property } from '../models/property'
 import { Favorite } from '../models/favorite'
 import { Like } from '../models/like'
@@ -20,9 +20,15 @@ import {Review} from '../models/review'
 import {Complain} from '../models/complain'
 import {Tag} from '../models/tag'
 import { logger } from '../logs/logger'
-import { setDateFilter } from '../utils/date-query-setter';
-import { constants } from '../constants/declared'
+import { constants, errors } from '../constants'
 
+// utils & helpers
+import { setDateFilter } from '../utils/date-query-setter';
+import { mailer } from '../helper/mailer'
+
+const { ACCOUNST_IS_ALREADY_VERIFIED, DELETE_OPERATION_FAILED, INVALID_REQUEST, INVALID_RESET_TOKEN, NEW_PASSWORD_IS_INVALID,
+    NOT_AUTHORIZED, NO_USER, OLD_PASSWORD_IS_INCORRECT, RESET_TOKEN_DEACTIVED, SAVE_OPERATION_FAILED ,
+    USER_UPDATE_OPERATION_FAILED} = errors;
 const UserRouter = express.Router()
 
 function setFilter(key:string, value:any): any {

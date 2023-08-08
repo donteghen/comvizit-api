@@ -5,7 +5,7 @@ import { ChatMessage } from '../models/chatmessage';
 import { logger } from '../logs/logger';
 import { User } from '../models/user';
 import { Chat } from '../models/chat';
-import { constants } from '../constants/declared';
+import { constants } from '../constants';
 
 async function onOutgoingMessage(socket: any, data: Omit<IChatMessage, 'unique_id'>) {
     try {

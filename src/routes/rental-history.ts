@@ -1,18 +1,21 @@
 import express, { Request, Response } from 'express'
 import { Types } from 'mongoose';
-import { INVALID_REQUEST, NOT_FOUND, RENTALHISTORY_CURRENTLY_ONGOING, SAVE_OPERATION_FAILED } from '../constants/error';
+import { errors, constants, messages} from '../constants';
 import { isAdmin, isLoggedIn } from '../middleware/auth-middleware';
 import { RentalHistory } from "../models/rental-history";
-import { mailer } from '../helper/mailer';
-import { notifyRentalHistoryCreatedToLandlord, notifyRentalHistoryCreatedToTenant, notifyRentalHistoryTerminatedToLandlord, notifyRentalHistoryTerminatedToTenant } from '../utils/mailer-templates'
 import { User } from '../models/user';
-import { singleRentalHistoryQuery, rentalHistoryListQuery } from '../utils/queryMaker';
 import { RentIntention } from '../models/rent-intention';
 import { IRentIntention } from '../models/interfaces';
 import { logger } from '../logs/logger';
-import { constants, messages } from '../constants/declared';
-import { setDateFilter } from '../utils/date-query-setter';
 
+// utils & helpers
+import { notifyRentalHistoryCreatedToLandlord, notifyRentalHistoryCreatedToTenant, notifyRentalHistoryTerminatedToLandlord, notifyRentalHistoryTerminatedToTenant } from '../utils/mailer-templates'
+import { mailer } from '../helper/mailer';
+import { setDateFilter } from '../utils/date-query-setter';
+import { singleRentalHistoryQuery, rentalHistoryListQuery } from '../utils/queryMaker';
+
+
+const { INVALID_REQUEST, NOT_FOUND, RENTALHISTORY_CURRENTLY_ONGOING, SAVE_OPERATION_FAILED } = errors;
 const RentalHistoryRouter = express.Router()
 
 /**

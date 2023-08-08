@@ -29,7 +29,6 @@ import {ChatRouter} from './routes/chat' ;
 import {ChatMessageRouter} from './routes/chatmessage' ;
 import { LogRouter } from './routes/log' ;
 import cronScheduler from './services/cron' ;
-// import {doCron} from './play'
 
 // socket and chat related dependecies
 import { IChatMessage, IChat } from "./models/interfaces";
@@ -40,7 +39,7 @@ import { User } from './models/user';
 import {onHeartBeat} from './listeners/heartBeat';
 import {onOutgoingMessage} from './listeners/outgoingMessage';
 import { Types } from 'mongoose';
-import { constants } from './constants/declared';
+import { constants } from './constants';
 
 // global settings
 dotenv.config() ;
@@ -115,7 +114,6 @@ app.use(LogRouter);
 
 // start all cron jobs
 cronScheduler();
-// doCron()
 //  Routes
 app.get('/api/', async (req: Request, res: Response) => {
     try {

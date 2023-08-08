@@ -16,10 +16,11 @@ exports.FavoriteRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const mongoose_1 = require("mongoose");
 const user_1 = require("../models/user");
-const error_1 = require("../constants/error");
+const constants_1 = require("../constants");
 const auth_middleware_1 = require("../middleware/auth-middleware");
 const favorite_1 = require("../models/favorite");
 const logger_1 = require("../logs/logger");
+const { NOT_FOUND } = constants_1.errors;
 const FavoriteRouter = express_1.default.Router();
 exports.FavoriteRouter = FavoriteRouter;
 // ***************************** tenant enpoints ***********************************************
@@ -64,7 +65,7 @@ FavoriteRouter.patch('/api/fav-property-list/add-favorite', auth_middleware_1.is
     try {
         const propertyId = req.body.id;
         if (!propertyId) {
-            throw error_1.NOT_FOUND;
+            throw NOT_FOUND;
         }
         const user = yield user_1.User.findById(req.user.id);
         const favAlreadyExit = yield favorite_1.Favorite.findOne({
@@ -103,11 +104,11 @@ FavoriteRouter.patch('/api/fav-property-list/remove-favorite', auth_middleware_1
     try {
         const favId = req.body.id;
         if (!favId) {
-            throw error_1.NOT_FOUND;
+            throw NOT_FOUND;
         }
         const fav = yield favorite_1.Favorite.findById(favId);
         if (!fav) {
-            throw error_1.NOT_FOUND;
+            throw NOT_FOUND;
         }
         // delete the fav
         yield favorite_1.Favorite.findByIdAndRemove(fav._id);

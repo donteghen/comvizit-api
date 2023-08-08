@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const logger_1 = require("../logs/logger");
 const review_1 = require("../models/review");
 const rental_history_1 = require("../models/rental-history");
-const declared_1 = require("../constants/declared");
+const constants_1 = require("../constants");
 const user_1 = require("../models/user");
 // mailer
 const mailer_1 = require("../helper/mailer");
@@ -27,7 +27,7 @@ function landlordReviewReminder() {
             const rentalHistoryRecords = yield rental_history_1.RentalHistory.find({
                 $and: [
                     {
-                        status: declared_1.constants.RENTAL_HISTORY_STATUS_OPTIONS.TERMINATED
+                        status: constants_1.constants.RENTAL_HISTORY_STATUS_OPTIONS.TERMINATED
                     },
                     {
                         endDate: {
@@ -41,8 +41,8 @@ function landlordReviewReminder() {
                 for (let record of rentalHistoryRecords) {
                     // check if the associated tenant already left a review for the associated landlord
                     const tenantReveiw = yield review_1.Review.findOne({
-                        type: declared_1.constants.REVIEW_TYPES.LANDLORD,
-                        authorType: declared_1.constants.REVIEW_AUTHOR_TYPE.TENANT,
+                        type: constants_1.constants.REVIEW_TYPES.LANDLORD,
+                        authorType: constants_1.constants.REVIEW_AUTHOR_TYPE.TENANT,
                         author: record.tenantId,
                         refId: (_a = record.landlordId) === null || _a === void 0 ? void 0 : _a.toString()
                     });

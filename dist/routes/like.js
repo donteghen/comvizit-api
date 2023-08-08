@@ -17,10 +17,11 @@ const express_1 = __importDefault(require("express"));
 const mongoose_1 = require("mongoose");
 const property_1 = require("../models/property");
 const user_1 = require("../models/user");
-const error_1 = require("../constants/error");
+const constants_1 = require("../constants");
 const auth_middleware_1 = require("../middleware/auth-middleware");
 const like_1 = require("../models/like");
 const logger_1 = require("../logs/logger");
+const { NOT_FOUND, SAVE_OPERATION_FAILED } = constants_1.errors;
 const LikeRouter = express_1.default.Router();
 exports.LikeRouter = LikeRouter;
 // ***************************** public enpoints ***********************************************
@@ -61,11 +62,11 @@ LikeRouter.post('/api/properties/:id/likes/increment', auth_middleware_1.isLogge
         const relatedProperty = yield property_1.Property.findById(req.params.id);
         const relatedTenant = yield user_1.User.findById(req.user.id);
         if (!relatedProperty || !relatedTenant) {
-            throw error_1.NOT_FOUND;
+            throw NOT_FOUND;
         }
         const like = yield newLike.save();
         if (!like) {
-            throw error_1.SAVE_OPERATION_FAILED;
+            throw SAVE_OPERATION_FAILED;
         }
         if (!relatedProperty.likes.includes(like._id.toString())) {
             relatedProperty.likes = relatedProperty.likes.concat(like._id.toString());

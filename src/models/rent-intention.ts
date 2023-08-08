@@ -2,7 +2,7 @@ import {Schema, model} from 'mongoose'
 import { IRentIntention } from './interfaces'
 import { NextFunction } from 'express';
 import { IdentityCounter } from "./identity-counter";
-import { constants } from '../constants/declared';
+import { constants } from '../constants';
 
 
 /**

@@ -1,6 +1,6 @@
 import { logger } from '../logs/logger';
 import { RentIntention } from '../models/rent-intention';
-import { constants } from '../constants/declared';
+import { constants } from '../constants';
 import { Property } from '../models/property';
 
 

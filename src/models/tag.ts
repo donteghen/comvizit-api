@@ -3,7 +3,7 @@ import {Schema, model} from 'mongoose'
 import { ITag } from './interfaces'
 import { NextFunction } from 'express';
 import { IdentityCounter } from "./identity-counter";
-import { constants } from '../constants/declared';
+import { constants } from '../constants';
 /**
  * Tag schema, defines the Tag document properties
  * @constructor Tag

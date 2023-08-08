@@ -3,7 +3,7 @@ import {Schema, model} from 'mongoose'
 import { IFeaturedProperties } from './interfaces'
 import { NextFunction } from 'express';
 import { IdentityCounter } from "./identity-counter";
-import { constants } from '../constants/declared';
+import { constants } from '../constants';
 
 /**
  * FeaturedProperty schema, represents the document property definition for Fetatured Properties

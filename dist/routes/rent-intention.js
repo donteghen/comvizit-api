@@ -16,16 +16,17 @@ exports.RentIntentionRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const mongoose_1 = require("mongoose");
 const user_1 = require("../models/user");
-const error_1 = require("../constants/error");
+const constants_1 = require("../constants");
 const auth_middleware_1 = require("../middleware/auth-middleware");
 const rent_intention_1 = require("../models/rent-intention");
-const queryMaker_1 = require("../utils/queryMaker");
-const mailer_1 = require("../helper/mailer");
-const mailer_templates_1 = require("../utils/mailer-templates");
 const logger_1 = require("../logs/logger");
 const property_1 = require("../models/property");
-const declared_1 = require("../constants/declared");
+// utils & helpers
+const queryMaker_1 = require("../utils/queryMaker");
+const mailer_1 = require("../helper/mailer");
 const date_query_setter_1 = require("../utils/date-query-setter");
+const mailer_templates_1 = require("../utils/mailer-templates");
+const { NOT_FOUND, DELETE_OPERATION_FAILED, NOT_AUTHORIZED } = constants_1.errors;
 const RentIntentionRouter = express_1.default.Router();
 exports.RentIntentionRouter = RentIntentionRouter;
 // query helper function
@@ -45,10 +46,10 @@ function setFilter(key, value) {
 RentIntentionRouter.get('/api/rent-intentions', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d, _e;
     try {
-        let filter = req.user.role === declared_1.constants.USER_ROLE.TENANT ?
+        let filter = req.user.role === constants_1.constants.USER_ROLE.TENANT ?
             { potentialTenantId: new mongoose_1.Types.ObjectId(req.user.id) }
             :
-                req.user.role === declared_1.constants.USER_ROLE.LANDLORD ?
+                req.user.role === constants_1.constants.USER_ROLE.LANDLORD ?
                     { landlordId: new mongoose_1.Types.ObjectId(req.user.id) }
                     :
                         {};
@@ -77,7 +78,7 @@ RentIntentionRouter.get('/api/rent-intentions', auth_middleware_1.isLoggedIn, (r
                 }
             });
         }
-        if (req.user.role === declared_1.constants.USER_ROLE.ADMIN && queries.includes('landlordId') && req.query['landlordId']) {
+        if (req.user.role === constants_1.constants.USER_ROLE.ADMIN && queries.includes('landlordId') && req.query['landlordId']) {
             pipeline.push({
                 $match: {
                     'landlord.unique_id': Number(req.query['landlordId'])
@@ -98,7 +99,7 @@ RentIntentionRouter.get('/api/rent-intentions/:id', auth_middleware_1.isLoggedIn
     try {
         const rentIntention = yield rent_intention_1.RentIntention.aggregate((0, queryMaker_1.singleRentIntentionQuery)(req.params.id));
         if (!(rentIntention.length > 0)) {
-            throw error_1.NOT_FOUND;
+            throw NOT_FOUND;
         }
         res.send({ ok: true, data: rentIntention[0] });
     }
@@ -119,7 +120,7 @@ RentIntentionRouter.post('/api/rent-intentions', auth_middleware_1.isLoggedIn, a
             propertyId: new mongoose_1.Types.ObjectId(propertyId),
             landlordId: new mongoose_1.Types.ObjectId(landlordId),
             potentialTenantId: new mongoose_1.Types.ObjectId(req.user.id),
-            status: declared_1.constants.RENT_INTENTION_STATUS_OPTIONS.INITIATED,
+            status: constants_1.constants.RENT_INTENTION_STATUS_OPTIONS.INITIATED,
             initiatedAt: {
                 $gt: thrityDaysAgo
             }
@@ -166,13 +167,13 @@ RentIntentionRouter.patch('/api/rent-intentions/:id/status-update', auth_middlew
         // get the corresponding rent-intension by id
         const rentIntention = yield rent_intention_1.RentIntention.findById(req.params.id);
         if (!rentIntention) {
-            throw error_1.NOT_FOUND;
+            throw NOT_FOUND;
         }
         // check if user is admin or landlord related to the current transaction (rent-intentsion)
-        if (((_h = req.user) === null || _h === void 0 ? void 0 : _h.role) !== declared_1.constants.USER_ROLE.ADMIN) {
-            if (((_j = req.user) === null || _j === void 0 ? void 0 : _j.role) === declared_1.constants.USER_ROLE.LANDLORD) {
+        if (((_h = req.user) === null || _h === void 0 ? void 0 : _h.role) !== constants_1.constants.USER_ROLE.ADMIN) {
+            if (((_j = req.user) === null || _j === void 0 ? void 0 : _j.role) === constants_1.constants.USER_ROLE.LANDLORD) {
                 if (rentIntention.landlordId.toString() !== ((_k = req.user) === null || _k === void 0 ? void 0 : _k.id))
-                    throw error_1.NOT_AUTHORIZED;
+                    throw NOT_AUTHORIZED;
             }
         }
         rentIntention.status = req.body.status ? req.body.status : rentIntention.status;
@@ -180,18 +181,18 @@ RentIntentionRouter.patch('/api/rent-intentions/:id/status-update', auth_middlew
         // update the related property's status
         const relatedProperty = yield property_1.Property.findOne({
             _id: rentIntention.propertyId,
-            status: { $nin: [declared_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.UNAVAILABLE] }
+            status: { $nin: [constants_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.UNAVAILABLE] }
         });
         if (!relatedProperty) {
-            throw error_1.NOT_FOUND;
+            throw NOT_FOUND;
         }
         switch (updatedRentItention.status) {
-            case declared_1.constants.RENT_INTENTION_STATUS_OPTIONS.CONFIRMED:
-                relatedProperty.availability = declared_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.BOOKED;
+            case constants_1.constants.RENT_INTENTION_STATUS_OPTIONS.CONFIRMED:
+                relatedProperty.availability = constants_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.BOOKED;
                 yield relatedProperty.save();
                 break;
-            case declared_1.constants.RENT_INTENTION_STATUS_OPTIONS.CANCELED:
-                relatedProperty.availability = declared_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE;
+            case constants_1.constants.RENT_INTENTION_STATUS_OPTIONS.CANCELED:
+                relatedProperty.availability = constants_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE;
                 yield relatedProperty.save();
                 break;
             default:
@@ -214,11 +215,11 @@ RentIntentionRouter.delete('/api/rent-intentions/:id/delete', auth_middleware_1.
     try {
         const deletedRentIntention = yield rent_intention_1.RentIntention.findById(req.params.id);
         if (!deletedRentIntention) {
-            throw error_1.NOT_FOUND;
+            throw NOT_FOUND;
         }
         const deleteResult = yield rent_intention_1.RentIntention.deleteOne({ _id: deletedRentIntention._id });
         if (deleteResult.deletedCount !== 1) {
-            throw error_1.DELETE_OPERATION_FAILED;
+            throw DELETE_OPERATION_FAILED;
         }
         res.send({ ok: true });
     }

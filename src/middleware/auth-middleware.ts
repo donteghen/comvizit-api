@@ -3,8 +3,9 @@ import {Strategy as LocalStrategy} from 'passport-local'
 import passport from "passport";
 import { User } from "../models/user";
 import {compareSync} from 'bcryptjs'
-import { AUTH_FAILED, NOT_AUTHORIZED } from "../constants/error";
+import { errors } from "../constants";
 
+const { NOT_AUTHORIZED } = errors;
 const passportConfig = () => {
       passport.use(
         new LocalStrategy(

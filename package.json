@@ -19,6 +19,7 @@
   "author": "Donald Ticha Teghen <donaldteghen@gmail.com>",
   "license": "ISC",
   "dependencies": {
+    "@comvizit/comvizit-common": "1.0.4",
     "@logtail/node": "0.3.1",
     "@logtail/winston": "0.3.1",
     "@sendgrid/mail": "7.7.0",

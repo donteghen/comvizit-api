@@ -3,10 +3,11 @@ import { isAdmin, isLoggedIn } from '../middleware/auth-middleware';
 import { Inquiry } from "../models/inquiry";
 import { mailer } from '../helper/mailer';
 import {notifyNewInquiry} from '../utils/mailer-templates'
-import { NOT_FOUND } from '../constants/error';
+import { errors } from '../constants';
 import { logger } from '../logs/logger';
 import { setDateFilter } from '../utils/date-query-setter';
 
+const { NOT_FOUND } = errors;
 const InquiryRouter = express.Router()
 
 // query helper function

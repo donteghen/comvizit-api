@@ -1,7 +1,7 @@
 import { logger } from '../logs/logger';
 import { Review } from '../models/review';
 import { RentalHistory } from '../models/rental-history';
-import { constants } from '../constants/declared';
+import { constants } from '../constants';
 import { User } from '../models/user';
 
 // mailer

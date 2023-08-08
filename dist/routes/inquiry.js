@@ -18,9 +18,10 @@ const auth_middleware_1 = require("../middleware/auth-middleware");
 const inquiry_1 = require("../models/inquiry");
 const mailer_1 = require("../helper/mailer");
 const mailer_templates_1 = require("../utils/mailer-templates");
-const error_1 = require("../constants/error");
+const constants_1 = require("../constants");
 const logger_1 = require("../logs/logger");
 const date_query_setter_1 = require("../utils/date-query-setter");
+const { NOT_FOUND } = constants_1.errors;
 const InquiryRouter = express_1.default.Router();
 exports.InquiryRouter = InquiryRouter;
 // query helper function
@@ -97,7 +98,7 @@ InquiryRouter.get('/api/inquiries/:id', auth_middleware_1.isLoggedIn, auth_middl
     try {
         const inquiry = yield inquiry_1.Inquiry.findById(req.params.id);
         if (!inquiry) {
-            throw error_1.NOT_FOUND;
+            throw NOT_FOUND;
         }
         res.send({ ok: true, data: inquiry });
     }
@@ -112,7 +113,7 @@ InquiryRouter.patch('/api/inquiries/:id/reply', auth_middleware_1.isLoggedIn, au
     try {
         const inquiry = yield inquiry_1.Inquiry.findById(req.params.id);
         if (!inquiry) {
-            throw error_1.NOT_FOUND;
+            throw NOT_FOUND;
         }
         inquiry.replied = true;
         inquiry.updated = Date.now();
@@ -134,7 +135,7 @@ InquiryRouter.delete('/api/inquiries/:id/delete', auth_middleware_1.isLoggedIn, 
     try {
         const inquiry = yield inquiry_1.Inquiry.findByIdAndDelete(req.params.id);
         if (!inquiry) {
-            throw error_1.NOT_FOUND;
+            throw NOT_FOUND;
         }
         res.send({ ok: true });
     }

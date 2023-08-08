@@ -16,11 +16,11 @@ exports.TagRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const auth_middleware_1 = require("../middleware/auth-middleware");
 const tag_1 = require("../models/tag");
-const error_1 = require("../constants/error");
 const mongoose_1 = require("mongoose");
 const logger_1 = require("../logs/logger");
 const date_query_setter_1 = require("../utils/date-query-setter");
-const declared_1 = require("../constants/declared");
+const constants_1 = require("../constants");
+const { DELETE_OPERATION_FAILED, INVALID_REQUEST, NOT_FOUND, SAVE_OPERATION_FAILED, TAG_ALREADY_EXISTS } = constants_1.errors;
 const TagRouter = express_1.default.Router();
 exports.TagRouter = TagRouter;
 /**
@@ -54,10 +54,10 @@ TagRouter.post('/api/tags/add', auth_middleware_1.isLoggedIn, auth_middleware_1.
         const code = title ? title.toString().toLowerCase().split(' ').join('_') : '';
         const existAlready = yield tag_1.Tag.findOne({ $and: [{ refId }, { code }] });
         if (existAlready) {
-            if (existAlready.status === declared_1.constants.TAG_STATUS_OPTIONS.ACTIVE) {
-                throw (0, error_1.TAG_ALREADY_EXISTS)(existAlready.code, existAlready.type, existAlready.refId.toString());
+            if (existAlready.status === constants_1.constants.TAG_STATUS_OPTIONS.ACTIVE) {
+                throw TAG_ALREADY_EXISTS(existAlready.code, existAlready.type, existAlready.refId.toString());
             }
-            existAlready.status = declared_1.constants.TAG_STATUS_OPTIONS.ACTIVE;
+            existAlready.status = constants_1.constants.TAG_STATUS_OPTIONS.ACTIVE;
             yield existAlready.save();
             res.send({ ok: true, data: existAlready });
             return;
@@ -70,7 +70,7 @@ TagRouter.post('/api/tags/add', auth_middleware_1.isLoggedIn, auth_middleware_1.
         });
         const tag = yield newTag.save();
         if (!tag) {
-            throw error_1.NOT_FOUND;
+            throw NOT_FOUND;
         }
         res.send({ ok: true, data: tag });
     }
@@ -112,7 +112,7 @@ TagRouter.get('/api/tags/:id', (req, res) => __awaiter(void 0, void 0, void 0, f
     try {
         const tag = yield tag_1.Tag.findById(req.params.id);
         if (!tag) {
-            throw error_1.NOT_FOUND;
+            throw NOT_FOUND;
         }
         res.send({ ok: true, data: tag });
     }
@@ -129,18 +129,18 @@ TagRouter.patch('/api/tags/:id/update', auth_middleware_1.isLoggedIn, auth_middl
         if (req.body.status) {
             const tag = yield tag_1.Tag.findById(req.params.id);
             if (!tag) {
-                throw error_1.NOT_FOUND;
+                throw NOT_FOUND;
             }
             tag.status = req.body.status;
             tag.updated = Date.now();
             const updatedTag = yield tag.save();
             if (!updatedTag) {
-                throw error_1.SAVE_OPERATION_FAILED;
+                throw SAVE_OPERATION_FAILED;
             }
             res.send({ ok: true, data: updatedTag });
         }
         else {
-            throw error_1.INVALID_REQUEST;
+            throw INVALID_REQUEST;
         }
     }
     catch (error) {
@@ -158,7 +158,7 @@ TagRouter.delete('/api/tags/:id/delete', auth_middleware_1.isLoggedIn, auth_midd
     try {
         const tag = yield tag_1.Tag.findByIdAndDelete(req.params.id);
         if (!tag) {
-            throw error_1.DELETE_OPERATION_FAILED;
+            throw DELETE_OPERATION_FAILED;
         }
         res.send({ ok: true });
     }

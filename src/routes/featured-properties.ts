@@ -1,13 +1,13 @@
 import express, { Request, Response } from 'express'
-import { DELETE_OPERATION_FAILED, FEATURING_EXPIRED, INVALID_PROPERTY_ID_FOR_FEATURING, INVALID_REQUEST, NOT_FOUND, PROPERTY_IS_ALREADY_FEATURED, PROPERTY_UNAVAILABLE_FOR_FEATURING } from '../constants/error';
 import { isAdmin, isLoggedIn } from '../middleware/auth-middleware';
 import { FeaturedProperties } from "../models/featured-properties";
 import {PipelineStage, Types} from 'mongoose'
 import { Property } from '../models/property';
 import { logger } from '../logs/logger';
 import { setDateFilter } from '../utils/date-query-setter';
-import { constants} from '../constants/declared';
+import { constants, errors} from '../constants';
 
+const { DELETE_OPERATION_FAILED, FEATURING_EXPIRED, INVALID_PROPERTY_ID_FOR_FEATURING, INVALID_REQUEST, NOT_FOUND, PROPERTY_IS_ALREADY_FEATURED, PROPERTY_UNAVAILABLE_FOR_FEATURING } = errors;
 const FeaturedRouter = express.Router()
 
 /**

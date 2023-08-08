@@ -1,12 +1,12 @@
 import express, { Request, Response } from 'express'
 import { isAdmin, isLoggedIn } from '../middleware/auth-middleware';
-import {DELETE_OPERATION_FAILED, INVALID_REQUEST, NOT_FOUND, REVIEW_ALREADY_EXIST, SAVE_OPERATION_FAILED} from '../constants/error'
 import {Types} from 'mongoose';
 import { Review } from '../models/review';
-import {constants} from '../constants/declared'
+import {constants, errors} from '../constants';
 import { logger } from '../logs/logger';
 import { setDateFilter } from '../utils/date-query-setter';
 
+const {DELETE_OPERATION_FAILED, INVALID_REQUEST, NOT_FOUND, REVIEW_ALREADY_EXIST, SAVE_OPERATION_FAILED} = errors;
 const ReviewRouter = express.Router()
 
 /**

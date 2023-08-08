@@ -16,11 +16,12 @@ exports.ChatRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const chat_1 = require("../models/chat");
 const auth_middleware_1 = require("../middleware/auth-middleware");
-const error_1 = require("../constants/error");
+const constants_1 = require("../constants");
 const logger_1 = require("../logs/logger");
 const mongoose_1 = require("mongoose");
 const date_query_setter_1 = require("../utils/date-query-setter");
-const declared_1 = require("../constants/declared");
+const constants_2 = require("../constants");
+const { CHAT_PARAM_INVALID, INVALID_REQUEST, NOT_FOUND } = constants_1.errors;
 const ChatRouter = express_1.default.Router();
 exports.ChatRouter = ChatRouter;
 // query helper function
@@ -37,7 +38,7 @@ ChatRouter.post('/api/chats', auth_middleware_1.isLoggedIn, (req, res) => __awai
     var _a;
     try {
         if (!req.body.tenant || !req.body.landlord) {
-            throw error_1.CHAT_PARAM_INVALID;
+            throw CHAT_PARAM_INVALID;
         }
         // check if chat already exists between the tenant and landlord
         const existingChat = yield chat_1.Chat.findOne({
@@ -68,7 +69,7 @@ ChatRouter.get('/api/chats', auth_middleware_1.isLoggedIn, (req, res) => __await
     var _b;
     try {
         let pipeline;
-        if (req.user.role === declared_1.constants.USER_ROLE.TENANT) {
+        if (req.user.role === constants_2.constants.USER_ROLE.TENANT) {
             pipeline = [
                 {
                     $match: {
@@ -141,14 +142,14 @@ ChatRouter.get('/api/existing-chat', auth_middleware_1.isLoggedIn, (req, res) =>
     const { tenant, landlord } = req.query;
     try {
         if (!tenant || !landlord) {
-            throw error_1.INVALID_REQUEST;
+            throw INVALID_REQUEST;
         }
         const chat = yield chat_1.Chat.findOne({
             landlord,
             tenant
         });
         if (!chat) {
-            throw error_1.NOT_FOUND;
+            throw NOT_FOUND;
         }
         res.send({ ok: true, data: chat });
     }
@@ -162,18 +163,18 @@ ChatRouter.get('/api/chats/:id', auth_middleware_1.isLoggedIn, (req, res) => __a
     var _d;
     try {
         if (!req.params.id) {
-            throw error_1.INVALID_REQUEST;
+            throw INVALID_REQUEST;
         }
         // check if the user is an admin and if yes then query only by id, else make sure the user is a member of that chat
-        const chat = req.user.role === declared_1.constants.USER_ROLE.ADMIN ?
+        const chat = req.user.role === constants_2.constants.USER_ROLE.ADMIN ?
             yield chat_1.Chat.findOne({ _id: new mongoose_1.Types.ObjectId(req.params.id) })
             :
-                req.user.role === declared_1.constants.USER_ROLE.TENANT ?
+                req.user.role === constants_2.constants.USER_ROLE.TENANT ?
                     yield chat_1.Chat.findOne({ _id: new mongoose_1.Types.ObjectId(req.params.id), tenant: req.user.id })
                     :
                         yield chat_1.Chat.findOne({ _id: new mongoose_1.Types.ObjectId(req.params.id), landlord: req.user.id });
         if (!chat) {
-            throw error_1.NOT_FOUND;
+            throw NOT_FOUND;
         }
         res.send({ ok: true, data: chat });
     }

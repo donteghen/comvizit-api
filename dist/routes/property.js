@@ -13,28 +13,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PropertyRouter = void 0;
-const property_1 = require("../models/property");
 const express_1 = __importDefault(require("express"));
+const constants_1 = require("../constants");
 const mongoose_1 = require("mongoose");
-const queryMaker_1 = require("../utils/queryMaker");
-const auth_middleware_1 = require("../middleware/auth-middleware");
-const error_1 = require("../constants/error");
-const mailer_templates_1 = require("../utils/mailer-templates");
-const mailer_1 = require("../helper/mailer");
+const property_1 = require("../models/property");
 const user_1 = require("../models/user");
 const tag_1 = require("../models/tag");
 const featured_properties_1 = require("../models/featured-properties");
-// import { RentIntention } from "../models/rent-intention";
+const logger_1 = require("../logs/logger");
 const complain_1 = require("../models/complain");
 const review_1 = require("../models/review");
 const like_1 = require("../models/like");
 // utils & helpers
-// import { constants } from "../constants/declared";
-const logger_1 = require("../logs/logger");
+const mailer_1 = require("../helper/mailer");
+const date_query_setter_1 = require("../utils/date-query-setter");
+const queryMaker_1 = require("../utils/queryMaker");
+const auth_middleware_1 = require("../middleware/auth-middleware");
+const mailer_templates_1 = require("../utils/mailer-templates");
+const { DELETE_OPERATION_FAILED, INVALID_REQUEST, NOT_AUTHORIZED, NOT_FOUND, NOT_PROPERTY_OWNER, SAVE_OPERATION_FAILED, NOT_SPECIFIED } = constants_1.errors;
 const PropertyRouter = express_1.default.Router();
 exports.PropertyRouter = PropertyRouter;
-const date_query_setter_1 = require("../utils/date-query-setter");
-const declared_1 = require("../constants/declared");
 const pageSize = Number(process.env.PAGE_SIZE); // number of documents returned per request for the get all properties route
 // query helper function
 function setFilter(key, value) {
@@ -111,7 +109,7 @@ function priceSetter(reqParams, queryArray, priceQuery) {
 PropertyRouter.get('/api/properties-in-quater/:quaterref', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d, _e;
     try {
-        let filter = { availability: declared_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE };
+        let filter = { availability: constants_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE };
         let sorting = { updated: -1 };
         let pageNum = 1;
         const queries = Object.keys(req.query);
@@ -163,14 +161,14 @@ PropertyRouter.get('/api/properties-by-tag/:code', (req, res) => __awaiter(void 
     var _f, _g, _h, _j, _k;
     try {
         if (!req.params.code) {
-            throw error_1.INVALID_REQUEST;
+            throw INVALID_REQUEST;
         }
         const tags = yield tag_1.Tag.find({ code: req.params.code });
         const tagRefIds = tags === null || tags === void 0 ? void 0 : tags.map(tag => tag.refId);
         let sorting = { createdAt: -1 };
         let pageNum = 1;
         const queries = Object.keys(req.query);
-        let filter = { availability: declared_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE, _id: { $in: tagRefIds } };
+        let filter = { availability: constants_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE, _id: { $in: tagRefIds } };
         if (queries.length > 0) {
             let dateFilter = (0, date_query_setter_1.setDateFilter)((_g = (_f = req.query['startDate']) === null || _f === void 0 ? void 0 : _f.toString()) !== null && _g !== void 0 ? _g : '', (_j = (_h = req.query['endDate']) === null || _h === void 0 ? void 0 : _h.toString()) !== null && _j !== void 0 ? _j : '');
             filter = Object.keys(dateFilter).length > 0 ? Object.assign(filter, dateFilter) : filter;
@@ -215,7 +213,7 @@ PropertyRouter.get('/api/landlord-properties/:id', (req, res) => __awaiter(void 
         let pipeline = [];
         let filter = {
             ownerId: new mongoose_1.Types.ObjectId(req.params.id),
-            availability: declared_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE
+            availability: constants_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE
         };
         const queries = Object.keys(req.query);
         let pageNum;
@@ -300,7 +298,7 @@ PropertyRouter.get('/api/search-quaters/:quaterRef', (req, res) => __awaiter(voi
             },
             {
                 $match: {
-                    "availability": declared_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE
+                    "availability": constants_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE
                 }
             },
             {
@@ -322,7 +320,7 @@ PropertyRouter.get('/api/search-quaters/:quaterRef', (req, res) => __awaiter(voi
 PropertyRouter.get('/api/town-properties/:town', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _t, _u, _v, _w, _x;
     try {
-        let filter = { availability: declared_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE };
+        let filter = { availability: constants_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE };
         let sorting = { createdAt: -1 };
         let pageNum = 1;
         const queries = Object.keys(req.query);
@@ -367,7 +365,7 @@ PropertyRouter.get('/api/town-properties/:town', (req, res) => __awaiter(void 0,
 PropertyRouter.get('/api/district-properties/:districtref', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _y, _z, _0, _1, _2;
     try {
-        let filter = { availability: declared_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE };
+        let filter = { availability: constants_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE };
         let sorting = { createdAt: -1 };
         let pageNum = 1;
         const queries = Object.keys(req.query);
@@ -415,7 +413,7 @@ PropertyRouter.get('/api/properties-group-by-town', (req, res) => __awaiter(void
         const groupsByTown = yield property_1.Property.aggregate([
             {
                 $match: {
-                    'availability': declared_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE
+                    'availability': constants_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE
                 }
             },
             {
@@ -441,7 +439,7 @@ PropertyRouter.get('/api/properties-group-by-district', (req, res) => __awaiter(
         const pipeline = [
             {
                 $match: {
-                    'availability': declared_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE
+                    'availability': constants_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE
                 }
             },
             {
@@ -513,7 +511,7 @@ PropertyRouter.get('/api/properties/:id', (req, res) => __awaiter(void 0, void 0
         ];
         const properties = yield property_1.Property.aggregate(pipeline);
         if (!properties[0]) {
-            throw error_1.NOT_FOUND;
+            throw NOT_FOUND;
         }
         res.send({ ok: true, data: properties[0] });
     }
@@ -565,7 +563,7 @@ PropertyRouter.get('/api/property/:propertyId/related-properties/:quaterref', (r
         ];
         const propertiesInSameQuater = yield property_1.Property.find({
             $and: [
-                { availability: declared_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE },
+                { availability: constants_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE },
                 { 'quater.ref': req.params.quaterref },
                 { _id: { $ne: req.params.propertyId } }
             ]
@@ -675,19 +673,19 @@ PropertyRouter.patch('/api/properties/:id/availability/update', auth_middleware_
         let propertyOwner;
         // make sure an availability status was passed within the request body
         if (!req.body.availability) {
-            throw error_1.INVALID_REQUEST;
+            throw INVALID_REQUEST;
         }
         // check if user is landlord or admin and property belongs to that user(landlord)
         if (req.user.role !== 'ADMIN' && req.user.role !== 'LANDLORD') {
-            throw error_1.NOT_AUTHORIZED;
+            throw NOT_AUTHORIZED;
         }
         const property = yield property_1.Property.findById(req.params.id);
         if (!property) {
-            throw error_1.NOT_FOUND;
+            throw NOT_FOUND;
         }
         if (req.user.role === 'LANDLORD') {
             if (property.ownerId.toString() !== req.user.id) {
-                throw error_1.NOT_PROPERTY_OWNER;
+                throw NOT_PROPERTY_OWNER;
             }
             propertyOwner = req.user;
         }
@@ -699,7 +697,7 @@ PropertyRouter.patch('/api/properties/:id/availability/update', auth_middleware_
         property.updated = Date.now();
         const updatedProperty = yield property.save();
         if (!updatedProperty) {
-            throw error_1.SAVE_OPERATION_FAILED;
+            throw SAVE_OPERATION_FAILED;
         }
         // notify the property owner
         const { subject, heading, detail, linkText } = (0, mailer_templates_1.notifyPropertyAvailability)(req.user.email, property._id.toString(), req.body.availability);
@@ -729,7 +727,7 @@ PropertyRouter.patch('/api/properties/:id/update', auth_middleware_1.isLoggedIn,
         }
         const updatedProperty = yield property_1.Property.findByIdAndUpdate(req.params.id, { $set: update }, { runValidators: true });
         if (!updatedProperty) {
-            throw error_1.SAVE_OPERATION_FAILED;
+            throw SAVE_OPERATION_FAILED;
         }
         res.status(200).send({ ok: true });
     }
@@ -749,7 +747,7 @@ PropertyRouter.patch('/api/properties/:id/update-media', auth_middleware_1.isLog
         const { photos, videos, virtualTours } = req.body.media;
         const property = yield property_1.Property.findById(req.params.id);
         if (!property) {
-            throw error_1.NOT_FOUND;
+            throw NOT_FOUND;
         }
         property.media.photos = photos ? photos : property.media.photos;
         property.media.videos = videos ? videos : property.media.videos;
@@ -772,7 +770,7 @@ PropertyRouter.delete('/api/properties/:id/delete', auth_middleware_1.isLoggedIn
     try {
         const deletedproperty = yield property_1.Property.findByIdAndDelete(req.params.id);
         if (!deletedproperty) {
-            throw error_1.DELETE_OPERATION_FAILED;
+            throw DELETE_OPERATION_FAILED;
         }
         // delete all corresponding tags
         yield tag_1.Tag.deleteMany({ refId: deletedproperty._id });

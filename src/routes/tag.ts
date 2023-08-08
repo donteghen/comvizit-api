@@ -1,12 +1,12 @@
 import express, { Request, Response } from 'express'
 import { isAdmin, isLoggedIn } from '../middleware/auth-middleware';
 import { Tag } from "../models/tag";
-import {DELETE_OPERATION_FAILED, INVALID_REQUEST, NOT_FOUND, SAVE_OPERATION_FAILED, TAG_ALREADY_EXISTS} from '../constants/error'
 import {Types} from 'mongoose';
 import { logger } from '../logs/logger';
 import { setDateFilter } from '../utils/date-query-setter';
-import { constants } from '../constants/declared';
+import { constants , errors} from '../constants';
 
+const {DELETE_OPERATION_FAILED, INVALID_REQUEST, NOT_FOUND, SAVE_OPERATION_FAILED, TAG_ALREADY_EXISTS} = errors;
 const TagRouter = express.Router()
 
 /**

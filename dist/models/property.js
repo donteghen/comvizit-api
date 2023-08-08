@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Property = void 0;
 const mongoose_1 = require("mongoose");
 const identity_counter_1 = require("./identity-counter");
-const declared_1 = require("../constants/declared");
+const constants_1 = require("../constants");
 /**
  * Property schema, represents the document property definition for a Property
  * @constructor Property
@@ -81,21 +81,21 @@ const propertySchema = new mongoose_1.Schema({
         type: String,
         required: true,
         enum: [
-            declared_1.constants.PROPERTY_TYPES.STUDIO,
-            declared_1.constants.PROPERTY_TYPES.APARTMENT,
-            declared_1.constants.PROPERTY_TYPES.PRIVATE_ROOM,
-            declared_1.constants.PROPERTY_TYPES.VILLA,
-            declared_1.constants.PROPERTY_TYPES.HOUSE,
-            declared_1.constants.PROPERTY_TYPES.OFFICE
+            constants_1.constants.PROPERTY_TYPES.STUDIO,
+            constants_1.constants.PROPERTY_TYPES.APARTMENT,
+            constants_1.constants.PROPERTY_TYPES.PRIVATE_ROOM,
+            constants_1.constants.PROPERTY_TYPES.VILLA,
+            constants_1.constants.PROPERTY_TYPES.HOUSE,
+            constants_1.constants.PROPERTY_TYPES.OFFICE
         ]
     },
     bedroom: {
         type: String,
         enum: [
-            declared_1.constants.PROPERTY_BEDROOM_OPTIONS.ONE,
-            declared_1.constants.PROPERTY_BEDROOM_OPTIONS.TWO,
-            declared_1.constants.PROPERTY_BEDROOM_OPTIONS.THREE,
-            declared_1.constants.PROPERTY_BEDROOM_OPTIONS.FOURPLUS
+            constants_1.constants.PROPERTY_BEDROOM_OPTIONS.ONE,
+            constants_1.constants.PROPERTY_BEDROOM_OPTIONS.TWO,
+            constants_1.constants.PROPERTY_BEDROOM_OPTIONS.THREE,
+            constants_1.constants.PROPERTY_BEDROOM_OPTIONS.FOURPLUS
         ]
     },
     propertySize: {
@@ -113,8 +113,8 @@ const propertySchema = new mongoose_1.Schema({
         type: String,
         required: true,
         enum: [
-            declared_1.constants.PROPERTY_FURNISHED_STATE.FURNISHED,
-            declared_1.constants.PROPERTY_FURNISHED_STATE.UNFURNISHED
+            constants_1.constants.PROPERTY_FURNISHED_STATE.FURNISHED,
+            constants_1.constants.PROPERTY_FURNISHED_STATE.UNFURNISHED
         ]
     },
     amenities: {
@@ -228,19 +228,19 @@ const propertySchema = new mongoose_1.Schema({
         gender: {
             type: String,
             enum: [
-                declared_1.constants.PROPERTY_PREFERED_TENANT_GENDERS.MALE,
-                declared_1.constants.PROPERTY_PREFERED_TENANT_GENDERS.FEMALE,
-                declared_1.constants.PROPERTY_PREFERED_TENANT_GENDERS.ALL
+                constants_1.constants.PROPERTY_PREFERED_TENANT_GENDERS.MALE,
+                constants_1.constants.PROPERTY_PREFERED_TENANT_GENDERS.FEMALE,
+                constants_1.constants.PROPERTY_PREFERED_TENANT_GENDERS.ALL
             ],
             required: true,
-            default: declared_1.constants.PROPERTY_PREFERED_TENANT_GENDERS.ALL
+            default: constants_1.constants.PROPERTY_PREFERED_TENANT_GENDERS.ALL
         },
         type: {
             type: String,
             enum: [
-                declared_1.constants.PROPERTY_PREFERED_TENANT_TYPES.STUDENTS,
-                declared_1.constants.PROPERTY_PREFERED_TENANT_TYPES.FAMILY,
-                declared_1.constants.PROPERTY_PREFERED_TENANT_TYPES.ALL
+                constants_1.constants.PROPERTY_PREFERED_TENANT_TYPES.STUDENTS,
+                constants_1.constants.PROPERTY_PREFERED_TENANT_TYPES.FAMILY,
+                constants_1.constants.PROPERTY_PREFERED_TENANT_TYPES.ALL
             ],
             required: true
         }
@@ -256,13 +256,13 @@ const propertySchema = new mongoose_1.Schema({
     availability: {
         type: String,
         enum: [
-            declared_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.UNAVAILABLE,
-            declared_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE,
-            declared_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.BOOKED,
-            declared_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.TAKEN
+            constants_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.UNAVAILABLE,
+            constants_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE,
+            constants_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.BOOKED,
+            constants_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.TAKEN
         ],
         required: true,
-        default: declared_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.UNAVAILABLE,
+        default: constants_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.UNAVAILABLE,
     },
     rentUtilities: {
         electricity: {

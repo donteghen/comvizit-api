@@ -14,13 +14,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FeaturedRouter = void 0;
 const express_1 = __importDefault(require("express"));
-const error_1 = require("../constants/error");
 const auth_middleware_1 = require("../middleware/auth-middleware");
 const featured_properties_1 = require("../models/featured-properties");
 const property_1 = require("../models/property");
 const logger_1 = require("../logs/logger");
 const date_query_setter_1 = require("../utils/date-query-setter");
-const declared_1 = require("../constants/declared");
+const constants_1 = require("../constants");
+const { DELETE_OPERATION_FAILED, FEATURING_EXPIRED, INVALID_PROPERTY_ID_FOR_FEATURING, INVALID_REQUEST, NOT_FOUND, PROPERTY_IS_ALREADY_FEATURED, PROPERTY_UNAVAILABLE_FOR_FEATURING } = constants_1.errors;
 const FeaturedRouter = express_1.default.Router();
 exports.FeaturedRouter = FeaturedRouter;
 /**
@@ -144,7 +144,7 @@ FeaturedRouter.get('/api/featured/properties/:propertyId', (req, res) => __await
     try {
         const featuredProperty = yield featured_properties_1.FeaturedProperties.findById(req.params.propertyId);
         if (!featuredProperty) {
-            throw error_1.NOT_FOUND;
+            throw NOT_FOUND;
         }
         res.send({ ok: true, data: featuredProperty });
     }
@@ -161,14 +161,14 @@ FeaturedRouter.post('/api/featured/properties/create', auth_middleware_1.isLogge
         const { propertyId, duration } = req.body;
         const relatedProperty = yield property_1.Property.findById(propertyId);
         if (!relatedProperty) {
-            throw error_1.INVALID_PROPERTY_ID_FOR_FEATURING;
+            throw INVALID_PROPERTY_ID_FOR_FEATURING;
         }
         if (relatedProperty.availability === 'Taken' || relatedProperty.availability === 'Inactive') {
-            throw error_1.PROPERTY_UNAVAILABLE_FOR_FEATURING;
+            throw PROPERTY_UNAVAILABLE_FOR_FEATURING;
         }
         const AlreadyFeatured = yield featured_properties_1.FeaturedProperties.findOne({ propertyId });
         if (AlreadyFeatured) {
-            throw error_1.PROPERTY_IS_ALREADY_FEATURED;
+            throw PROPERTY_IS_ALREADY_FEATURED;
         }
         const newFeaturedProperty = new featured_properties_1.FeaturedProperties({
             propertyId,
@@ -196,21 +196,21 @@ FeaturedRouter.patch('/api/featured/properties/:propertyId/status/update', auth_
         if (req.body.status) {
             const featuredProperty = yield featured_properties_1.FeaturedProperties.findById(req.params.propertyId);
             if (!featuredProperty) {
-                throw error_1.NOT_FOUND;
+                throw NOT_FOUND;
             }
             if (Date.now() > (featuredProperty.startedAt + featuredProperty.duration)) {
-                throw error_1.FEATURING_EXPIRED;
+                throw FEATURING_EXPIRED;
             }
             featuredProperty.status = req.body.status;
             const updateFeaturedProperty = yield featuredProperty.save();
             // update related property's featuring state
             const relatedProperty = yield property_1.Property.findById(featuredProperty.propertyId);
-            relatedProperty.featuring = updateFeaturedProperty.status === declared_1.constants.FEATURED_PROPERTY_STATUS.ACTIVE ? true : false;
+            relatedProperty.featuring = updateFeaturedProperty.status === constants_1.constants.FEATURED_PROPERTY_STATUS.ACTIVE ? true : false;
             yield relatedProperty.save();
             res.send({ ok: true, data: updateFeaturedProperty });
         }
         else {
-            throw error_1.INVALID_REQUEST;
+            throw INVALID_REQUEST;
         }
     }
     catch (error) {
@@ -228,7 +228,7 @@ FeaturedRouter.delete('/api/featured/properties/:propertyId/delete', auth_middle
     try {
         const featuredProperty = yield featured_properties_1.FeaturedProperties.findByIdAndDelete(req.params.propertyId);
         if (!featuredProperty) {
-            throw error_1.DELETE_OPERATION_FAILED;
+            throw DELETE_OPERATION_FAILED;
         }
         // update related property's featuring state
         const relatedProperty = yield property_1.Property.findById(featuredProperty.propertyId);

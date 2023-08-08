@@ -16,8 +16,9 @@ exports.ChatMessageRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const chatmessage_1 = require("../models/chatmessage");
 const auth_middleware_1 = require("../middleware/auth-middleware");
-const error_1 = require("../constants/error");
+const constants_1 = require("../constants");
 const logger_1 = require("../logs/logger");
+const { CHAT_MESSAGE_PARAM_INVALID } = constants_1.errors;
 const ChatMessageRouter = express_1.default.Router();
 exports.ChatMessageRouter = ChatMessageRouter;
 // query helper function
@@ -39,7 +40,7 @@ ChatMessageRouter.post('/api/chat-messages', auth_middleware_1.isLoggedIn, (req,
     try {
         const { chatId, senderId, content } = req.body;
         if (!chatId || !senderId || !content) {
-            throw error_1.CHAT_MESSAGE_PARAM_INVALID;
+            throw CHAT_MESSAGE_PARAM_INVALID;
         }
         const newChatMessage = new chatmessage_1.ChatMessage({
             chatId,

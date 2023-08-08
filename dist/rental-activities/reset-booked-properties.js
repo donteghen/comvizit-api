@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const logger_1 = require("../logs/logger");
 const rent_intention_1 = require("../models/rent-intention");
-const declared_1 = require("../constants/declared");
+const constants_1 = require("../constants");
 const property_1 = require("../models/property");
 function resetBookedProperties() {
     var _a;
@@ -22,7 +22,7 @@ function resetBookedProperties() {
             // get all initiated rent intentiosn
             const initiatedRentIntentions = yield rent_intention_1.RentIntention.find({
                 $and: [
-                    { status: declared_1.constants.RENT_INTENTION_STATUS_OPTIONS.INITIATED },
+                    { status: constants_1.constants.RENT_INTENTION_STATUS_OPTIONS.INITIATED },
                     {
                         initiatedAt: {
                             $lt: fiveDaysAgo
@@ -35,12 +35,12 @@ function resetBookedProperties() {
                 // reset the status to the associated property to available
                 for (let initiatedIntention of initiatedRentIntentions) {
                     // cancel the booking
-                    initiatedIntention.status = declared_1.constants.RENT_INTENTION_STATUS_OPTIONS.CANCELED;
+                    initiatedIntention.status = constants_1.constants.RENT_INTENTION_STATUS_OPTIONS.CANCELED;
                     yield initiatedIntention.save();
                     // reset the property's availability to available
                     const associatedProperty = yield property_1.Property.findById(initiatedIntention.propertyId.toString());
-                    if ((associatedProperty === null || associatedProperty === void 0 ? void 0 : associatedProperty.availability) !== declared_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE) {
-                        associatedProperty.availability = declared_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE;
+                    if ((associatedProperty === null || associatedProperty === void 0 ? void 0 : associatedProperty.availability) !== constants_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE) {
+                        associatedProperty.availability = constants_1.constants.PROPERTY_AVAILABILITY_STATUS_OPTIONS.AVAILABLE;
                         yield associatedProperty.save();
                     }
                 }

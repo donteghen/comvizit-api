@@ -15,12 +15,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReviewRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const auth_middleware_1 = require("../middleware/auth-middleware");
-const error_1 = require("../constants/error");
 const mongoose_1 = require("mongoose");
 const review_1 = require("../models/review");
-const declared_1 = require("../constants/declared");
+const constants_1 = require("../constants");
 const logger_1 = require("../logs/logger");
 const date_query_setter_1 = require("../utils/date-query-setter");
+const { DELETE_OPERATION_FAILED, INVALID_REQUEST, NOT_FOUND, REVIEW_ALREADY_EXIST, SAVE_OPERATION_FAILED } = constants_1.errors;
 const ReviewRouter = express_1.default.Router();
 exports.ReviewRouter = ReviewRouter;
 /**
@@ -59,14 +59,14 @@ ReviewRouter.post('/api/reviews/create', auth_middleware_1.isLoggedIn, (req, res
         const authorType = req.user.role;
         const existAlready = yield review_1.Review.findOne({ $and: [{ type }, { author }, { refId }] });
         if (existAlready) {
-            throw error_1.REVIEW_ALREADY_EXIST;
+            throw REVIEW_ALREADY_EXIST;
         }
         const newReview = new review_1.Review({
             type, rating, comment, status, author, refId, authorType
         });
         const review = yield newReview.save();
         if (!review) {
-            throw error_1.SAVE_OPERATION_FAILED;
+            throw SAVE_OPERATION_FAILED;
         }
         res.send({ ok: true, data: review });
     }
@@ -85,12 +85,12 @@ ReviewRouter.post('/api/reviews-rating-count', (req, res) => __awaiter(void 0, v
     try {
         let averageRating = 0;
         if (!req.body.refId || !req.body.type) {
-            throw error_1.INVALID_REQUEST;
+            throw INVALID_REQUEST;
         }
         const reviews = yield review_1.Review.find({
             type: req.body.type,
             refId: req.body.refId.trim(),
-            status: declared_1.constants.REVIEW_STATUS.ACTIVE
+            status: constants_1.constants.REVIEW_STATUS.ACTIVE
         }, { rating: 1 });
         if ((reviews === null || reviews === void 0 ? void 0 : reviews.length) > 0) {
             const total = reviews.map(review => Number(review.rating)).reduce((prev, sum) => prev + sum, 0);
@@ -134,7 +134,7 @@ ReviewRouter.get('/api/reviews/:id', (req, res) => __awaiter(void 0, void 0, voi
     try {
         const review = yield review_1.Review.findById(req.params.id).populate('author', ['fullname', 'avatar', 'address.town']).exec();
         if (!review) {
-            throw error_1.NOT_FOUND;
+            throw NOT_FOUND;
         }
         res.send({ ok: true, data: review });
     }
@@ -151,17 +151,17 @@ ReviewRouter.patch('/api/reviews/:id/status-update', auth_middleware_1.isLoggedI
         if (req.body.status) {
             const review = yield review_1.Review.findById(req.params.id);
             if (!review) {
-                throw error_1.NOT_FOUND;
+                throw NOT_FOUND;
             }
             review.status = req.body.status;
             const updatedReview = yield review.save();
             if (!updatedReview) {
-                throw error_1.SAVE_OPERATION_FAILED;
+                throw SAVE_OPERATION_FAILED;
             }
             res.send({ ok: true, data: updatedReview });
         }
         else {
-            throw error_1.INVALID_REQUEST;
+            throw INVALID_REQUEST;
         }
     }
     catch (error) {
@@ -179,7 +179,7 @@ ReviewRouter.delete('/api/reviews/:id/delete', auth_middleware_1.isLoggedIn, aut
     try {
         const review = yield review_1.Review.findByIdAndDelete(req.params.id);
         if (!review) {
-            throw error_1.DELETE_OPERATION_FAILED;
+            throw DELETE_OPERATION_FAILED;
         }
         res.send({ ok: true });
     }

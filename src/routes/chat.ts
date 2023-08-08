@@ -1,13 +1,13 @@
 import express , {Request, Response} from "express";
 import { Chat } from "../models/chat";
 import { isAdmin, isLoggedIn } from "../middleware/auth-middleware";
-import { CHAT_PARAM_INVALID, INVALID_REQUEST, NOT_FOUND } from "../constants/error";
+import { errors } from "../constants";
 import { logger } from "../logs/logger";
 import { PipelineStage, Types } from "mongoose";
 import { setDateFilter } from "../utils/date-query-setter";
-import { constants } from "../constants/declared";
+import { constants } from "../constants";
 
-
+const {CHAT_PARAM_INVALID, INVALID_REQUEST, NOT_FOUND} = errors;
 
 
 const ChatRouter = express.Router()

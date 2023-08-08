@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ComplainRouter = void 0;
 const express_1 = __importDefault(require("express"));
-const error_1 = require("../constants/error");
+const constants_1 = require("../constants");
 const auth_middleware_1 = require("../middleware/auth-middleware");
 const complain_1 = require("../models/complain");
 const mailer_1 = require("../helper/mailer");
@@ -22,7 +22,7 @@ const mailer_templates_1 = require("../utils/mailer-templates");
 const mongoose_1 = require("mongoose");
 const logger_1 = require("../logs/logger");
 const date_query_setter_1 = require("../utils/date-query-setter");
-const declared_1 = require("../constants/declared");
+const { NOT_FOUND, DELETE_OPERATION_FAILED } = constants_1.errors;
 const ComplainRouter = express_1.default.Router();
 exports.ComplainRouter = ComplainRouter;
 // query helper function
@@ -78,10 +78,10 @@ ComplainRouter.post('/api/complains', auth_middleware_1.isLoggedIn, auth_middlew
 ComplainRouter.get('/api/complains', auth_middleware_1.isLoggedIn, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _b, _c, _d, _e, _f;
     try {
-        let filter = req.user.role === declared_1.constants.USER_ROLE.TENANT ?
+        let filter = req.user.role === constants_1.constants.USER_ROLE.TENANT ?
             { potentialTenantId: new mongoose_1.Types.ObjectId(req.user.id) }
             :
-                req.user.role === declared_1.constants.USER_ROLE.LANDLORD ?
+                req.user.role === constants_1.constants.USER_ROLE.LANDLORD ?
                     { landlordId: new mongoose_1.Types.ObjectId(req.user.id) }
                     :
                         {};
@@ -114,7 +114,7 @@ ComplainRouter.get('/api/complains', auth_middleware_1.isLoggedIn, (req, res) =>
                 }
             }
         ];
-        if (req.user.role === declared_1.constants.USER_ROLE.ADMIN && queries.includes('plaintiveId') && req.query['plaintiveId']) {
+        if (req.user.role === constants_1.constants.USER_ROLE.ADMIN && queries.includes('plaintiveId') && req.query['plaintiveId']) {
             pipeline.push({
                 $match: {
                     'plaintive.unique_id': Number(req.query['plaintiveId'])
@@ -136,7 +136,7 @@ ComplainRouter.get('/api/complains/:id', auth_middleware_1.isLoggedIn, auth_midd
     try {
         const complain = yield complain_1.Complain.findById(req.params.id);
         if (!complain) {
-            throw error_1.NOT_FOUND;
+            throw NOT_FOUND;
         }
         res.send({ ok: true, data: complain });
     }
@@ -151,7 +151,7 @@ ComplainRouter.patch('/api/complains/:id/process', auth_middleware_1.isLoggedIn,
     try {
         const complain = yield complain_1.Complain.findById(req.params.id);
         if (!complain) {
-            throw error_1.NOT_FOUND;
+            throw NOT_FOUND;
         }
         complain.processed = true;
         complain.updated = Date.now();
@@ -173,11 +173,11 @@ ComplainRouter.delete('/api/complains/:id/delete', auth_middleware_1.isLoggedIn,
     try {
         const complain = yield complain_1.Complain.findById(req.params.id);
         if (!complain) {
-            throw error_1.NOT_FOUND;
+            throw NOT_FOUND;
         }
         const deleteResult = yield complain_1.Complain.deleteOne({ _id: complain._id });
         if (deleteResult.deletedCount !== 1) {
-            throw error_1.DELETE_OPERATION_FAILED;
+            throw DELETE_OPERATION_FAILED;
         }
         res.send({ ok: true });
     }
