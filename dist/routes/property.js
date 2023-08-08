@@ -641,6 +641,7 @@ PropertyRouter.get('/api/properties', auth_middleware_1.isLoggedIn, auth_middlew
                 }
             });
         }
+        console.log(pipeline);
         const properties = yield property_1.Property.aggregate(pipeline);
         res.send({ ok: true, data: properties });
     }
